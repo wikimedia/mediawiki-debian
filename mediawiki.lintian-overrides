@@ -1,0 +1,41 @@
+# $Id: mediawiki.lintian-overrides 554 2014-06-26 07:57:33Z tg $
+#-
+
+# this is ok, a Conflicts is not needed
+mediawiki: breaks-without-version mediawiki-extensions-fckeditor
+
+# this is a file conflict
+mediawiki: conflicts-with-version mediawiki-extensions-base (<< 3.5~)
+
+# this is not the same library even though the filename is the same
+mediawiki: embedded-javascript-library usr/share/mediawiki/resources/src/jquery/jquery.tablesorter.js please use libjs-jquery-tablesorter
+
+# MediaWiki has local patches
+mediawiki: embedded-javascript-library usr/share/mediawiki/resources/src/jquery.tipsy/jquery.tipsy.js please use libjs-jquery-tipsy
+
+# MediaWiki uses an older version
+mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/jquery.cookie.js please use libjs-jquery-cookie
+
+# MediaWiki uses a newer version
+mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/jquery.form.js please use libjs-jquery-form
+
+# the files in question are not suitable for doc-base registration
+mediawiki: possible-documentation-but-no-doc-base-registration
+
+# unusual, but not a typo
+mediawiki: unusual-interpreter usr/share/mediawiki/maintenance/hiphop/run-server #!/usr/bin/hhvm
+
+# by design, README.Debian explains how the local admin
+# should generate the link targets
+mediawiki: package-contains-broken-symlink var/lib/mediawiki/AdminSettings.php etc/mediawiki/AdminSettings.php
+mediawiki: package-contains-broken-symlink var/lib/mediawiki/LocalSettings.php etc/mediawiki/LocalSettings.php
+
+# COPYING files are needed for Special:Version
+mediawiki: extra-license-file
+
+# MediaWiki has local patches and a newer version
+mediawiki: embedded-php-library usr/share/mediawiki/extensions-core/SyntaxHighlight_GeSHi/geshi/geshi.php please use php-geshi
+
+# These files are fine
+mediawiki: source-is-missing resources/lib/jquery/jquery.validate.js
+mediawiki: source-is-missing vendor/oojs/oojs-ui/demos/pages/dialogs.js

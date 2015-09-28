@@ -1,0 +1,505 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: MediaWiki
+Upstream-Contact: Kunal Mehta <legoktm@gmail.com>
+Source: https://releases.wikimedia.org/mediawiki/
+
+Files: *
+Copyright: 2001-2015, MediaWiki developers
+License: GPL-2.0+
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2`.
+
+Files: extensions/ConfirmEdit/ReCaptcha/recaptchalib.php
+Copyright: 2007, reCAPTCHA -- http://recaptcha.net
+License: Expat
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated documentation
+ files (the "Software"), to deal in the Software without
+ restriction, including without limitation the rights to use,
+ copy, modify, merge, publish, distribute, sublicense, and/or
+ sell copies of the Software, and to permit persons to whom
+ the Software is furnished to do so, subject to the following
+ conditions:
+ .
+ The above copyright notice and this permission notice shall
+ be included in all copies or substantial portions of the
+ Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+ KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+ OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Files: extensions/InputBox/*
+License: Expat
+Copyright: Erik Moeller <moeller@scireview.de>
+           Leonardo Pimenta <leo.lns@gmail.com>
+           Trevor Parscal <tparscal@wikimedia.org>
+
+Files: extensions/Poem/*
+Copyright: 2005, Nikola Smolenski <smolensk@eunet.yu>
+           2011, Zaran <zaran.krleza@gmail.com>
+License: CC0
+ Creative Commons Legal Code
+ .
+ CC0 1.0 Universal
+ .
+     CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
+     LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN
+     ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
+     INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
+     REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS
+     PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM
+     THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED
+     HEREUNDER.
+ .
+ Statement of Purpose
+ .
+ The laws of most jurisdictions throughout the world automatically confer
+ exclusive Copyright and Related Rights (defined below) upon the creator
+ and subsequent owner(s) (each and all, an "owner") of an original work of
+ authorship and/or a database (each, a "Work").
+ .
+ Certain owners wish to permanently relinquish those rights to a Work for
+ the purpose of contributing to a commons of creative, cultural and
+ scientific works ("Commons") that the public can reliably and without fear
+ of later claims of infringement build upon, modify, incorporate in other
+ works, reuse and redistribute as freely as possible in any form whatsoever
+ and for any purposes, including without limitation commercial purposes.
+ These owners may contribute to the Commons to promote the ideal of a free
+ culture and the further production of creative, cultural and scientific
+ works, or to gain reputation or greater distribution for their Work in
+ part through the use and efforts of others.
+ .
+ For these and/or other purposes and motivations, and without any
+ expectation of additional consideration or compensation, the person
+ associating CC0 with a Work (the "Affirmer"), to the extent that he or she
+ is an owner of Copyright and Related Rights in the Work, voluntarily
+ elects to apply CC0 to the Work and publicly distribute the Work under its
+ terms, with knowledge of his or her Copyright and Related Rights in the
+ Work and the meaning and intended legal effect of CC0 on those rights.
+ .
+ 1. Copyright and Related Rights. A Work made available under CC0 may be
+ protected by copyright and related or neighboring rights ("Copyright and
+ Related Rights"). Copyright and Related Rights include, but are not
+ limited to, the following:
+ .
+   i. the right to reproduce, adapt, distribute, perform, display,
+      communicate, and translate a Work;
+  ii. moral rights retained by the original author(s) and/or performer(s);
+ iii. publicity and privacy rights pertaining to a person's image or
+      likeness depicted in a Work;
+  iv. rights protecting against unfair competition in regards to a Work,
+      subject to the limitations in paragraph 4(a), below;
+   v. rights protecting the extraction, dissemination, use and reuse of data
+      in a Work;
+  vi. database rights (such as those arising under Directive 96/9/EC of the
+      European Parliament and of the Council of 11 March 1996 on the legal
+      protection of databases, and under any national implementation
+      thereof, including any amended or successor version of such
+      directive); and
+ vii. other similar, equivalent or corresponding rights throughout the
+      world based on applicable law or treaty, and any national
+      implementations thereof.
+ .
+ 2. Waiver. To the greatest extent permitted by, but not in contravention
+ of, applicable law, Affirmer hereby overtly, fully, permanently,
+ irrevocably and unconditionally waives, abandons, and surrenders all of
+ Affirmer's Copyright and Related Rights and associated claims and causes
+ of action, whether now known or unknown (including existing as well as
+ future claims and causes of action), in the Work (i) in all territories
+ worldwide, (ii) for the maximum duration provided by applicable law or
+ treaty (including future time extensions), (iii) in any current or future
+ medium and for any number of copies, and (iv) for any purpose whatsoever,
+ including without limitation commercial, advertising or promotional
+ purposes (the "Waiver"). Affirmer makes the Waiver for the benefit of each
+ member of the public at large and to the detriment of Affirmer's heirs and
+ successors, fully intending that such Waiver shall not be subject to
+ revocation, rescission, cancellation, termination, or any other legal or
+ equitable action to disrupt the quiet enjoyment of the Work by the public
+ as contemplated by Affirmer's express Statement of Purpose.
+ .
+ 3. Public License Fallback. Should any part of the Waiver for any reason
+ be judged legally invalid or ineffective under applicable law, then the
+ Waiver shall be preserved to the maximum extent permitted taking into
+ account Affirmer's express Statement of Purpose. In addition, to the
+ extent the Waiver is so judged Affirmer hereby grants to each affected
+ person a royalty-free, non transferable, non sublicensable, non exclusive,
+ irrevocable and unconditional license to exercise Affirmer's Copyright and
+ Related Rights in the Work (i) in all territories worldwide, (ii) for the
+ maximum duration provided by applicable law or treaty (including future
+ time extensions), (iii) in any current or future medium and for any number
+ of copies, and (iv) for any purpose whatsoever, including without
+ limitation commercial, advertising or promotional purposes (the
+ "License"). The License shall be deemed effective as of the date CC0 was
+ applied by Affirmer to the Work. Should any part of the License for any
+ reason be judged legally invalid or ineffective under applicable law, such
+ partial invalidity or ineffectiveness shall not invalidate the remainder
+ of the License, and in such case Affirmer hereby affirms that he or she
+ will not (i) exercise any of his or her remaining Copyright and Related
+ Rights in the Work or (ii) assert any associated claims and causes of
+ action with respect to the Work, in either case contrary to Affirmer's
+ express Statement of Purpose.
+ .
+ 4. Limitations and Disclaimers.
+ .
+  a. No trademark or patent rights held by Affirmer are waived, abandoned,
+     surrendered, licensed or otherwise affected by this document.
+  b. Affirmer offers the Work as-is and makes no representations or
+     warranties of any kind concerning the Work, express, implied,
+     statutory or otherwise, including without limitation warranties of
+     title, merchantability, fitness for a particular purpose, non
+     infringement, or the absence of latent or other defects, accuracy, or
+     the present or absence of errors, whether or not discoverable, all to
+     the greatest extent permissible under applicable law.
+  c. Affirmer disclaims responsibility for clearing rights of other persons
+     that may apply to the Work or any use thereof, including without
+     limitation any person's Copyright and Related Rights in the Work.
+     Further, Affirmer disclaims responsibility for obtaining any necessary
+     consents, permissions or other rights required for any use of the
+     Work.
+  d. Affirmer understands and acknowledges that Creative Commons is not a
+     party to this document and has no duty or obligation with respect to
+     this CC0 or use of the Work.
+
+
+Files: extensions/SpamBlacklist/*
+Copyright: Tim Starling
+License: Tim-Starling-License
+ All source code which I have made publicly available, and 
+ for which I hold the copyright, may be distributed under any
+ of the open source licenses approved as such by the 
+ [http://www.opensource.org/about Open Source Initiative], at 
+ the option of the licensee. A list of such licenses can be 
+ found [http://www.opensource.org/licenses/alphabetical here]. 
+ .
+ If the license places requirements on the form of the work,
+ such as requiring a standard file header, then it is the 
+ responsibility of the distributor to alter the work to bring 
+ it into compliance, before the work can be distributed under 
+ that license.
+ .
+ Any statement of limited liability or warranty in these 
+ licenses should be interpreted as being '''to the extent 
+ permitted by applicable law'''. I recognise that a statutory 
+ warranty may apply to certain parties with whom I have a 
+ professional relationship, and that to misrepresent the rights 
+ of these clients by denying this warranty may constitute a 
+ breach of the Trade Practices Act of Australia or corresponding
+ state-level legislation.
+ .
+ Works with multiple authors, where I am one of the authors, 
+ may be distributed under any OSI-approved license that has 
+ the support of all of the copyright holders. I encourage the 
+ authors of derived works to dual-license under the GNU General 
+ Public License (version unspecified), and at least one license 
+ that is less restrictive.
+ .
+ In principle, I am committed to seeing my work in this arena 
+ distributed without any restriction, but I recognise the legal 
+ problems with the concept of irrevocable public domain 
+ dedication. Please accept my personal, non-binding assurance 
+ that I do not intend to seek redress for any breach of the 
+ copyright of these works.
+
+Files: extensions/SyntaxHighlight_GeSHi/geshi/*
+License: GPL-2.0
+Copyright: 2004-2007 Nigel McNie
+           2007-2014 Benny Baumann
+
+Files: includes/libs/CSSMin.php
+Copyright: 2010, Wikimedia Foundation
+License: Apache-2.0
+ On Debian systems, the full text of the Apache-2.0 license
+ can be found in the file
+ `/usr/share/common-licenses/Apache-2.0`.
+
+Files: includes/libs/IEContentAnalyzer.php
+Copyright: Tim Starling
+License: Tim-Starling-License
+
+Files: includes/libs/JavaScriptMinifier.php
+Copyright: Paul Copperman <paul.copperman@gmail.com>
+License: Apache-2.0 or Expat or GPL-2.0 or LGPL
+
+Files: includes/libs/jsminplus.php
+Copyright: 2004, Brendan Eich <brendan@mozilla.org>
+           2009-2011 Tino Zijdel <crisp@tweakers.net>
+License: MPL-1.1 or GPL-2 or LGPL-2.1
+ The contents of this file are subject to the Mozilla Public License Version
+ 1.1 (the "License"); you may not use this file except in compliance with
+ the License. You may obtain a copy of the License at
+ http://www.mozilla.org/MPL/
+ .
+ Software distributed under the License is distributed on an "AS IS" basis,
+ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ for the specific language governing rights and limitations under the
+ License.
+ .
+ The Original Code is the Narcissus JavaScript engine.
+ .
+ The Initial Developer of the Original Code is
+ Brendan Eich <brendan@mozilla.org>.
+ Portions created by the Initial Developer are Copyright (C) 2004
+ the Initial Developer. All Rights Reserved.
+ .
+ Contributor(s): Tino Zijdel <crisp@tweakers.net>
+ PHP port, modifications and minifier routine are (C) 2009-2011
+ .
+ Alternatively, the contents of this file may be used under the terms of
+ either the GNU General Public License Version 2 or later (the "GPL"), or
+ the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ in which case the provisions of the GPL or the LGPL are applicable instead
+ of those above. If you wish to allow use of your version of this file only
+ under the terms of either the GPL or the LGPL, and not to allow others to
+ use your version of this file under the terms of the MPL, indicate your
+ decision by deleting the provisions above and replace them with the notice
+ and other provisions required by the GPL or the LGPL. If you do not delete
+ the provisions above, a recipient may use your version of this file under
+ the terms of any one of the MPL, the GPL or the LGPL.
+
+Files: includes/libs/MWMessagePack.php
+Copyright: 2011, OnlineCity <https://github.com/onlinecity/msgpack-php>
+           2013, Ori Livneh <ori@wikimedia.org>
+License: Expat
+
+Files: includes/objectcache/MemcachedClient.php
+Copyright: 2003, Ryan T. Dean <rtdean@cytherianage.net>
+License: BSD-2-clause
+
+Files: profileinfo.php
+Copyright: 2005, Kate Turner
+License: Expat
+
+Files: resources/lib/es5-shim/es5-shim.js
+Copyright: 2009-2014, Kristopher Michael Kowal and contributors
+License: Expat
+
+Files: resources/lib/jquery/jquery.appear.js
+Copyright: 2009, Michael Hixson
+License: Expat
+
+Files: resources/lib/jquery/jquery.async.js
+Copyright: 2008, Vincent Robert (genezys.net)
+License: Expat
+
+Files: resources/lib/jquery/jquery.ba-throttle-debounce.js
+Copyright: 2010, "Cowboy" Ben Alman
+License: Expat or GPL-2
+
+Files: resources/lib/jquery/jquery.cookie.js
+Copyright: 2013, Klaus Hartl
+License: Expat
+
+Files: resources/lib/jquery/jquery.form.js
+Copyright: jQuery Form plugin contributors
+License: Expat or GPL-2
+
+Files: resources/lib/jquery/jquery.fullscreen.js
+Copyright: 2013, Theopolisme <theopolismewiki@gmail.com>
+License: GPL-2
+
+Files: resources/lib/jquery/jquery.hoverIntent.js
+Copyright: Brian Cherne <brian@cherne.net>
+License: Expat or GPL-2.0
+
+Files: resources/lib/jquery/jquery.js
+Copyright: 2005, 2014 jQuery Foundation, Inc. and other contributors
+License: Expat
+
+Files: resources/lib/jquery/jquery.jStorage.js
+Copyright: Andris Reinman <andris.reinman@gmail.com>
+License: Unlicense
+
+Files: resources/lib/jquery/jquery.mockjax.js
+Copyright: 2010, appendTo LLC
+License: Expat or GPL-2
+
+Files: resources/lib/jquery/jquery.validate.js
+Copyright: 2006-2011, Jörn Zaefferer
+License: Expat or GPL-3
+
+Files: resources/lib/jquery/jquery.xmldom.js
+Copyright: 2009, Jonathan Sharp, Out West Media LLC.
+License: Expat or GPL-2.0
+
+Files: resources/lib/jquery.chosen/*
+Copyright: 2011-2013, Harvest
+License: Expat
+
+Files: resources/lib/jquery.client/*
+Copyright: 2010-2015, jquery-client maintainers and other contributors
+License: Expat
+
+Files: resources/lib/jquery.ui/*
+Copyright: 2012, jQuery Foundation and other contributors
+License: Expat
+
+Files: resources/lib/json2/json2.js
+License: public-domain
+Copyright: Public Domain
+
+Files: resources/lib/moment/*
+Copyright: 2011-2014, Tim Wood, Iskren Chernev, Moment.js contributors
+License: Expat
+
+Files: resources/lib/mustache/*
+Copyright: 2009, Chris Wanstrath
+           2010-2014, Jan Lehnardt
+License: Expat
+
+Files: resources/lib/oojs/*
+Copyright: 2011-2015, OOjs Team and other contributors
+License: Expat
+
+Files: resources/lib/oojs-ui/*
+Copyright: 2011-2015, OOjs Team and other contributors
+License: Expat
+
+Files: resources/lib/qunitjs/*
+Copyright: jQuery Foundation and other contributors
+License: Expat
+
+Files: resources/lib/sinonjs/*
+Copyright: 2010-2014, Christian Johansen <christian@cjohansen.no>
+License: BSD-3-clause
+
+Files: resources/src/jquery/jquery.badge.js
+Copyright: 2012, Ryan Kaldari <rkaldari@wikimedia.org>
+           2012, Andrew Garrett <agarrett@wikimedia.org>
+           2012, Marius Hoch <hoo@online.de>
+License: Expat
+
+Files: resources/src/jquery/jquery.color.js
+Copyright: 2007, John Resig
+           2011, Krinkle
+License: Expat or GPL-2.0+
+
+Files: resources/src/jquery/jquery.colorUtil.js
+License: Expat or GPL-2.0+
+Copyright: 2011, Krinkle
+
+Files: resources/src/jquery/jquery.confirmable.js
+Copyright: Bartosz Dziewoński
+License: Expat
+
+Files: resources/src/jquery/jquery.makeCollapsible.*
+License: CC-BY-3.0 or GPL-2.0
+Copyright: 2011-2012 Krinkle
+
+Files: resources/src/jquery/jquery.placeholder.js
+Copyright: Mathias Bynens <http://mathiasbynens.be/>
+           2012, Trevor Parscal <tparscal@wikimedia.org>
+           2012, Krinkle <krinklemail@gmail.com>
+           2013, Alex Ivanov <alexivanov97@gmail.com>
+License: Expat
+
+Files: resources/src/jquery/jquery.tablesorter.*
+Copyright: 2007, Christian Bach
+           2011, Leo Koppelkamm
+License: Expat or GPL-2.0
+
+Files: resources/src/jquery.tipsy/*
+Copyright: 2008-2010, jason frame <jason@onehackoranother.com>
+License: Expat
+
+# "Parsing based on parseUri"
+Files: resources/src/mediawiki/mediawiki.Uri.js
+Copyright: Steven Levithan <http://stevenlevithan.com>
+License: Expat
+
+Files: resources/src/mediawiki.legacy/ajax.js
+Copyright: 2005, modernmethod, inc
+License: CC-BY-2.0
+
+Files: resources/src/mediawiki.libs/CLDRPluralRuleParser.js
+Copyright: 2012-2014, Santhosh Thottingal and other contributors
+License: Expat
+
+Files: resources/src/mediawiki.libs/mediawiki.libs.jpegmeta.js
+Copyright: 2009, Ben Leslie
+License: Expat
+
+Files: skins/Vector/csshover*
+Copyright: 2009, Peter Nederlof
+License: LGPL-2.1
+
+Files: vendor/autoload.php
+Copyright: 2015, Nils Adermann, Jordi Boggiano
+License: Expat
+
+Files: vendor/composer/*
+Copyright: 2015, Nils Adermann, Jordi Boggiano
+License: Expat
+
+Files: vendor/cssjanus/cssjanus/*
+License: Apache-2.0
+Copyright: 2008, Google Inc.
+           2010, Roan Kattouw
+
+Files: vendor/leafo/lessphp/*
+Copyright: 2013, Leaf Corcoran, http://leafo.net/lessphp
+License: Expat or GPL-3.0
+
+Files: vendor/liuggio/statsd-php-client/*
+Copyright: Giulio De Donato
+License: Expat
+
+Files: vendor/monolog/monolog/*
+Copyright: 2011-2015 Jordi Boggiano
+License: Expat
+
+Files: vendor/oojs/oojs-ui/*
+Copyright: 2011-2015, OOjs Team and other contributors
+License: Expat
+
+Files: vendor/psr/log/*
+Copyright: 2012, PHP Framework Interoperability Group
+License: Expat
+
+Files: vendor/ruflin/elastica/*
+Copyright: 2014 Nicolas Ruflin
+License: Expat
+
+Files: vendor/wikimedia/cdb/*
+License: GPL-2.0
+Copyright: 2009, Tim Starling
+           2013, Chad Horohoe
+
+Files: vendor/wikimedia/composer-merge-plugin/*
+Copyright: 2014, Bryan Davis, Wikimedia Foundation, and contributors
+License: Expat
+
+Files: vendor/wikimedia/utfnormal/*
+Copyright: 2004, Brion Vibber <brion@pobox.com>
+License: GPL-2.0+
+
+Files: vendor/zordius/lightncandy/*
+Copyright: 2013, 2014, Yahoo! Inc.
+License: Expat

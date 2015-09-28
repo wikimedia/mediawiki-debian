@@ -1,0 +1,19 @@
+$Id: debian_specific_config.patch 432 2013-03-25 09:39:41Z tg $
+
+Support mediawiki-extensions Debian packaging (see #703852).
+
+--- a/includes/installer/LocalSettingsGenerator.php
++++ b/includes/installer/LocalSettingsGenerator.php
+@@ -411,6 +411,12 @@
+ # Path to the GNU diff3 utility. Used for conflict resolution.
+ \$wgDiff3 = \"{$this->values['wgDiff3']}\";
+ 
++# debian-specific include:
++if (is_file(\"/etc/mediawiki-extensions/extensions.php\")) {
++	include(\"/etc/mediawiki-extensions/extensions.php\");
++}
++
++
+ {$groupRights}{$noFollow}## Default skin: you can change the default skin. Use the internal symbolic
+ ## names, ie 'vector', 'monobook':
+ \$wgDefaultSkin = \"{$this->values['wgDefaultSkin']}\";

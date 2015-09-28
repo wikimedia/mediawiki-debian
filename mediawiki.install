@@ -1,0 +1,4 @@
+debian/etc/*	etc/mediawiki
+debian/phpmod/mediawiki.ini etc/php5/mods-available
+*.php *.phtml includes index.php languages maintenance mw-config resources skins vendor usr/share/mediawiki
+cache extensions images var/lib/mediawiki

@@ -1,0 +1,4 @@
+version=3
+
+opts="dversionmangle=s/^[0-9]+://;s/\+dfsg$//,pgpsigurlmangle=s/$/.sig/" \
+http://releases.wikimedia.org/mediawiki/1.25/ mediawiki-([0-9.]*).tar.gz \
