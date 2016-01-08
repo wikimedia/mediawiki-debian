@@ -1,0 +1,2 @@
+# lintian bug
+mediawiki: source-is-missing vendor/oojs/oojs-ui/demos/pages/dialogs.js

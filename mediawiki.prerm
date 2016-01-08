@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id: mediawiki.prerm 522 2014-03-24 09:00:57Z tg $
 # From MirOS: contrib/hosted/tg/deb/jupp/debian/jupp.prerm,v 1.4 2011/09/06 20:07:39 tg Exp $
 
 set -e
