@@ -19,7 +19,7 @@ mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/
 # the files in question are not suitable for doc-base registration
 mediawiki: possible-documentation-but-no-doc-base-registration
 
-# unusual, but not a typo
+# unusual, but not a typo, filed as bug #789878
 mediawiki: unusual-interpreter usr/share/mediawiki/maintenance/hiphop/run-server #!/usr/bin/hhvm
 
 # by design, README.Debian explains how the local admin
