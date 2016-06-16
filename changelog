@@ -1,3 +1,22 @@
+mediawiki (1:1.27.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+  * Update dependencies to be PHP version agnostic
+  * Switch to new 1.27 MediaWiki Installer overrides system, drop old patches
+  * Local patch to remove newline before shebang in php-jwt/run-tests.sh
+  * Local patch to fix pear/mail_mime/scripts/phail.php shebang
+  * Remove permission fixes that were addressed upstream, add new ones
+  * Properly override source-is-missing lintian warning
+  * Drop AdminSettings.php support
+  * Add php-curl, php-intl, and php-wikidiff2 as Recommends
+  * Add python as recommended for SyntaxHighlighting (via pygments)
+  * Remove unnecessary Build-Depends packages
+  * Update watch file for 1.27
+  * Standards version 3.9.8
+  * Include serialized/ folder in install, MediaWiki now needs it at runtime
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 30 Jun 2016 22:48:23 +0000
+
 mediawiki (1:1.25.5-1) unstable; urgency=medium
 
   * Upgraded to new upstream release

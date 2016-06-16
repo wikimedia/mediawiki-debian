@@ -19,17 +19,13 @@ mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/
 # the files in question are not suitable for doc-base registration
 mediawiki: possible-documentation-but-no-doc-base-registration
 
-# unusual, but not a typo, filed as bug #789878
-mediawiki: unusual-interpreter usr/share/mediawiki/maintenance/hiphop/run-server #!/usr/bin/hhvm
-
 # by design, README.Debian explains how the local admin
 # should generate the link targets
-mediawiki: package-contains-broken-symlink var/lib/mediawiki/AdminSettings.php etc/mediawiki/AdminSettings.php
 mediawiki: package-contains-broken-symlink var/lib/mediawiki/LocalSettings.php etc/mediawiki/LocalSettings.php
 
 # COPYING files are needed for Special:Version
 mediawiki: extra-license-file
 
-# MediaWiki has local patches and a newer version
-mediawiki: embedded-php-library usr/share/mediawiki/extensions-core/SyntaxHighlight_GeSHi/geshi/geshi.php please use php-geshi
+# lintian bug #818962
+mediawiki: php-script-but-no-phpX-cli-dep
 

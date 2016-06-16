@@ -1,2 +1,3 @@
-mimetypes.patch
-debian_specific_config.patch
+debian_installer_overrides.diff
+pear-phail-fail-shebang.diff
+php-jwt-fix-shebang.diff

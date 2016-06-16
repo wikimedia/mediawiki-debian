@@ -1,4 +1,3 @@
-etc/mediawiki/AdminSettings.php var/lib/mediawiki/AdminSettings.php 
 etc/mediawiki/LocalSettings.php var/lib/mediawiki/LocalSettings.php 
 usr/share/mediawiki/extensions-core/ConfirmEdit/Asirra.php etc/mediawiki-extensions/extensions-available/Asirra.php
 usr/share/mediawiki/extensions-core/ConfirmEdit/ConfirmEdit.php etc/mediawiki-extensions/extensions-available/ConfirmEdit.php
@@ -14,7 +13,6 @@ usr/share/mediawiki/extensions-core/Vector/Vector.php etc/mediawiki-extensions/e
 usr/share/mediawiki/extensions-core/WikiEditor/WikiEditor.php etc/mediawiki-extensions/extensions-available/WikiEditor.php
 usr/share/mediawiki/mw-config var/lib/mediawiki/mw-config
 usr/share/mediawiki/resources var/lib/mediawiki/resources
-var/lib/mediawiki/AdminSettings.php usr/share/mediawiki/AdminSettings.php
 var/lib/mediawiki/LocalSettings.php usr/share/mediawiki/LocalSettings.php
 var/lib/mediawiki/config usr/share/mediawiki/config
 var/lib/mediawiki/extensions usr/share/mediawiki/extensions

@@ -7,113 +7,21 @@ DEB_UPSTREAM_VERSION:=$(shell DEB_NOEPOCH_VERSION=${DEB_NOEPOCH_VERSION}; echo $
 override_dh_install:
 	dh_install
 	# Now some tidying up is required
-	chmod a-x debian/mediawiki/usr/share/mediawiki/maintenance/dev/includes/require-php.sh
-	chmod a-x debian/mediawiki/usr/share/mediawiki/maintenance/dev/includes/php.sh
-	chmod a-x debian/mediawiki/usr/share/mediawiki/includes/profiler/ProfilerSectionOnly.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/includes/jobqueue/jobs/EnqueueJob.php
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail/tests/bug17178.phpt
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail/tests/bug17317.phpt
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/xmail.dtd
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/Mail/mimePart.php
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/Mail/mimeDecode.php
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/xmail.xsl
+	# These were fixed upstream already: https://github.com/liuggio/statsd-php-client/pull/52
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Entity/StatsdData.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Query/SimpleQueryStringTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/mediawiki/images/icons/align-center.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Suggest/CandidateGenerator/DirectGenerator.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Entity/StatsdDataInterface.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/mediawiki/images/icons/smaller-ltr.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Sum.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Missing.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/DateRangeTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Bulk/Action/AbstractDocument.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Filter/TermsTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Query/CommonTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Filter/Indices.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/ClientTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/RangeTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Node/Info.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/CardinalityTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/GeohashGrid.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/GeoDistance.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Node/InfoTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Suggest/TermTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/IndexTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Avg.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Query/SimpleQueryString.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Suggest/Term.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Cardinality.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/NestedTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Type/MappingTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Histogram.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/BulkTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/GeoDistanceTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Index/Status.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/mediawiki/images/icons/align-float-left.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/ExtendedStatsTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/ValueCount.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Search.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Query/FunctionScoreTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/IpRangeTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/GlobalAggregationTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Nested.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Query.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/MissingTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/IpRange.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/apex/images/icons/align-float-left.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/mediawiki/images/icons/bigger-ltr.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/ExtendedStats.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Filter/GeohashCell.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Index/SettingsTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Filter/GeohashCellTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Type/Mapping.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/mediawiki/images/icons/align-float-right.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Bulk/Action.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/apex/images/icons/align-float-right.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/FilterTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Query/FunctionScore.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Terms.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/zordius/lightncandy/tests/example_helpers.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Suggest/Phrase.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Suggest/AbstractSuggest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/ValueCountTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/SumTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/GlobalAggregation.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/DateHistogramTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/apex/images/icons/smaller-ltr.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Transport/ThriftTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/StatsTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/GeohashGridTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/TermsTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Filter/Terms.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/MaxTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/DateRange.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/AvgTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Bulk/Action/UpdateDocument.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Filter/TermTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/AbstractSimpleAggregation.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Suggest/CandidateGenerator/AbstractCandidateGenerator.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Query/Common.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/BaseAggregationTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/HistogramTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/DateHistogram.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Facet/GeoClusterTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/ResultSet.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Range.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Filter/IndicesTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/SnapshotTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Query/BoostingTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/apex/images/icons/align-center.svg
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Suggest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Suggest/PhraseTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/Entity/StatsdDataTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/changes.txt
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/NodeTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Stats.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/test/lib/Elastica/Test/Aggregation/MinTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Max.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/AbstractAggregation.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oojs/oojs-ui/src/themes/apex/images/icons/bigger-ltr.svg
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/StatsdDataFactoryTest.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Filter.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Aggregation/Min.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/ruflin/elastica/lib/Elastica/Snapshot.php
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Entity/StatsdDataInterface.php
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/Entity/StatsdDataTest.php
+	# Submitted upstream: https://github.com/oyejorge/less.php/pull/325
+	chmod a+x debian/mediawiki/usr/share/mediawiki/vendor/oyejorge/less.php/bin/lessc
 
-	find debian/mediawiki/usr/share/mediawiki -maxdepth 1 -mindepth 1 | grep -v "\(LocalSettings.php\|AdminSettings.php\|debian-scripts\|images\|extensions\|config\)" | \
+	find debian/mediawiki/usr/share/mediawiki -maxdepth 1 -mindepth 1 | grep -v "\(LocalSettings.php\|debian-scripts\|images\|extensions\|config\)" | \
 	while read i; do \
 		dh_link "`echo "$$i" | sed -e s#debian/mediawiki/##`" \
 		"`echo "$$i" | sed -e s#debian/mediawiki/usr/share/mediawiki/#var/lib/mediawiki/#`"; \
@@ -140,11 +48,6 @@ override_dh_install:
 	done
 	# includes/libs is provided by mediawiki-classes
 	rm -rf debian/mediawiki/usr/share/mediawiki/includes/libs
-	# fixup permissions
-	#chmod a-x debian/mediawiki/usr/share/mediawiki/extensions-core/Nuke/Nuke*.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/extensions-core/SyntaxHighlight_GeSHi/geshi/geshi/qml.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/extensions-core/ConfirmEdit/FancyCaptcha/FancyCaptcha.class.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/extensions-core/Renameuser/Renameuser.php
 
 override_dh_installdeb:
 	find debian/mediawiki -depth \( -name ".cvsignore" -o -name ".gitignore" -o -name ".arch-ids" \) -exec rm -rf {} \;

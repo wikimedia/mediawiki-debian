@@ -4,7 +4,7 @@ mediawiki for Debian
 
 Optional features:
 	- Image thumbnailing :
-	  Install 'php5-gd' or 'imagemagick' to use this feature.
+	  Install 'php-gd' or 'imagemagick' to use this feature.
 
 Configuration:
 	The configuration uses an easy web-based system ; just go to this URL :
@@ -47,7 +47,7 @@ Upgrading the database:
 	work. Here is a rapid sketch:
 	1) Dump your database to a text file.
 	   mysqldump --add-drop-table -u <user> -p <my-database> > /path/to/file.sql
-	2)   You will need an AdminSettings.php file.
+	2)   You will need an LocalSettings.php file.
 	If you don't have any, a sample is not available (sorry!).
 	You may fill in this file and copy it in /etc/mediawiki.
 	If you use the mysql root account, you may delete it afterward.
