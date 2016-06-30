@@ -1,0 +1,35 @@
+MediaWiki for Debian
+--------------------
+Installing:
+	MediaWiki requires one of the following databases: MariaDB/MySQL
+	(preferred), SQLite, or PostgreSQL.
+	.
+	Visit <http://localhost/mediawiki/> in your browser to go through
+	MediaWiki's web installer. Save the resulting LocalSettings.php file
+	in /etc/mediawiki. Your wiki should now be accessible.
+
+Customizing:
+	If you wish to customize MediaWiki after installation, you can do
+	so. <https://www.mediawiki.org/wiki/Manual:System_administration>
+	has details on how to go about that.
+
+Upgrading:
+	Upgrading to a new major MediaWiki version usually has associated
+	database schema updates. These will need to be applied, and can be
+	done by visiting <http://localhost/mediawiki/mw-config/> in your
+	browser, or by running the "update.php" command-line script
+	(requires the php-cli package). It is recommended to back up your
+	database before upgrading, just in case.
+
+Editing:
+	For help on editing, see
+	<https://www.mediawiki.org/wiki/Help:Editing>.
+
+Contributing:
+	Help is welcome in maintaining the mediawiki package! The git
+	repository is <https://gerrit.wikimedia.org/r/mediawiki/debian.git>,
+	patches can be sent via Gerrit
+	(<https://www.mediawiki.org/wiki/Gerrit/Getting_started>), through
+	the GitHub mirror (<https://github.com/wikimedia/mediawiki-debian>),
+	or e-mail.
+

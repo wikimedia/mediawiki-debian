@@ -1,0 +1,59 @@
+Source: mediawiki
+Section: web
+Priority: optional
+Maintainer: Kunal Mehta <legoktm@member.fsf.org>
+Build-Depends: debhelper (>= 9),
+ dh-buildinfo,
+ apache2-dev
+Homepage: https://www.mediawiki.org/
+Standards-Version: 3.9.8
+Vcs-Git: https://gerrit.wikimedia.org/r/mediawiki/debian.git
+Vcs-Browser: https://phabricator.wikimedia.org/diffusion/MDEB/
+
+Package: mediawiki
+Architecture: all
+Depends: apache2 | httpd, php, php-mysql | php-pgsql | php-sqlite3 | php-mysqlnd, php-common (>= 5.5.0+dfsg-10~), php-mbstring, mime-support, libjs-jquery, mediawiki-classes, ${misc:Depends}
+Recommends: mysql-server | postgresql-contrib, php-cli, php-intl, php-curl, php-wikidiff2, python
+Suggests: imagemagick | php-gd, memcached, clamav, php-apcu, hhvm
+Breaks: fusionforge-plugin-mediawiki (<< 5.2~rc1+1~),
+ mediawiki-extensions-geshi (<< 2.8~),
+ mediawiki-extensions-ldapauth (<< 2.8~),
+ mediawiki-extensions-openid (<< 2.8~),
+ mediawiki-extensions-fckeditor,
+ mediawiki-extensions-collection (<< 2.8~),
+ mediawiki-extensions-graphviz (<< 2.8~),
+ mediawiki-extensions (<< 2.8~)
+Conflicts: mediawiki-extensions-base (<< 3.5~),
+ mediawiki-extensions-confirmedit
+Replaces: mediawiki-extensions-confirmedit
+Description: website engine for collaborative work
+ MediaWiki is a wiki engine (a program for creating a collaboratively
+ edited website). It is designed to handle heavy websites containing
+ library-like document collections, and supports user uploads of
+ images/sounds, multilingual content, TOC autogeneration, ISBN links,
+ etc.
+ .
+ Moreover, it keeps track of changes, so users can receive
+ notifications, view diffs and revert edits. This system has many
+ other features and can easily be extended.
+
+Package: mediawiki-classes
+Architecture: all
+Depends: ${misc:Depends}
+Breaks: mediawiki (<< 1:1.19.8+dfsg-2.1~)
+Replaces: mediawiki (<< 1:1.19.8+dfsg-2.1~)
+Description: website engine for collaborative work - standalone classes
+ This package provides standalone classes from the remainder of the
+ MediaWiki codebase. They do not call on any other portions of MediaWiki
+ code, and can be used in portions of MediaWiki code, and can be used in
+ other projects without dependency issues.
+ .
+ MediaWiki is a wiki engine (a program for creating a collaboratively
+ edited website). It is designed to handle heavy websites containing
+ library-like document collections, and supports user uploads of
+ images/sounds, multilingual content, TOC autogeneration, ISBN links,
+ etc.
+ .
+ Moreover, it keeps track of changes, so users can receive
+ notifications, view diffs and revert edits. This system has many
+ other features and can easily be extended.

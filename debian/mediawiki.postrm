@@ -1,0 +1,18 @@
+#! /bin/sh
+# postrm script for mediawiki
+#
+# see: dh_installdeb(1)
+
+set -e
+
+case "$1" in
+    purge)
+	rm -rf /etc/mediawiki /var/lib/mediawiki
+    ;;
+    *)
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

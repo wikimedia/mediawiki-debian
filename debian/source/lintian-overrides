@@ -1,0 +1,9 @@
+# lintian thinks a bunch of test/data/etc. files are missing source
+# because they have long lines but they're not
+mediawiki source: source-is-missing
+
+# pear/net_smtp already in Debian
+mediawiki source: license-problem-php-license vendor/pear/net_smtp/LICENSE
+mediawiki source: license-problem-bad-php-license debian/copyright
+mediawiki source: license-problem-php-license debian/copyright
+

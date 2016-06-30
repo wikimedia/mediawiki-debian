@@ -1,0 +1,26 @@
+#! /bin/sh
+
+set -e
+
+case "$1" in
+    configure)
+
+	php5enmod mediawiki
+
+        chown -R www-data:www-data /var/lib/mediawiki/cache /var/lib/mediawiki/images
+        chmod 700 /var/lib/mediawiki/cache /var/lib/mediawiki/images
+
+    ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
