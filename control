@@ -14,7 +14,7 @@ Package: mediawiki
 Architecture: all
 Depends: apache2 | httpd, php5, php5-mysql | php5-pgsql | php5-sqlite | php5-mysqlnd, php5-common (>= 5.5.0+dfsg-10~), mime-support, libjs-jquery, mediawiki-classes, ${misc:Depends}
 Recommends: mysql-server | postgresql-contrib, php5-cli, python, php-wikidiff2
-Suggests: imagemagick | php5-gd, mediawiki-extensions-math, memcached, clamav, php5-apcu, php5-intl
+Suggests: imagemagick | php5-gd, mediawiki-extensions-math, memcached, clamav, php5-apcu, php5-intl, hhvm
 Breaks: fusionforge-plugin-mediawiki (<< 5.2~rc1+1~),
  mediawiki-extensions-geshi (<< 2.8~),
  mediawiki-extensions-ldapauth (<< 2.8~),
