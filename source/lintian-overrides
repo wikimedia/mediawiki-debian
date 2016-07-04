@@ -1,3 +1,3 @@
-# lintian bug
-mediawiki: source-is-missing vendor/oojs/oojs-ui/demos/pages/dialogs.js
-mediawiki: source-is-missing resources/lib/jquery/jquery.validate.js
+# lintian thinks a bunch of test/data/etc. files are missing source
+# because they have long lines but they're not
+mediawiki source: source-is-missing
