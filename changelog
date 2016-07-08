@@ -14,6 +14,7 @@ mediawiki (1:1.27.0-1) UNRELEASED; urgency=medium
   * Update watch file for 1.27
   * Standards version 3.9.8
   * Include serialized/ folder in install, MediaWiki now needs it at runtime
+  * Rewrite and simplify README
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 30 Jun 2016 22:48:23 +0000
 
