@@ -16,16 +16,18 @@ Depends: apache2 | httpd, php, php-mysql | php-pgsql | php-sqlite3 | php-mysqlnd
 Recommends: mysql-server | postgresql-contrib, php-cli, php-intl, php-curl, php-wikidiff2, python
 Suggests: imagemagick | php-gd, memcached, clamav, php-apcu, hhvm
 Breaks: fusionforge-plugin-mediawiki (<< 5.2~rc1+1~),
- mediawiki-extensions-geshi (<< 2.8~),
  mediawiki-extensions-ldapauth (<< 2.8~),
  mediawiki-extensions-openid (<< 2.8~),
  mediawiki-extensions-fckeditor,
  mediawiki-extensions-collection (<< 2.8~),
  mediawiki-extensions-graphviz (<< 2.8~),
- mediawiki-extensions (<< 2.8~)
-Conflicts: mediawiki-extensions-base (<< 3.5~),
- mediawiki-extensions-confirmedit
-Replaces: mediawiki-extensions-confirmedit
+ mediawiki-extensions (<< 2.8~),
+ mediawiki-extensions-base,
+ mediawiki-extensions-confirmedit,
+ mediawiki-extensions-geshi
+Replaces: mediawiki-extensions-base,
+ mediawiki-extensions-confirmedit,
+ mediawiki-extensions-geshi
 Description: website engine for collaborative work
  MediaWiki is a wiki engine (a program for creating a collaboratively
  edited website). It is designed to handle heavy websites containing
