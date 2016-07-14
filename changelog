@@ -1,4 +1,4 @@
-mediawiki (1:1.27.0-1) UNRELEASED; urgency=medium
+mediawiki (1:1.27.0-1) unstable; urgency=medium
 
   * New upstream release
   * Update dependencies to be PHP version agnostic
