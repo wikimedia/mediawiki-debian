@@ -4,11 +4,14 @@
 set -e
 
 case $1 in
-remove|deconfigure)
-	php5dismod mediawiki
-	;;
-
-upgrade|failed-upgrade)
+remove|deconfigure|upgrade|failed-upgrade)
+	# Cleanup old mediawiki.ini
+	# This is intentionally PHP5 only, it was never installed
+	# for PHP7.
+	if [ -e "/usr/share/php5/php5-maintscript-helper" ]; then
+		. /usr/share/php5/php5-maintscript-helper
+		php5_invoke dismod ALL mediawiki
+	fi
 	;;
 
 *)

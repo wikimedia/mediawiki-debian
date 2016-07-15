@@ -5,7 +5,13 @@ set -e
 case "$1" in
     configure)
 
-	php5enmod mediawiki
+	# Cleanup old mediawiki.ini
+	# This is intentionally PHP5 only, it was never installed
+	# for PHP7.
+	if [ -e "/usr/share/php5/php5-maintscript-helper" ]; then
+		. /usr/share/php5/php5-maintscript-helper
+		php5_invoke dismod ALL mediawiki
+	fi
 
         chown -R www-data:www-data /var/lib/mediawiki/cache /var/lib/mediawiki/images
         chmod 700 /var/lib/mediawiki/cache /var/lib/mediawiki/images
