@@ -1,3 +1,14 @@
+mediawiki (1:1.27.1-1) UNRELEASED; urgency=medium
+
+  * Add gbp.conf for git-buildpackage
+  * Improve Breaks/Replaces for mediawiki-extensions-* packages
+    (Closes: #831227)
+  * Update apache config for mod_php7
+  * Don't add custom PHP session configuration (Closes: #831874)
+  * Imported Upstream version 1.27.1
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Mon, 22 Aug 2016 20:08:40 -0700
+
 mediawiki (1:1.27.0-1) unstable; urgency=medium
 
   * New upstream release
