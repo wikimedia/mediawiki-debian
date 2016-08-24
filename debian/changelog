@@ -5,7 +5,10 @@ mediawiki (1:1.27.1-1) UNRELEASED; urgency=medium
     (Closes: #831227)
   * Update apache config for mod_php7
   * Don't add custom PHP session configuration (Closes: #831874)
-  * Imported Upstream version 1.27.1
+  * Imported Upstream version 1.27.1 (security release), fixing
+    CVE-2016-6335, CVE-2016-6334, CVE-2016-6333, CVE-2016-6333,
+    CVE-2016-6336, CVE-2016-6332, CVE-2016-6332, CVE-2016-6331,
+    CVE-2016-6337
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Mon, 22 Aug 2016 20:08:40 -0700
 
