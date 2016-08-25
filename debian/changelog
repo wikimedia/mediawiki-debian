@@ -1,4 +1,4 @@
-mediawiki (1:1.27.1-1) UNRELEASED; urgency=medium
+mediawiki (1:1.27.1-1) unstable; urgency=medium
 
   * Add gbp.conf for git-buildpackage
   * Improve Breaks/Replaces for mediawiki-extensions-* packages
