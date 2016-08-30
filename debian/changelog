@@ -1,4 +1,4 @@
-mediawiki (1:1.27.1-2) UNRELEASED; urgency=medium
+mediawiki (1:1.27.1-2) unstable; urgency=high
 
   * Add missing php-xml dependency (Closes: #835912)
 
