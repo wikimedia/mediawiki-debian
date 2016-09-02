@@ -1,3 +1,11 @@
+mediawiki (1:1.27.1-2~bpo8+1) UNRELEASED; urgency=medium
+
+  * Rebuild for jessie-backports.
+  * Update gbp.conf for jessie
+  * Update dependencies for jessie
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Fri, 02 Sep 2016 03:03:23 -0700
+
 mediawiki (1:1.27.1-2) unstable; urgency=high
 
   * Add missing php-xml dependency (Closes: #835912)
