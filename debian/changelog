@@ -1,6 +1,7 @@
-mediawiki (1:1.27.1-3) unstable; urgency=high
+mediawiki (1:1.27.1-3) UNRELEASED; urgency=medium
 
   * Ensure mediawiki depends upon the same version of mediawiki-classes
+  * Add powered by Debian icon in footer
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 13 Sep 2016 04:17:42 -0700
 
