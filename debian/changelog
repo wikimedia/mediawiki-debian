@@ -1,3 +1,9 @@
+mediawiki (1:1.27.1-2ppa2~xenial1) xenial; urgency=medium
+
+  * Rebuild for xenial
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Sat, 17 Sep 2016 16:47:47 -0700
+
 mediawiki (1:1.27.1-2) unstable; urgency=high
 
   * Add missing php-xml dependency (Closes: #835912)
