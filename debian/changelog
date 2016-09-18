@@ -1,3 +1,9 @@
+mediawiki (1:1.27.1-2ppa2~trusty1) trusty; urgency=medium
+
+  * Rebuild for trusty
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Sun, 18 Sep 2016 00:08:55 -0700
+
 mediawiki (1:1.27.1-2~bpo8+1) jessie-backports; urgency=medium
 
   * Rebuild for jessie-backports.
