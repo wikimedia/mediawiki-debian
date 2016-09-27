@@ -1,0 +1,13 @@
+mediawiki (1:1.27.0-1) unstable; urgency=medium
+
+    MediaWiki has been updated to the 1.27 upstream release branch, which
+    brings in about 6 years of upstream changes. Release notes may be found
+    in /usr/share/doc/mediawiki/RELEASE-NOTES-1.27 and
+    /usr/share/doc/mediawiki/changelog. Please see the "Upgrading" section
+    of README.debian and /usr/share/doc/mediawiki/UPGRADE for details on
+    what manual steps need to be taken to upgrade.
+
+    Note that the mediawiki-extensions* packages are no longer compatible
+    with this version of MediaWiki, and are no longer supported.
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 27 Sep 2016 12:45:06 -0700
