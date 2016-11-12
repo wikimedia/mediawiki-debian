@@ -6,7 +6,7 @@ mediawiki (1:1.27.1-3) UNRELEASED; urgency=medium
   * Add README for mediawiki-classes
   * Add RELEASE-NOTES-* as documentation for mediawiki
   * Recommend default-mysql-server | virtual-mysql-server instead of
-    just mysql-server
+    just mysql-server (Closes: #843994)
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 13 Sep 2016 04:17:42 -0700
 
