@@ -12,7 +12,7 @@ Vcs-Browser: https://phabricator.wikimedia.org/diffusion/MDEB/
 
 Package: mediawiki
 Architecture: all
-Depends: apache2 | httpd, php, php-mysql | php-pgsql | php-sqlite3 | php-mysqlnd, php-common (>= 5.5.0+dfsg-10~), php-mbstring, php-xml, mime-support, libjs-jquery, mediawiki-classes (= ${binary:Version}), ${misc:Depends}
+Depends: apache2 | httpd, php, php-mysql | php-pgsql | php-sqlite3 | php-mysqlnd, php-common (>= 5.5.0+dfsg-10~), php-mbstring, php-xml, mime-support, mediawiki-classes (= ${binary:Version}), ${misc:Depends}
 Recommends: default-mysql-server | virtual-mysql-server | postgresql-contrib, php-cli, php-intl, php-curl, php-wikidiff2, python
 Suggests: imagemagick | php-gd, memcached, clamav, php-apcu, hhvm
 Breaks: fusionforge-plugin-mediawiki (<< 5.2~rc1+1~),

@@ -16,6 +16,9 @@ mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/
 # MediaWiki uses a newer version
 mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/jquery.form.js please use libjs-jquery-form
 
+# MediaWiki requires an older version
+mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/jquery.js please use libjs-jquery
+
 # the files in question are not suitable for doc-base registration
 mediawiki: possible-documentation-but-no-doc-base-registration
 

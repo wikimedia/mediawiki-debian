@@ -26,9 +26,6 @@ override_dh_install:
 		dh_link "`echo "$$i" | sed -e s#debian/mediawiki/##`" \
 		"`echo "$$i" | sed -e s#debian/mediawiki/usr/share/mediawiki/#var/lib/mediawiki/#`"; \
 	done
-	# Use system javascript libraries
-	rm debian/mediawiki/usr/share/mediawiki/resources/lib/jquery/jquery.js
-	dh_link usr/share/javascript/jquery/jquery.min.js usr/share/mediawiki/resources/lib/jquery/jquery.js
 	# Remove Makefiles
 	find debian/mediawiki/ -iname makefile -exec rm {} \;
 	# Put debian version for mediawiki version..
