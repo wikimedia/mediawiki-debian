@@ -28,6 +28,8 @@ Breaks: fusionforge-plugin-mediawiki (<< 5.2~rc1+1~),
 Replaces: mediawiki-extensions-base,
  mediawiki-extensions-confirmedit,
  mediawiki-extensions-geshi
+Provides: mediawiki-extensions-confirmedit,
+ mediawiki-extensions-geshi
 Description: website engine for collaborative work
  MediaWiki is a wiki engine (a program for creating a collaboratively
  edited website). It is designed to handle heavy websites containing
