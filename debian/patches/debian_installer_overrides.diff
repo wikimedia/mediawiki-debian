@@ -1,8 +1,8 @@
-Index: mediawiki-1.27.0/mw-config/overrides/DebianOverrides.php
+Index: mediawiki/mw-config/overrides/DebianOverrides.php
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mediawiki-1.27.0/mw-config/overrides/DebianOverrides.php	2016-06-30 22:58:41.125788992 +0000
-@@ -0,0 +1,45 @@
++++ mediawiki/mw-config/overrides/DebianOverrides.php	2016-09-15 11:38:07.080772730 -0700
+@@ -0,0 +1,60 @@
 +<?php
 +/**
 + * Debian overrides for the MediaWiki installer.
@@ -31,17 +31,32 @@ Index: mediawiki-1.27.0/mw-config/overrides/DebianOverrides.php
 +class DebianLocalSettingsGenerator extends LocalSettingsGenerator {
 +	function getText() {
 +		$ls = parent::getText();
-+		$ls .= "
++		// Installer sets $wgResourceBasePath = $wgScriptPath
++		$resourceBasePath = $this->values['wgScriptPath'];
++		$ls .= <<<CONF
 +# Debian specific generated settings
++# Use system mimetypes
 +\$wgMimeTypeFile = '/etc/mime.types';
-+if ( is_file( \"/etc/mediawiki-extensions/extensions.php\" ) ) {
-+	include \"/etc/mediawiki-extensions/extensions.php\";
++# Load legacy extensions
++if ( is_file( "/etc/mediawiki-extensions/extensions.php" ) ) {
++	include "/etc/mediawiki-extensions/extensions.php";
 +}
++# Add a "powered by Debian" footer icon
++\$wgFooterIcons['poweredby']['debian'] = [
++	"src" => "$resourceBasePath/resources/assets/debian/poweredby_debian_1x.png",
++	"url" => "https://www.debian.org/",
++	"alt" => "Powered by Debian",
++	"srcset" =>
++		"$resourceBasePath/resources/assets/debian/poweredby_debian_1_5x.png 1.5x, " .
++		"$resourceBasePath/resources/assets/debian/poweredby_debian_2x.png 2x",
++];
 +# End Debian specific generated settings
-+# Add more configuration options below.\n\n";
++# Add more configuration options below.\n\n
++CONF;
 +		return $ls;
 +	}
 +}
++
 +
 +class DebianWebInstaller extends WebInstaller {
 +	public function getLocalSettingsLocation() {

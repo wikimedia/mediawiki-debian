@@ -12,8 +12,8 @@ Vcs-Browser: https://phabricator.wikimedia.org/diffusion/MDEB/
 
 Package: mediawiki
 Architecture: all
-Depends: apache2 | httpd, php5, php5-mysql | php5-pgsql | php5-sqlite | php5-mysqlnd, php5-common (>= 5.5.0+dfsg-10~), mime-support, libjs-jquery, mediawiki-classes, ${misc:Depends}
-Recommends: mysql-server | postgresql-contrib, php5-cli, php5-intl, php5-curl, php-wikidiff2, python
+Depends: apache2 | httpd, php5, php5-mysql | php5-pgsql | php5-sqlite | php5-mysqlnd, php5-common (>= 5.5.0+dfsg-10~), mime-support, mediawiki-classes (= ${binary:Version}), ${misc:Depends}
+Recommends: virtual-mysql-server | postgresql-contrib, php5-cli, php5-intl, php5-curl, php-wikidiff2, python
 Suggests: imagemagick | php5-gd, memcached, clamav, php5-apcu, hhvm
 Breaks: fusionforge-plugin-mediawiki (<< 5.2~rc1+1~),
  mediawiki-extensions-ldapauth (<< 2.8~),
@@ -27,6 +27,8 @@ Breaks: fusionforge-plugin-mediawiki (<< 5.2~rc1+1~),
  mediawiki-extensions-geshi
 Replaces: mediawiki-extensions-base,
  mediawiki-extensions-confirmedit,
+ mediawiki-extensions-geshi
+Provides: mediawiki-extensions-confirmedit,
  mediawiki-extensions-geshi
 Description: website engine for collaborative work
  MediaWiki is a wiki engine (a program for creating a collaboratively
