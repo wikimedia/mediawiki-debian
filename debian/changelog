@@ -1,6 +1,6 @@
 mediawiki (1:1.27.1-4) UNRELEASED; urgency=medium
 
-  * Improve NEWS file (Closes: #852862)
+  * Improve NEWS file (Closes: #852862, #854352)
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Sun, 29 Jan 2017 21:28:59 -0800
 

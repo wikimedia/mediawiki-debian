@@ -19,4 +19,9 @@ mediawiki (1:1.27.0-1) unstable; urgency=medium
     Note that the mediawiki-extensions* packages are no longer compatible
     with this version of MediaWiki, and are no longer supported.
 
+    If you are upgrading from wheezy, you may encounter issues with prior
+    apache2 configuration preventing the new one from being installed.
+    Disabling the old one and copying over the new one from
+    /etc/mediawiki/mediawiki.conf is recommended.
+
  -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 27 Sep 2016 12:45:06 -0700
