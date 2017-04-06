@@ -1,8 +1,12 @@
-mediawiki (1:1.27.1-4) UNRELEASED; urgency=medium
+mediawiki (1:1.27.2-1) unstable; urgency=medium
 
   * Improve NEWS file (Closes: #852862, #854352)
+  * Imported Upstream version 1.27.2 (security release), fixing
+    CVE-2017-0363, CVE-2017-0364, CVE-2017-0365, CVE-2017-0361,
+    CVE-2017-0362, CVE-2017-0368, CVE-2017-0366, CVE-2017-0370,
+    CVE-2017-0369, CVE-2017-0367, CVE-2017-0372
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Sun, 29 Jan 2017 21:28:59 -0800
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 06 Apr 2017 14:04:24 -0700
 
 mediawiki (1:1.27.1-3) unstable; urgency=medium
 
