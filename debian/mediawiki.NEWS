@@ -1,13 +1,27 @@
 mediawiki (1:1.27.0-1) unstable; urgency=medium
 
     MediaWiki has been updated to the 1.27 upstream release branch, which
-    brings in about 6 years of upstream changes. Release notes may be found
+    brings in about 4 years of upstream changes. Release notes may be found
     in /usr/share/doc/mediawiki/RELEASE-NOTES-1.27 and
     /usr/share/doc/mediawiki/changelog. Please see the "Upgrading" section
     of README.debian and /usr/share/doc/mediawiki/UPGRADE for details on
     what manual steps need to be taken to upgrade.
 
+    Some highlights of new features:
+    * Improvements to the appearance and performance of diffs
+    * Better defaults for email notifications
+    * Performance improvements in client-side JavaScript
+    * Secure storage for passwords
+    * Improved patrolling and anti-spam features out of the box
+    * Additional language and internationalization support
+    * Common extensions are bundled and can be enabled from the installer
+
     Note that the mediawiki-extensions* packages are no longer compatible
     with this version of MediaWiki, and are no longer supported.
+
+    If you are upgrading from wheezy, you may encounter issues with prior
+    apache2 configuration preventing the new one from being installed.
+    Disabling the old one and copying over the new one from
+    /etc/mediawiki/mediawiki.conf is recommended.
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 27 Sep 2016 12:45:06 -0700
