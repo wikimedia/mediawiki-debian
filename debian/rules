@@ -13,6 +13,8 @@ override_dh_install:
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/Mail/mimePart.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/Mail/mimeDecode.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/xmail.xsl
+	# Fixed upstream already: https://gerrit.wikimedia.org/r/347519
+	chmod a-x debian/mediawiki/usr/share/mediawiki/includes/specials/SpecialNewpages.php
 	# These were fixed upstream already: https://github.com/liuggio/statsd-php-client/pull/52
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Entity/StatsdData.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/StatsdDataFactoryTest.php
