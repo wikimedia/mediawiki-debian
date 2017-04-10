@@ -17,7 +17,7 @@ Copyright: Ævar Arnfjörð Bjarmason
            Trevor Parscal
 License: GPL-2.0+
 
-Files: extensions/Cite/CiteDataModule.php extensions/Cite/CiteCSSFileModule.php extensions/Cite/CiteHooks.php extensions/Cite/modules/ve-cite/*
+Files: extensions/Cite/includes/CiteDataModule.php extensions/Cite/includes/CiteHooks.php extensions/Cite/modules/ve-cite/*
 Copyright: 2011-2016, Cite VisualEditor Team and others
 License: Expat
 
@@ -138,7 +138,7 @@ Files: includes/libs/CSSMin.php
 Copyright: 2010, Wikimedia Foundation
 License: Apache-2.0
 
-Files: includes/libs/IEContentAnalyzer.php
+Files: includes/libs/mime/IEContentAnalyzer.php
 Copyright: Tim Starling
 License: Tim-Starling-License
 
@@ -249,6 +249,10 @@ Files: resources/lib/oojs/*
 Copyright: 2011-2015, OOjs Team and other contributors
 License: Expat
 
+Files: resources/lib/oojs-router/*
+Copyright: 2011-2016, OOjs Team and other contributors
+License: Expat
+
 Files: resources/lib/oojs-ui/*
 Copyright: 2011-2015, OOjs Team and other contributors
 License: Expat
@@ -350,9 +354,13 @@ Files: vendor/firebase/php-jwt/*
 Copyright: 2011, Neuman Vong
 License: BSD-3-clause
 
+Files: vendor/james-heinrich/getid3/*
+Copyright: James Heinrich
+License: GPL-2.0+
+
 Files: vendor/justinrainbow/json-schema/*
 Copyright: 2008, Gradua Networks
-License: BSD-3-clause
+License: Expat
 
 Files: vendor/liuggio/statsd-php-client/*
 Copyright: Giulio De Donato
@@ -419,6 +427,10 @@ Copyright: 1997-2009, Stig Bakken <ssb@php.net>
                       Martin Jansen <mj@php.net>
 License: BSD-2-clause
 
+Files: vendor/pimple/pimple/*
+Copyright: 2009-2014, Fabien Potencier
+License: Expat
+
 Files: vendor/psr/log/*
 Copyright: 2012, PHP Framework Interoperability Group
 License: Expat
@@ -476,12 +488,20 @@ Files: vendor/wikimedia/running-stat/*
 Copyright: Ori Livneh
 License: GPL-2.0+
 
+Files: vendor/wikimedia/scoped-callback/*
+Copyright: 2016, Aaron Schulz <aschulz@wikimedia.org>
+License: GPL-2.0+
+
 Files: vendor/wikimedia/textcat/*
 Copyright: Stanislav Malyshev
 License: LGPL-2.1
 
 Files: vendor/wikimedia/utfnormal/*
 Copyright: 2004, Brion Vibber <brion@pobox.com>
+License: GPL-2.0+
+
+Files: vendor/wikimedia/wait-condition-loop/*
+Copyright: 2016, Aaron Schulz <aschulz@wikimedia.org>
 License: GPL-2.0+
 
 Files: vendor/wikimedia/wrappedstring/*
