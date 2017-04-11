@@ -1,3 +1,25 @@
+mediawiki (1:1.27.2-1ppa1~trusty1) trusty; urgency=medium
+
+  * Rebuild for trusty
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 11 Apr 2017 11:16:03 -0700
+
+mediawiki (1:1.27.2-1~bpo8+1) jessie-backports; urgency=medium
+
+  * Rebuild for jessie-backports.
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Sat, 08 Apr 2017 08:37:49 +0000
+
+mediawiki (1:1.27.2-1) unstable; urgency=medium
+
+  * Improve NEWS file (Closes: #852862, #854352)
+  * Imported Upstream version 1.27.2 (security release), fixing
+    CVE-2017-0363, CVE-2017-0364, CVE-2017-0365, CVE-2017-0361,
+    CVE-2017-0362, CVE-2017-0368, CVE-2017-0366, CVE-2017-0370,
+    CVE-2017-0369, CVE-2017-0367, CVE-2017-0372
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 06 Apr 2017 14:04:24 -0700
+
 mediawiki (1:1.27.1-3ppa1~trusty1) trusty; urgency=medium
 
   * Rebuild for trusty
