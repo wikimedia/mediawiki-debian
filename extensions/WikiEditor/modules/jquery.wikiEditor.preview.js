@@ -120,7 +120,7 @@ $.wikiEditor.modules.preview = {
 					};
 					var postPromise = api.post( postdata );
 
-					$.when( postPromise, mw.loader.using( 'mediawiki.action.history.diff' ) )
+					$.when( postPromise, mw.loader.using( 'mediawiki.diff.styles' ) )
 					.done( function ( postResult ) {
 						try {
 							var diff = postResult[ 0 ].query.pages[ 0 ]

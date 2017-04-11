@@ -124,7 +124,7 @@ class MysqlInstaller extends DatabaseInstaller {
 			return $status;
 		}
 		/**
-		 * @var $conn DatabaseBase
+		 * @var $conn Database
 		 */
 		$conn = $status->value;
 
@@ -143,7 +143,7 @@ class MysqlInstaller extends DatabaseInstaller {
 	public function openConnection() {
 		$status = Status::newGood();
 		try {
-			$db = DatabaseBase::factory( 'mysql', [
+			$db = Database::factory( 'mysql', [
 				'host' => $this->getVar( 'wgDBserver' ),
 				'user' => $this->getVar( '_InstallUser' ),
 				'password' => $this->getVar( '_InstallPassword' ),
@@ -168,7 +168,7 @@ class MysqlInstaller extends DatabaseInstaller {
 			return;
 		}
 		/**
-		 * @var $conn DatabaseBase
+		 * @var $conn Database
 		 */
 		$conn = $status->value;
 		$conn->selectDB( $this->getVar( 'wgDBname' ) );
@@ -226,7 +226,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		$status = $this->getConnection();
 
 		/**
-		 * @var $conn DatabaseBase
+		 * @var $conn Database
 		 */
 		$conn = $status->value;
 
@@ -261,7 +261,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			return false;
 		}
-		/** @var $conn DatabaseBase */
+		/** @var $conn Database */
 		$conn = $status->value;
 
 		// Get current account name
@@ -312,7 +312,7 @@ class MysqlInstaller extends DatabaseInstaller {
 				'IS_GRANTABLE' => 1,
 			], __METHOD__ );
 		foreach ( $res as $row ) {
-			$regex = $conn->likeToRegex( $row->TABLE_SCHEMA );
+			$regex = $this->likeToRegex( $row->TABLE_SCHEMA );
 			if ( preg_match( $regex, $this->getVar( 'wgDBname' ) ) ) {
 				unset( $grantOptions[$row->PRIVILEGE_TYPE] );
 			}
@@ -323,6 +323,19 @@ class MysqlInstaller extends DatabaseInstaller {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Convert a wildcard (as used in LIKE) to a regex
+	 * Slashes are escaped, slash terminators included
+	 */
+	protected function likeToRegex( $wildcard ) {
+		$r = preg_quote( $wildcard, '/' );
+		$r = strtr( $r, [
+			'%' => '.*',
+			'_' => '.'
+		] );
+		return "/$r/s";
 	}
 
 	/**
@@ -427,7 +440,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		if ( !$create ) {
 			// Test the web account
 			try {
-				DatabaseBase::factory( 'mysql', [
+				Database::factory( 'mysql', [
 					'host' => $this->getVar( 'wgDBserver' ),
 					'user' => $this->getVar( 'wgDBuser' ),
 					'password' => $this->getVar( 'wgDBpassword' ),
@@ -471,7 +484,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		if ( !$status->isOK() ) {
 			return $status;
 		}
-		/** @var DatabaseBase $conn */
+		/** @var Database $conn */
 		$conn = $status->value;
 		$dbName = $this->getVar( 'wgDBname' );
 		if ( !$conn->selectDB( $dbName ) ) {
@@ -509,7 +522,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		if ( $this->getVar( '_CreateDBAccount' ) ) {
 			// Before we blindly try to create a user that already has access,
 			try { // first attempt to connect to the database
-				DatabaseBase::factory( 'mysql', [
+				Database::factory( 'mysql', [
 					'host' => $server,
 					'user' => $dbUser,
 					'password' => $password,
