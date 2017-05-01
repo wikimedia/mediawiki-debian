@@ -1479,7 +1479,7 @@ class ApiMain extends ApiBase {
 		$this->mParamsUsed += array_fill_keys( (array)$params, true );
 	}
 
- 	/**
+	/**
 	 * Get the request parameters that should be considered sensitive
 	 * @since 1.28
 	 * @return array
