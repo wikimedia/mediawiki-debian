@@ -1,3 +1,16 @@
+mediawiki (1:1.27.3-1ppa1~xenial1) xenial; urgency=medium
+
+  * Rebuild for xenial
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Mon, 01 May 2017 15:32:31 -0700
+
+mediawiki (1:1.27.3-1) unstable; urgency=medium
+
+  * Imported Upstream version 1.27.3 (security release), that
+    actually contains the fix for CVE-2017-0372 (Closes: #861585)
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Mon, 01 May 2017 13:20:11 -0700
+
 mediawiki (1:1.27.2-1ppa1~xenial1) xenial; urgency=medium
 
   * Rebuild for xenial
@@ -10,7 +23,7 @@ mediawiki (1:1.27.2-1) unstable; urgency=medium
   * Imported Upstream version 1.27.2 (security release), fixing
     CVE-2017-0363, CVE-2017-0364, CVE-2017-0365, CVE-2017-0361,
     CVE-2017-0362, CVE-2017-0368, CVE-2017-0366, CVE-2017-0370,
-    CVE-2017-0369, CVE-2017-0367, CVE-2017-0372
+    CVE-2017-0369, CVE-2017-0367
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 06 Apr 2017 14:04:24 -0700
 
