@@ -4,7 +4,7 @@ Upstream-Contact: Kunal Mehta <legoktm@member.fsf.org>
 Source: https://releases.wikimedia.org/mediawiki/
 
 Files: *
-Copyright: 2001-2016, MediaWiki developers
+Copyright: 2001-2017, MediaWiki developers
 License: GPL-2.0+
 
 Files: extensions/Cite/*
@@ -18,7 +18,7 @@ Copyright: Ævar Arnfjörð Bjarmason
 License: GPL-2.0+
 
 Files: extensions/Cite/includes/CiteDataModule.php extensions/Cite/includes/CiteHooks.php extensions/Cite/modules/ve-cite/*
-Copyright: 2011-2016, Cite VisualEditor Team and others
+Copyright: 2011-2017, Cite VisualEditor Team and others
 License: Expat
 
 Files: extensions/CiteThisPage/*
@@ -79,7 +79,7 @@ Copyright: Tim Starling
            Robert Rohde
            Ross McClure
            Juraj Simlovic
-License: GPL-2.0
+License: GPL-2.0+
 
 Files: extensions/PdfHandler/*
 Copyright: Martin Seidel
@@ -161,15 +161,11 @@ Copyright: 2003, Ryan T. Dean <rtdean@cytherianage.net>
 License: BSD-2-clause
 
 Files: includes/widget/*
-Copyright: 2011-2015, MediaWiki Widgets Team and others
+Copyright: 2011-2017, MediaWiki Widgets Team and others
 License: Expat
 
 Files: profileinfo.php
 Copyright: 2005, Kate Turner
-License: Expat
-
-Files: resources/lib/es5-shim/es5-shim.js
-Copyright: 2009-2014, Kristopher Michael Kowal and contributors
 License: Expat
 
 Files: resources/lib/jquery/jquery.appear.js
@@ -208,6 +204,10 @@ Files: resources/lib/jquery/jquery.jStorage.js
 Copyright: Andris Reinman <andris.reinman@gmail.com>
 License: Unlicense
 
+Files: resources/lib/jquery/jquery.migrate.js
+Copyright: jQuery Foundation and other contributors
+License: Expat
+
 Files: resources/lib/jquery/jquery.mockjax.js
 Copyright: 2010, appendTo LLC
 License: Expat or GPL-2.0
@@ -215,6 +215,10 @@ License: Expat or GPL-2.0
 Files: resources/lib/jquery/jquery.xmldom.js
 Copyright: 2009, Jonathan Sharp, Out West Media LLC.
 License: Expat or GPL-2.0
+
+Files: resources/lib/jquery/jquery3.js
+Coyright: JS Foundation and ther contributors
+License: Expat
 
 Files: resources/lib/jquery.chosen/*
 Copyright: 2011-2013, Harvest
@@ -232,12 +236,8 @@ Files: resources/lib/jquery.ui/*
 Copyright: 2012, jQuery Foundation and other contributors
 License: Expat
 
-Files: resources/lib/json2/json2.js
-License: PD
-Copyright: Public Domain
-
 Files: resources/lib/moment/*
-Copyright: 2011-2014, Tim Wood, Iskren Chernev, Moment.js contributors
+Copyright: 2011-2016, Tim Wood, Iskren Chernev, Moment.js contributors
 License: Expat
 
 Files: resources/lib/mustache/*
@@ -288,13 +288,6 @@ Files: resources/src/jquery/jquery.makeCollapsible.*
 License: CC-BY-3.0 or GPL-2.0
 Copyright: 2011-2012 Krinkle
 
-Files: resources/src/jquery/jquery.placeholder.js
-Copyright: Mathias Bynens <http://mathiasbynens.be/>
-           2012, Trevor Parscal <tparscal@wikimedia.org>
-           2012, Krinkle <krinklemail@gmail.com>
-           2013, Alex Ivanov <alexivanov97@gmail.com>
-License: Expat
-
 Files: resources/src/jquery/jquery.tablesorter.*
 Copyright: 2007, Christian Bach
            2011, Leo Koppelkamm
@@ -318,7 +311,7 @@ Copyright: 2009, Ben Leslie
 License: Expat
 
 Files: resources/src/mediawiki.widgets/*
-Copyright: 2011-2015, MediaWiki Widgets Team and others
+Copyright: 2011-2016, MediaWiki Widgets Team and others
 License: Expat
 
 Files: skins/CologneBlue/*
@@ -379,7 +372,7 @@ Copyright: 2014, SWANSOFT
 License: BSD-3-clause
 
 Files: vendor/oojs/oojs-ui/*
-Copyright: 2011-2016, OOjs UI Team and other contributors
+Copyright: 2011-2017, OOjs UI Team and other contributors
 License: Expat
 
 Files: vendor/oyejorge/less.php/*
@@ -428,7 +421,7 @@ Copyright: 1997-2009, Stig Bakken <ssb@php.net>
 License: BSD-2-clause
 
 Files: vendor/pimple/pimple/*
-Copyright: 2009-2014, Fabien Potencier
+Copyright: 2009-2015, Fabien Potencier
 License: Expat
 
 Files: vendor/psr/log/*
@@ -439,8 +432,12 @@ Files: vendor/ruflin/elastica/*
 Copyright: 2014, Nicolas Ruflin
 License: Expat
 
+Files: vendor/stil/gd-text/*
+Copyright: FIXME
+License: Expat
+
 Files: vendor/symfony/process/*
-Copyright: 2004-2016, Fabien Potencier
+Copyright: 2004-2017, Fabien Potencier
 License: Expat
 
 Files: vendor/wikimedia/assert/*
@@ -484,6 +481,10 @@ Files: vendor/wikimedia/relpath/*
 Copyright: 2015, Ori Livneh <ori@wikimedia.org>
 License: Expat
 
+File: vendor/wikimedia/remex-html/*
+Copyright: 2016 Wikimedia Foundation
+License: Expat
+
 Files: vendor/wikimedia/running-stat/*
 Copyright: Ori Livneh
 License: GPL-2.0+
@@ -495,6 +496,10 @@ License: GPL-2.0+
 Files: vendor/wikimedia/textcat/*
 Copyright: Stanislav Malyshev
 License: LGPL-2.1
+
+Files: vendor/wikimedia/timestamp/*
+Copyright: 2012 Tyler Romeo <tylerromeo@gmail.com>
+License: GPL-2.0+
 
 Files: vendor/wikimedia/utfnormal/*
 Copyright: 2004, Brion Vibber <brion@pobox.com>
