@@ -1,4 +1,4 @@
-#!/usr/bin/php -Cq
+#!@prefix@/bin/php -Cq
 <?php
 /**
 * PHAIL - stands for PHP Mail

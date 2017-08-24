@@ -1,0 +1,8 @@
+--- a/vendor/pear/mail_mime/scripts/phail.php
++++ b/vendor/pear/mail_mime/scripts/phail.php
+@@ -1,4 +1,4 @@
+-#!@prefix@/bin/php -Cq
++#!/usr/bin/php -Cq
+ <?php
+ /**
+ * PHAIL - stands for PHP Mail
