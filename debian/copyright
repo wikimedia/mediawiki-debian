@@ -217,7 +217,7 @@ Copyright: 2009, Jonathan Sharp, Out West Media LLC.
 License: Expat or GPL-2.0
 
 Files: resources/lib/jquery/jquery3.js
-Coyright: JS Foundation and ther contributors
+Copyright: JS Foundation and ther contributors
 License: Expat
 
 Files: resources/lib/jquery.chosen/*
@@ -433,7 +433,7 @@ Copyright: 2014, Nicolas Ruflin
 License: Expat
 
 Files: vendor/stil/gd-text/*
-Copyright: FIXME
+Copyright: Przemysław Ryciuk
 License: Expat
 
 Files: vendor/symfony/process/*
@@ -481,7 +481,7 @@ Files: vendor/wikimedia/relpath/*
 Copyright: 2015, Ori Livneh <ori@wikimedia.org>
 License: Expat
 
-File: vendor/wikimedia/remex-html/*
+Files: vendor/wikimedia/remex-html/*
 Copyright: 2016 Wikimedia Foundation
 License: Expat
 
@@ -861,27 +861,6 @@ License: Apache-2.0
  On Debian systems, the full text of the Apache-2.0 license
  can be found in the file
  `/usr/share/common-licenses/Apache-2.0`.
-
-License: GPL-3.0
- This program is free software; you can redistribute it
- and/or modify it under the terms of the GNU General Public
- License as published by the Free Software Foundation; either
- version 3 of the License.
- .
- This program is distributed in the hope that it will be
- useful, but WITHOUT ANY WARRANTY; without even the implied
- warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the GNU General Public License for more
- details.
- .
- You should have received a copy of the GNU General Public
- License along with this package; if not, write to the Free
- Software Foundation, Inc., 51 Franklin St, Fifth Floor,
- Boston, MA  02110-1301 USA
- .
- On Debian systems, the full text of the GNU General Public
- License version 3 can be found in the file
- `/usr/share/common-licenses/GPL-3`.
 
 License: CC-BY-3.0
  Creative Commons Legal Code
@@ -1563,11 +1542,6 @@ License: CC-BY-SA-3.0
      this trademark restriction does not form part of the License.
  .
      Creative Commons may be contacted at https://creativecommons.org/.
-
-License: PD
- Public Domain.
- .
- NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
 
 License: LGPL-2.1
  This library is free software; you can redistribute it and/or
