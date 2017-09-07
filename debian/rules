@@ -7,21 +7,20 @@ DEB_UPSTREAM_VERSION:=$(shell DEB_NOEPOCH_VERSION=${DEB_NOEPOCH_VERSION}; echo $
 override_dh_install:
 	dh_install
 	# Now some tidying up is required
+	chmod a-x debian/mediawiki/usr/share/mediawiki/includes/api/ApiSetPageLanguage.php
+	chmod a-x debian/mediawiki/usr/share/mediawiki/maintenance/addSite.php
+	chmod a-x debian/mediawiki/usr/share/mediawiki/skins/Vector/variables.less
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail/tests/bug17178.phpt
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail/tests/bug17317.phpt
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/xmail.dtd
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/Mail/mimePart.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/Mail/mimeDecode.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/xmail.xsl
-	# Fixed upstream already: https://gerrit.wikimedia.org/r/347519
-	chmod a-x debian/mediawiki/usr/share/mediawiki/includes/specials/SpecialNewpages.php
-	# These were fixed upstream already: https://github.com/liuggio/statsd-php-client/pull/52
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Entity/StatsdData.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/StatsdDataFactoryTest.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Entity/StatsdDataInterface.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/Entity/StatsdDataTest.php
-	# Submitted upstream: https://github.com/oyejorge/less.php/pull/325
-	chmod a+x debian/mediawiki/usr/share/mediawiki/vendor/oyejorge/less.php/bin/lessc
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oyejorge/less.php/lib/Less/Less.php.combine
 
 	find debian/mediawiki/usr/share/mediawiki -maxdepth 1 -mindepth 1 | grep -v "\(LocalSettings.php\|debian-scripts\|images\|extensions\|config\)" | \
 	while read i; do \
@@ -45,6 +44,7 @@ override_dh_install:
 		dh_link usr/share/mediawiki/extensions-core/"$$coreextension" \
 		    var/lib/mediawiki/extensions/"$$coreextension"; \
 	done
+	chmod a-x debian/mediawiki/usr/share/mediawiki/extensions-core/ConfirmEdit/i18n/en.json
 	# includes/libs is provided by mediawiki-classes
 	rm -rf debian/mediawiki/usr/share/mediawiki/includes/libs
 
