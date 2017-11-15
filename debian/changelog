@@ -1,3 +1,9 @@
+mediawiki (1:1.27.4-1ppa1~xenial1) xenial; urgency=medium
+
+  * Rebuild for xenial
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 14 Nov 2017 16:42:15 -0800
+
 mediawiki (1:1.27.4-1) unstable; urgency=medium
 
   * Imported Upstream version 1.27.4 (security release), fixing
