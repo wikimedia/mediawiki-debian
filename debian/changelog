@@ -1,3 +1,14 @@
+mediawiki (1:1.27.4-1) unstable; urgency=medium
+
+  * Imported Upstream version 1.27.4 (security release), fixing
+    CVE-2017-8809, CVE-2017-8810, CVE-2017-8808, CVE-2017-8811,
+    CVE-2017-8812, CVE-2017-8814, CVE-2017-8815.
+  * Users who used the default configuration should not be affected
+    by CVE-2017-9841, but an extra .htaccess file will restrict
+    web access to the vendor/ directory.
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 14 Nov 2017 15:52:47 -0800
+
 mediawiki (1:1.27.3-1~bpo8+1) jessie-backports; urgency=medium
 
   * Rebuild for jessie-backports.
