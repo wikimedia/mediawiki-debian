@@ -1,3 +1,9 @@
+mediawiki (1:1.27.4-1~bpo8+1) jessie-backports; urgency=medium
+
+  * Rebuild for jessie-backports.
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 14 Nov 2017 16:25:29 -0800
+
 mediawiki (1:1.27.4-1) unstable; urgency=medium
 
   * Imported Upstream version 1.27.4 (security release), fixing
