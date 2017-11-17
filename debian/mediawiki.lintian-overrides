@@ -1,9 +1,6 @@
 # this is ok, a Conflicts is not needed
 mediawiki: breaks-without-version mediawiki-extensions-fckeditor
 
-# this is a file conflict
-mediawiki: conflicts-with-version mediawiki-extensions-base (<< 3.5~)
-
 # this is not the same library even though the filename is the same
 mediawiki: embedded-javascript-library usr/share/mediawiki/resources/src/jquery/jquery.tablesorter.js please use libjs-jquery-tablesorter
 
@@ -28,7 +25,4 @@ mediawiki: package-contains-broken-symlink var/lib/mediawiki/LocalSettings.php e
 
 # COPYING files are needed for Special:Version
 mediawiki: extra-license-file
-
-# lintian bug #818962
-mediawiki: php-script-but-no-phpX-cli-dep
 
