@@ -9,6 +9,7 @@ Homepage: https://www.mediawiki.org/
 Standards-Version: 4.1.1
 Vcs-Git: https://gerrit.wikimedia.org/r/mediawiki/debian.git
 Vcs-Browser: https://phabricator.wikimedia.org/diffusion/MDEB/
+Rules-Requires-Root: no
 
 Package: mediawiki
 Architecture: all

@@ -1,8 +1,9 @@
 mediawiki (1:1.27.4-2) UNRELEASED; urgency=medium
 
   * Bump Standards-Version to 4.1.1
+  * Set Rules-Requires-Root: no
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 16 Nov 2017 23:38:41 -0800
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 16 Nov 2017 23:46:08 -0800
 
 mediawiki (1:1.27.4-1) unstable; urgency=medium
 
