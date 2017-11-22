@@ -1,9 +1,5 @@
 #!/usr/bin/make -f
 
-DEB_VERSION:=$(shell dpkg-parsechangelog -n1 | sed -n '/^Version: /s///p')
-DEB_NOEPOCH_VERSION:=$(shell DEB_VERSION=${DEB_VERSION}; echo $${DEB_VERSION\#*:})
-DEB_UPSTREAM_VERSION:=$(shell DEB_NOEPOCH_VERSION=${DEB_NOEPOCH_VERSION}; echo $${DEB_NOEPOCH_VERSION%+dfsg-*})
-
 override_dh_install:
 	dh_install
 	# Now some tidying up is required
@@ -28,9 +24,6 @@ override_dh_install:
 	done
 	# Remove Makefiles
 	find debian/mediawiki/ -iname makefile -exec rm {} \;
-	# Put debian version for mediawiki version..
-	sed -e "s#$(DEB_UPSTREAM_VERSION)#$(DEB_NOEPOCH_VERSION)#" \
-			-i debian/mediawiki/usr/share/mediawiki/includes/DefaultSettings.php
 	# Move extensions
 	mkdir -p debian/mediawiki/usr/share/doc/mediawiki
 	mv debian/mediawiki/var/lib/mediawiki/extensions/README \
