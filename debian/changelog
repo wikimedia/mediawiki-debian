@@ -5,8 +5,9 @@ mediawiki (1:1.27.4-2) UNRELEASED; urgency=medium
   * Remove unused lintian overrides
   * Upgrade php-apcu to a Recommends
   * Use debhelper compat 10
+  * Add a systemd unit to run runJobs.php as a service
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 21 Nov 2017 18:34:50 -0800
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 21 Nov 2017 22:10:02 -0800
 
 mediawiki (1:1.27.4-1) unstable; urgency=medium
 
