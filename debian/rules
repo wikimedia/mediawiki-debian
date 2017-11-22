@@ -46,10 +46,6 @@ override_dh_install:
 	# includes/libs is provided by mediawiki-classes
 	rm -rf debian/mediawiki/usr/share/mediawiki/includes/libs
 
-override_dh_installdeb:
-	find debian/mediawiki -depth \( -name ".cvsignore" -o -name ".gitignore" -o -name ".arch-ids" \) -exec rm -rf {} \;
-	dh_installdeb
-
 override_dh_systemd_enable:
 	# Do not enable by default, the user needs to manually
 	# configure MediaWiki first.
