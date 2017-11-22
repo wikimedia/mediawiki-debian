@@ -4,8 +4,9 @@ mediawiki (1:1.27.4-2) UNRELEASED; urgency=medium
   * Set Rules-Requires-Root: no
   * Remove unused lintian overrides
   * Upgrade php-apcu to a Recommends
+  * Use debhelper compat 10
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Fri, 17 Nov 2017 01:06:29 -0800
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 21 Nov 2017 18:34:50 -0800
 
 mediawiki (1:1.27.4-1) unstable; urgency=medium
 
