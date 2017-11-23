@@ -1,0 +1,15 @@
+#!/bin/sh
+# Install MediaWiki on the PostgreSQL backend
+# and then verify the installation was successful.
+set -e
+
+mkdir /tmp/mw-install
+sudo -u postgres createuser --createdb -e wikidebadmin
+sudo -u postgres psql -c "ALTER USER wikidebadmin WITH PASSWORD 'password1';"
+php /var/lib/mediawiki/maintenance/install.php --confpath /tmp/mw-install --dbname autopkgtestwiki --dbtype postgres --dbserver localhost --dbuser wikidebadmin --dbpass password1 --pass password1 Debian-Autopkgtest Administrator
+php /var/lib/mediawiki/maintenance/getText.php --conf /tmp/mw-install/LocalSettings.php "Main_Page" | grep "MediaWiki has been installed"
+sudo cp /tmp/mw-install/LocalSettings.php /etc/mediawiki/LocalSettings.php
+curl -I --silent "http://localhost/mediawiki/index.php/Main_Page"
+curl --silent "http://localhost/mediawiki/index.php/Main_Page" | grep "MediaWiki has been installed"
+curl --silent "http://localhost/mediawiki/index.php/Special:BlankPage" | grep "This page is intentionally left blank."
+

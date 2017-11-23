@@ -1,0 +1,11 @@
+#!/bin/sh
+# Lint both PHP and JSON files
+
+set -e
+
+# Bool and Null are already fixed upstream:
+# <https://github.com/ruflin/Elastica/issues/825>
+# Ignore LocalSettings.php since it is just a symlink
+# that does not exist yet.
+find /usr/share/mediawiki -not -type d -name '*.php' -not -name 'Bool.php' -not -name 'Null.php' -not -name 'LocalSettings.php' | xargs -n1 -exec php -l
+find /usr/share/mediawiki -not -type d -name '*.json' | xargs -n1 -exec jsonlint-php

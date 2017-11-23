@@ -1,3 +1,9 @@
+mediawiki (1:1.27.4-3) UNRELEASED; urgency=medium
+
+  * Add basic tests via autopkgtest
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Sat, 25 Nov 2017 16:29:10 -0800
+
 mediawiki (1:1.27.4-2) unstable; urgency=medium
 
   * Bump Standards-Version to 4.1.1
