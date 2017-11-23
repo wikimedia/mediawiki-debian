@@ -1,7 +1,21 @@
-Index: mediawiki/mw-config/overrides/DebianOverrides.php
+From: Kunal Mehta <legoktm@member.fsf.org>
+Date: Thu, 23 Nov 2017 00:57:46 -0800
+Subject: Debian-specific overrides for the Installer
+
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ mediawiki/mw-config/overrides/DebianOverrides.php	2016-09-15 11:38:07.080772730 -0700
+
+Forwarded: not-needed
+Change-Id: I3d70ea529870e033329ecfc9f2ccc3b8648a4923
+---
+ mw-config/overrides/DebianOverrides.php | 60 +++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 mw-config/overrides/DebianOverrides.php
+
+diff --git a/mw-config/overrides/DebianOverrides.php b/mw-config/overrides/DebianOverrides.php
+new file mode 100644
+index 0000000..37a18a3
+--- /dev/null
++++ b/mw-config/overrides/DebianOverrides.php
 @@ -0,0 +1,60 @@
 +<?php
 +/**
