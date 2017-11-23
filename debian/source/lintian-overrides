@@ -7,3 +7,5 @@ mediawiki source: license-problem-php-license vendor/pear/net_smtp/LICENSE
 mediawiki source: license-problem-bad-php-license debian/copyright
 mediawiki source: license-problem-php-license debian/copyright
 
+# we have a composer.json file, but aren't a composer package
+mediawiki source: composer-package-without-pkg-php-tools-builddep
