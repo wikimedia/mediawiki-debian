@@ -8,8 +8,9 @@ mediawiki (1:1.27.4-2) UNRELEASED; urgency=medium
   * Add a systemd unit to run runJobs.php as a service
   * Get rid of unnecessary dh_installdeb override
   * Remove dead code to mess with $wgVersion
+  * Synchronise upstream/signing-key.asc
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 21 Nov 2017 22:20:52 -0800
+ -- Kunal Mehta <legoktm@member.fsf.org>  Wed, 22 Nov 2017 22:50:47 -0800
 
 mediawiki (1:1.27.4-1) unstable; urgency=medium
 
