@@ -1,4 +1,4 @@
-mediawiki (1:1.27.4-2) UNRELEASED; urgency=medium
+mediawiki (1:1.27.4-2) unstable; urgency=medium
 
   * Bump Standards-Version to 4.1.1
   * Set Rules-Requires-Root: no
