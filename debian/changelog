@@ -1,4 +1,4 @@
-mediawiki (1:1.27.4-3) UNRELEASED; urgency=medium
+mediawiki (1:1.27.4-3) unstable; urgency=medium
 
   * Add basic tests via autopkgtest
   * Document mediawiki-jobrunner systemd unit in README.Debian
