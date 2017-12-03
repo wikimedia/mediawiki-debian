@@ -12,6 +12,9 @@ Customizing:
 	If you wish to customize MediaWiki after installation, you can do
 	so. <https://www.mediawiki.org/wiki/Manual:System_administration>
 	has details on how to go about that.
+	For a better experience, setting up a background job processor is
+	recommended, and a systemd service unit is provided for convenience.
+	Run $ systemctl enable mediawiki-jobrunner; to start it.
 
 Upgrading:
 	Upgrading to a new major MediaWiki version usually has associated

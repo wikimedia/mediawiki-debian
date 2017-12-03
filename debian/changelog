@@ -1,8 +1,9 @@
 mediawiki (1:1.27.4-3) UNRELEASED; urgency=medium
 
   * Add basic tests via autopkgtest
+  * Document mediawiki-jobrunner systemd unit in README.Debian
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Sat, 25 Nov 2017 16:29:10 -0800
+ -- Kunal Mehta <legoktm@member.fsf.org>  Sun, 03 Dec 2017 00:20:33 -0800
 
 mediawiki (1:1.27.4-2) unstable; urgency=medium
 
