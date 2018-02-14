@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 10),
 Homepage: https://www.mediawiki.org/
 Standards-Version: 4.1.1
 Vcs-Git: https://gerrit.wikimedia.org/r/mediawiki/debian.git
-Vcs-Browser: https://phabricator.wikimedia.org/diffusion/MDEB/
+Vcs-Browser: https://gerrit.wikimedia.org/g/mediawiki/debian
 Rules-Requires-Root: no
 
 Package: mediawiki

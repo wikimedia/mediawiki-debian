@@ -1,3 +1,9 @@
+mediawiki (1:1.27.4-4) UNRELEASED; urgency=medium
+
+  * Update Vcs-Browser to use Gerrit/Gitiles as repository viewer
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Wed, 14 Feb 2018 15:33:03 -0800
+
 mediawiki (1:1.27.4-3) unstable; urgency=medium
 
   * Add basic tests via autopkgtest
