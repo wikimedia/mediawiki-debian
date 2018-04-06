@@ -24,6 +24,8 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Query module to get information about the currently logged-in user
  *
@@ -62,18 +64,19 @@ class ApiQueryUserInfo extends ApiQueryBase {
 	 *  - blockreason - reason provided for the block
 	 *  - blockedtimestamp - timestamp for when the block was placed/modified
 	 *  - blockexpiry - expiry time of the block
+	 *  - systemblocktype - system block type, if any
 	 */
 	public static function getBlockInfo( Block $block ) {
-		global $wgContLang;
 		$vals = [];
 		$vals['blockid'] = $block->getId();
 		$vals['blockedby'] = $block->getByName();
 		$vals['blockedbyid'] = $block->getBy();
 		$vals['blockreason'] = $block->mReason;
 		$vals['blockedtimestamp'] = wfTimestamp( TS_ISO_8601, $block->mTimestamp );
-		$vals['blockexpiry'] = $wgContLang->formatExpiry(
-			$block->getExpiry(), TS_ISO_8601, 'infinite'
-		);
+		$vals['blockexpiry'] = ApiResult::formatExpiry( $block->getExpiry(), 'infinite' );
+		if ( $block->getSystemBlockType() !== null ) {
+			$vals['systemblocktype'] = $block->getSystemBlockType();
+		}
 		return $vals;
 	}
 
@@ -140,6 +143,19 @@ class ApiQueryUserInfo extends ApiQueryBase {
 			ApiResult::setIndexedTagName( $vals['groups'], 'g' ); // even if empty
 		}
 
+		if ( isset( $this->prop['groupmemberships'] ) ) {
+			$ugms = $user->getGroupMemberships();
+			$vals['groupmemberships'] = [];
+			foreach ( $ugms as $group => $ugm ) {
+				$vals['groupmemberships'][] = [
+					'group' => $group,
+					'expiry' => ApiResult::formatExpiry( $ugm->getExpiry() ),
+				];
+			}
+			ApiResult::setArrayType( $vals['groupmemberships'], 'array' ); // even if empty
+			ApiResult::setIndexedTagName( $vals['groupmemberships'], 'groupmembership' ); // even if empty
+		}
+
 		if ( isset( $this->prop['implicitgroups'] ) ) {
 			$vals['implicitgroups'] = $user->getAutomaticGroups();
 			ApiResult::setArrayType( $vals['implicitgroups'], 'array' ); // even if empty
@@ -166,12 +182,6 @@ class ApiQueryUserInfo extends ApiQueryBase {
 			$vals['options'][ApiResult::META_BC_BOOLS] = array_keys( $vals['options'] );
 		}
 
-		if ( isset( $this->prop['preferencestoken'] ) ) {
-			$p = $this->getModulePrefix();
-			$this->setWarning(
-				"{$p}prop=preferencestoken has been deprecated. Please use action=query&meta=tokens instead."
-			);
-		}
 		if ( isset( $this->prop['preferencestoken'] ) &&
 			!$this->lacksSameOriginSecurity() &&
 			$user->isAllowed( 'editmyoptions' )
@@ -225,7 +235,8 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		}
 
 		if ( isset( $this->prop['unreadcount'] ) ) {
-			$unreadNotifications = WatchedItemStore::getDefaultInstance()->countUnreadNotifications(
+			$store = MediaWikiServices::getInstance()->getWatchedItemStore();
+			$unreadNotifications = $store->countUnreadNotifications(
 				$user,
 				self::WL_UNREAD_LIMIT
 			);
@@ -293,11 +304,11 @@ class ApiQueryUserInfo extends ApiQueryBase {
 					'blockinfo',
 					'hasmsg',
 					'groups',
+					'groupmemberships',
 					'implicitgroups',
 					'rights',
 					'changeablegroups',
 					'options',
-					'preferencestoken',
 					'editcount',
 					'ratelimits',
 					'email',
@@ -306,6 +317,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 					'registrationdate',
 					'unreadcount',
 					'centralids',
+					'preferencestoken',
 				],
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [
 					'unreadcount' => [
@@ -313,6 +325,13 @@ class ApiQueryUserInfo extends ApiQueryBase {
 						self::WL_UNREAD_LIMIT - 1,
 						self::WL_UNREAD_LIMIT . '+',
 					],
+				],
+				ApiBase::PARAM_DEPRECATED_VALUES => [
+					'preferencestoken' => [
+						'apiwarn-deprecation-withreplacement',
+						$this->getModulePrefix() . "prop=preferencestoken",
+						'action=query&meta=tokens',
+					]
 				],
 			],
 			'attachedwiki' => null,
@@ -329,6 +348,6 @@ class ApiQueryUserInfo extends ApiQueryBase {
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/API:Userinfo';
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Userinfo';
 	}
 }

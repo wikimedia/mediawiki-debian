@@ -21,6 +21,8 @@
  * @ingroup Deployment
  */
 
+use Wikimedia\Rdbms\DatabaseMssql;
+
 /**
  * Class for setting up the MediaWiki database using Microsoft SQL Server.
  *
@@ -88,9 +90,21 @@ class MssqlUpdater extends DatabaseUpdater {
 				'patch-recentchanges-drop-fks.sql' ],
 			[ 'updateSchema', 'logging', 'logging-drop-fks', 'patch-logging-drop-fks.sql' ],
 			[ 'updateSchema', 'archive', 'archive-drop-fks', 'patch-archive-drop-fks.sql' ],
-			// 1.29.0, 1.28.1, 1.27.2
+
+			// 1.28
+			[ 'addIndex', 'recentchanges', 'rc_name_type_patrolled_timestamp',
+				'patch-add-rc_name_type_patrolled_timestamp_index.sql' ],
+			[ 'addField', 'change_tag', 'ct_id', 'patch-change_tag-ct_id.sql' ],
+			[ 'addField', 'tag_summary', 'ts_id', 'patch-tag_summary-ts_id.sql' ],
+
+			// 1.29
+			[ 'addField', 'externallinks', 'el_index_60', 'patch-externallinks-el_index_60.sql' ],
 			[ 'dropIndex', 'oldimage', 'oi_name_archive_name',
 				'patch-alter-table-oldimage.sql' ],
+
+			// 1.30
+			[ 'modifyField', 'image', 'img_media_type', 'patch-add-3d.sql' ],
+			[ 'addIndex', 'site_stats', 'PRIMARY', 'patch-site_stats-pk.sql' ],
 		];
 	}
 
@@ -104,12 +118,15 @@ class MssqlUpdater extends DatabaseUpdater {
 
 	/**
 	 * General schema update for a table that touches more than one field or requires
-	 * destructive actions (such as dropping and recreating the table).
+	 * destructive actions (such as dropping and recreating the table). NOTE: Usage of
+	 * this function is highly discouraged, use it's successor DatabaseUpdater::modifyTable
+	 * instead.
 	 *
 	 * @param string $table
 	 * @param string $updatekey
 	 * @param string $patch
 	 * @param bool $fullpath
+	 * @return bool
 	 */
 	protected function updateSchema( $table, $updatekey, $patch, $fullpath = false ) {
 		if ( !$this->db->tableExists( $table, __METHOD__ ) ) {
@@ -117,9 +134,11 @@ class MssqlUpdater extends DatabaseUpdater {
 		} elseif ( $this->updateRowExists( $updatekey ) ) {
 			$this->output( "...$table already had schema updated by $patch.\n" );
 		} else {
-			$this->insertUpdateRow( $updatekey );
-
-			return $this->applyPatch( $patch, $fullpath, "Updating schema of table $table" );
+			$apply = $this->applyPatch( $patch, $fullpath, "Updating schema of table $table" );
+			if ( $apply ) {
+				$this->insertUpdateRow( $updatekey );
+			}
+			return $apply;
 		}
 
 		return true;

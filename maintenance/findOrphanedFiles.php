@@ -16,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @author Aaron Schulz
  */
 
 require_once __DIR__ . '/Maintenance.php';
@@ -75,7 +74,7 @@ class FindOrphanedFiles extends Maintenance {
 			return;
 		}
 
-		$dbr = $repo->getSlaveDB();
+		$dbr = $repo->getReplicaDB();
 
 		$curNames = [];
 		$oldNames = [];

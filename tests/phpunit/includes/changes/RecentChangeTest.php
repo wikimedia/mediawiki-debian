@@ -1,4 +1,5 @@
 <?php
+use Wikimedia\ScopedCallback;
 
 /**
  * @group Database
@@ -30,6 +31,8 @@ class RecentChangeTest extends MediaWikiTestCase {
 		$row->rc_foo = 'AAA';
 		$row->rc_timestamp = '20150921134808';
 		$row->rc_deleted = 'bar';
+		$row->rc_comment_text = 'comment';
+		$row->rc_comment_data = null;
 
 		$rc = RecentChange::newFromRow( $row );
 
@@ -37,6 +40,29 @@ class RecentChangeTest extends MediaWikiTestCase {
 			'rc_foo' => 'AAA',
 			'rc_timestamp' => '20150921134808',
 			'rc_deleted' => 'bar',
+			'rc_comment' => 'comment',
+			'rc_comment_text' => 'comment',
+			'rc_comment_data' => null,
+		];
+		$this->assertEquals( $expected, $rc->getAttributes() );
+
+		$row = new stdClass();
+		$row->rc_foo = 'AAA';
+		$row->rc_timestamp = '20150921134808';
+		$row->rc_deleted = 'bar';
+		$row->rc_comment = 'comment';
+
+		MediaWiki\suppressWarnings();
+		$rc = RecentChange::newFromRow( $row );
+		MediaWiki\restoreWarnings();
+
+		$expected = [
+			'rc_foo' => 'AAA',
+			'rc_timestamp' => '20150921134808',
+			'rc_deleted' => 'bar',
+			'rc_comment' => 'comment',
+			'rc_comment_text' => 'comment',
+			'rc_comment_data' => null,
 		];
 		$this->assertEquals( $expected, $rc->getAttributes() );
 	}
@@ -87,15 +113,14 @@ class RecentChangeTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * 50 mins and 100 mins are used here as the tests never take that long!
 	 * @return array
 	 */
 	public function provideIsInRCLifespan() {
 		return [
-			[ 6000, time() - 3000, 0, true ],
-			[ 3000, time() - 6000, 0, false ],
-			[ 6000, time() - 3000, 6000, true ],
-			[ 3000, time() - 6000, 6000, true ],
+			[ 6000, -3000, 0, true ],
+			[ 3000, -6000, 0, false ],
+			[ 6000, -3000, 6000, true ],
+			[ 3000, -6000, 6000, true ],
 		];
 	}
 
@@ -103,8 +128,12 @@ class RecentChangeTest extends MediaWikiTestCase {
 	 * @covers RecentChange::isInRCLifespan
 	 * @dataProvider provideIsInRCLifespan
 	 */
-	public function testIsInRCLifespan( $maxAge, $timestamp, $tolerance, $expected ) {
+	public function testIsInRCLifespan( $maxAge, $offset, $tolerance, $expected ) {
 		$this->setMwGlobals( 'wgRCMaxAge', $maxAge );
+		// Calculate this here instead of the data provider because the provider
+		// is expanded early on and the full test suite may take longer than 100 minutes
+		// when coverage is enabled.
+		$timestamp = time() + $offset;
 		$this->assertEquals( $expected, RecentChange::isInRCLifespan( $timestamp, $tolerance ) );
 	}
 

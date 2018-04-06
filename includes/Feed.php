@@ -54,8 +54,6 @@ class FeedItem {
 	public $rssIsPermalink = false;
 
 	/**
-	 * Constructor
-	 *
 	 * @param string|Title $title Item's title
 	 * @param string $description
 	 * @param string $url URL uniquely designating the item.
@@ -242,7 +240,6 @@ abstract class ChannelFeed extends FeedItem {
 			$wgOut->addVaryHeader( 'X-Forwarded-Proto' );
 		}
 		$wgOut->sendCacheControl();
-
 	}
 
 	/**

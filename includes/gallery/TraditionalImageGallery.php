@@ -59,6 +59,16 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			$output .= "\n\t<li class='gallerycaption'>{$this->mCaption}</li>";
 		}
 
+		if ( $this->mShowFilename ) {
+			// Preload LinkCache info for when generating links
+			// of the filename below
+			$lb = new LinkBatch();
+			foreach ( $this->mImages as $img ) {
+				$lb->addObj( $img[0] );
+			}
+			$lb->execute();
+		}
+
 		$lang = $this->getRenderLang();
 		# Output each image...
 		foreach ( $this->mImages as $pair ) {
@@ -164,25 +174,39 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			// ":{$ut}" );
 			// $ul = Linker::link( $linkTarget, $ut );
 
-			if ( $this->mShowBytes ) {
-				if ( $img ) {
-					$fileSize = htmlspecialchars( $lang->formatSize( $img->getSize() ) );
-				} else {
-					$fileSize = $this->msg( 'filemissing' )->escaped();
+			$meta = [];
+			if ( $img ) {
+				if ( $this->mShowDimensions ) {
+					$meta[] = $img->getDimensionsString();
 				}
-				$fileSize = "$fileSize<br />\n";
-			} else {
-				$fileSize = '';
+				if ( $this->mShowBytes ) {
+					$meta[] = htmlspecialchars( $lang->formatSize( $img->getSize() ) );
+				}
+			} elseif ( $this->mShowDimensions || $this->mShowBytes ) {
+				$meta[] = $this->msg( 'filemissing' )->escaped();
+			}
+			$meta = $lang->semicolonList( $meta );
+			if ( $meta ) {
+				$meta .= "<br />\n";
 			}
 
 			$textlink = $this->mShowFilename ?
+				// Preloaded into LinkCache above
 				Linker::linkKnown(
 					$nt,
-					htmlspecialchars( $lang->truncate( $nt->getText(), $this->mCaptionLength ) )
-				) . "<br />\n" :
+					htmlspecialchars(
+						$this->mCaptionLength !== true ?
+							$lang->truncate( $nt->getText(), $this->mCaptionLength ) :
+							$nt->getText()
+					),
+					[
+						'class' => 'galleryfilename' .
+							( $this->mCaptionLength === true ? ' galleryfilename-truncate' : '' )
+					]
+				) . "\n" :
 				'';
 
-			$galleryText = $textlink . $text . $fileSize;
+			$galleryText = $textlink . $text . $meta;
 			$galleryText = $this->wrapGalleryText( $galleryText, $thumb );
 
 			# Weird double wrapping (the extra div inside the li) needed due to FF2 bug
@@ -219,8 +243,8 @@ class TraditionalImageGallery extends ImageGalleryBase {
 	}
 
 	/**
-	 * How much padding such the thumb have between image and inner div that
-	 * that contains the border. This is both for verical and horizontal
+	 * How much padding the thumb has between the image and the inner div
+	 * that contains the border. This is for both vertical and horizontal
 	 * padding. (However, it is cut in half in the vertical direction).
 	 * @return int
 	 */
@@ -324,22 +348,8 @@ class TraditionalImageGallery extends ImageGalleryBase {
 	 *
 	 * Used by a subclass to insert extra high resolution images.
 	 * @param MediaTransformOutput $thumb The thumbnail
-	 * @param array $imageParameters Array of options
+	 * @param array &$imageParameters Array of options
 	 */
 	protected function adjustImageParameters( $thumb, &$imageParameters ) {
-	}
-}
-
-/**
- * Backwards compatibility. This always uses traditional mode
- * if called the old way, for extensions that may expect traditional
- * mode.
- *
- * @deprecated since 1.22 Use ImageGalleryBase::factory instead.
- */
-class ImageGallery extends TraditionalImageGallery {
-	function __construct( $mode = 'traditional' ) {
-		wfDeprecated( __METHOD__, '1.22' );
-		parent::__construct( $mode );
 	}
 }

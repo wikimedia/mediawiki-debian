@@ -19,6 +19,11 @@
  *
  * @file
  */
+
+use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\IDatabase;
+use MediaWiki\MediaWikiServices;
+
 class Block {
 	/** @var string */
 	public $mReason;
@@ -39,37 +44,40 @@ class Block {
 	public $mParentBlockId;
 
 	/** @var int */
-	protected $mId;
+	private $mId;
 
 	/** @var bool */
-	protected $mFromMaster;
+	private $mFromMaster;
 
 	/** @var bool */
-	protected $mBlockEmail;
+	private $mBlockEmail;
 
 	/** @var bool */
-	protected $mDisableUsertalk;
+	private $mDisableUsertalk;
 
 	/** @var bool */
-	protected $mCreateAccount;
+	private $mCreateAccount;
 
 	/** @var User|string */
-	protected $target;
+	private $target;
 
 	/** @var int Hack for foreign blocking (CentralAuth) */
-	protected $forcedTargetID;
+	private $forcedTargetID;
 
 	/** @var int Block::TYPE_ constant. Can only be USER, IP or RANGE internally */
-	protected $type;
+	private $type;
 
 	/** @var User */
-	protected $blocker;
+	private $blocker;
 
 	/** @var bool */
-	protected $isHardblock;
+	private $isHardblock;
 
 	/** @var bool */
-	protected $isAutoblocking;
+	private $isAutoblocking;
+
+	/** @var string|null */
+	private $systemBlockType;
 
 	# TYPE constants
 	const TYPE_USER = 1;
@@ -96,6 +104,10 @@ class Block {
 	 *     blockEmail bool      Disallow sending emails
 	 *     allowUsertalk bool   Allow the target to edit its own talk page
 	 *     byText string        Username of the blocker (for foreign users)
+	 *     systemBlock string   Indicate that this block is automatically
+	 *                          created by MediaWiki rather than being stored
+	 *                          in the database. Value is a string to return
+	 *                          from self::getSystemBlockType().
 	 *
 	 * @since 1.26 accepts $options array instead of individual parameters; order
 	 * of parameters above reflects the original order
@@ -116,6 +128,7 @@ class Block {
 			'blockEmail'      => false,
 			'allowUsertalk'   => false,
 			'byText'          => '',
+			'systemBlock'     => null,
 		];
 
 		if ( func_num_args() > 1 || !is_array( $options ) ) {
@@ -145,7 +158,7 @@ class Block {
 
 		$this->mReason = $options['reason'];
 		$this->mTimestamp = wfTimestamp( TS_MW, $options['timestamp'] );
-		$this->mExpiry = wfGetDB( DB_SLAVE )->decodeExpiry( $options['expiry'] );
+		$this->mExpiry = wfGetDB( DB_REPLICA )->decodeExpiry( $options['expiry'] );
 
 		# Boolean settings
 		$this->mAuto = (bool)$options['auto'];
@@ -159,6 +172,7 @@ class Block {
 		$this->prevents( 'createaccount', (bool)$options['createAccount'] );
 
 		$this->mFromMaster = false;
+		$this->systemBlockType = $options['systemBlock'];
 	}
 
 	/**
@@ -168,7 +182,7 @@ class Block {
 	 * @return Block|null
 	 */
 	public static function newFromID( $id ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->selectRow(
 			'ipblocks',
 			self::selectFields(),
@@ -185,6 +199,8 @@ class Block {
 	/**
 	 * Return the list of ipblocks fields that should be selected to create
 	 * a new block.
+	 * @todo Deprecate this in favor of a method that returns tables and joins
+	 *  as well, and use CommentStore::getJoin().
 	 * @return array
 	 */
 	public static function selectFields() {
@@ -193,7 +209,6 @@ class Block {
 			'ipb_address',
 			'ipb_by',
 			'ipb_by_text',
-			'ipb_reason',
 			'ipb_timestamp',
 			'ipb_auto',
 			'ipb_anon_only',
@@ -204,7 +219,7 @@ class Block {
 			'ipb_block_email',
 			'ipb_allow_usertalk',
 			'ipb_parent_block_id',
-		];
+		] + CommentStore::newKey( 'ipb_reason' )->getFields();
 	}
 
 	/**
@@ -242,7 +257,7 @@ class Block {
 	 * @return bool Whether a relevant block was found
 	 */
 	protected function newLoad( $vagueTarget = null ) {
-		$db = wfGetDB( $this->mFromMaster ? DB_MASTER : DB_SLAVE );
+		$db = wfGetDB( $this->mFromMaster ? DB_MASTER : DB_REPLICA );
 
 		if ( $this->type !== null ) {
 			$conds = [
@@ -253,7 +268,7 @@ class Block {
 		}
 
 		# Be aware that the != '' check is explicit, since empty values will be
-		# passed by some callers (bug 29116)
+		# passed by some callers (T31116)
 		if ( $vagueTarget != '' ) {
 			list( $target, $type ) = self::parseTarget( $vagueTarget );
 			switch ( $type ) {
@@ -346,12 +361,12 @@ class Block {
 		if ( $end === null ) {
 			$end = $start;
 		}
-		# Per bug 14634, we want to include relevant active rangeblocks; for
+		# Per T16634, we want to include relevant active rangeblocks; for
 		# rangeblocks, we want to include larger ranges which enclose the given
 		# range. We know that all blocks must be smaller than $wgBlockCIDRLimit,
 		# so we can improve performance by filtering on a LIKE clause
 		$chunk = self::getIpFragment( $start );
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$like = $dbr->buildLike( $chunk, $dbr->anyString() );
 
 		# Fairly hard to make a malicious SQL statement out of hex characters,
@@ -397,7 +412,6 @@ class Block {
 			$this->setBlocker( $row->ipb_by_text );
 		}
 
-		$this->mReason = $row->ipb_reason;
 		$this->mTimestamp = wfTimestamp( TS_MW, $row->ipb_timestamp );
 		$this->mAuto = $row->ipb_auto;
 		$this->mHideName = $row->ipb_deleted;
@@ -405,7 +419,11 @@ class Block {
 		$this->mParentBlockId = $row->ipb_parent_block_id;
 
 		// I wish I didn't have to do this
-		$this->mExpiry = wfGetDB( DB_SLAVE )->decodeExpiry( $row->ipb_expiry );
+		$db = wfGetDB( DB_REPLICA );
+		$this->mExpiry = $db->decodeExpiry( $row->ipb_expiry );
+		$this->mReason = CommentStore::newKey( 'ipb_reason' )
+			// Legacy because $row probably came from self::selectFields()
+			->getCommentLegacy( $db, $row )->text;
 
 		$this->isHardblock( !$row->ipb_anon_only );
 		$this->isAutoblocking( $row->ipb_enable_autoblock );
@@ -458,6 +476,11 @@ class Block {
 	 */
 	public function insert( $dbw = null ) {
 		global $wgBlockDisablesLogin;
+
+		if ( $this->getSystemBlockType() !== null ) {
+			throw new MWException( 'Cannot insert a system block into the database' );
+		}
+
 		wfDebug( "Block::insert; timestamp {$this->mTimestamp}\n" );
 
 		if ( $dbw === null ) {
@@ -466,11 +489,10 @@ class Block {
 
 		# Periodic purge via commit hooks
 		if ( mt_rand( 0, 9 ) == 0 ) {
-			Block::purgeExpired();
+			self::purgeExpired();
 		}
 
-		$row = $this->getDatabaseArray();
-		$row['ipb_id'] = $dbw->nextSequenceValue( "ipblocks_ipb_id_seq" );
+		$row = $this->getDatabaseArray( $dbw );
 
 		$dbw->insert( 'ipblocks', $row, __METHOD__, [ 'IGNORE' ] );
 		$affected = $dbw->affectedRows();
@@ -536,10 +558,10 @@ class Block {
 		$affected = $dbw->affectedRows();
 
 		if ( $this->isAutoblocking() ) {
-			// update corresponding autoblock(s) (bug 48813)
+			// update corresponding autoblock(s) (T50813)
 			$dbw->update(
 				'ipblocks',
-				$this->getAutoblockUpdateArray(),
+				$this->getAutoblockUpdateArray( $dbw ),
 				[ 'ipb_parent_block_id' => $this->getId() ],
 				__METHOD__
 			);
@@ -564,14 +586,11 @@ class Block {
 
 	/**
 	 * Get an array suitable for passing to $dbw->insert() or $dbw->update()
-	 * @param IDatabase $db
+	 * @param IDatabase $dbw
 	 * @return array
 	 */
-	protected function getDatabaseArray( $db = null ) {
-		if ( !$db ) {
-			$db = wfGetDB( DB_SLAVE );
-		}
-		$expiry = $db->encodeExpiry( $this->mExpiry );
+	protected function getDatabaseArray( IDatabase $dbw ) {
+		$expiry = $dbw->encodeExpiry( $this->mExpiry );
 
 		if ( $this->forcedTargetID ) {
 			$uid = $this->forcedTargetID;
@@ -584,8 +603,7 @@ class Block {
 			'ipb_user'             => $uid,
 			'ipb_by'               => $this->getBy(),
 			'ipb_by_text'          => $this->getByName(),
-			'ipb_reason'           => $this->mReason,
-			'ipb_timestamp'        => $db->timestamp( $this->mTimestamp ),
+			'ipb_timestamp'        => $dbw->timestamp( $this->mTimestamp ),
 			'ipb_auto'             => $this->mAuto,
 			'ipb_anon_only'        => !$this->isHardblock(),
 			'ipb_create_account'   => $this->prevents( 'createaccount' ),
@@ -597,23 +615,23 @@ class Block {
 			'ipb_block_email'      => $this->prevents( 'sendemail' ),
 			'ipb_allow_usertalk'   => !$this->prevents( 'editownusertalk' ),
 			'ipb_parent_block_id'  => $this->mParentBlockId
-		];
+		] + CommentStore::newKey( 'ipb_reason' )->insert( $dbw, $this->mReason );
 
 		return $a;
 	}
 
 	/**
+	 * @param IDatabase $dbw
 	 * @return array
 	 */
-	protected function getAutoblockUpdateArray() {
+	protected function getAutoblockUpdateArray( IDatabase $dbw ) {
 		return [
 			'ipb_by'               => $this->getBy(),
 			'ipb_by_text'          => $this->getByName(),
-			'ipb_reason'           => $this->mReason,
 			'ipb_create_account'   => $this->prevents( 'createaccount' ),
 			'ipb_deleted'          => (int)$this->mHideName, // typecast required for SQLite
 			'ipb_allow_usertalk'   => !$this->prevents( 'editownusertalk' ),
-		];
+		] + CommentStore::newKey( 'ipb_reason' )->insert( $dbw, $this->mReason );
 	}
 
 	/**
@@ -653,7 +671,7 @@ class Block {
 			return;
 		}
 
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 
 		$options = [ 'ORDER BY' => 'rc_timestamp DESC' ];
 		$conds = [ 'rc_user_text' => (string)$block->getTarget() ];
@@ -689,11 +707,13 @@ class Block {
 	public static function isWhitelistedFromAutoblocks( $ip ) {
 		// Try to get the autoblock_whitelist from the cache, as it's faster
 		// than getting the msg raw and explode()'ing it.
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$lines = $cache->getWithSetCallback(
-			wfMemcKey( 'ipb', 'autoblock', 'whitelist' ),
+			$cache->makeKey( 'ipb', 'autoblock', 'whitelist' ),
 			$cache::TTL_DAY,
-			function () {
+			function ( $curValue, &$ttl, array &$setOpts ) {
+				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
+
 				return explode( "\n",
 					wfMessage( 'autoblock_whitelist' )->inContentLanguage()->plain() );
 			}
@@ -736,6 +756,11 @@ class Block {
 			return false;
 		}
 
+		# Don't autoblock for system blocks
+		if ( $this->getSystemBlockType() !== null ) {
+			throw new MWException( 'Cannot autoblock from a system block' );
+		}
+
 		# Check for presence on the autoblock whitelist.
 		if ( self::isWhitelistedFromAutoblocks( $autoblockIP ) ) {
 			return false;
@@ -752,12 +777,12 @@ class Block {
 		# It's okay to autoblock. Go ahead and insert/update the block...
 
 		# Do not add a *new* block if the IP is already blocked.
-		$ipblock = Block::newFromTarget( $autoblockIP );
+		$ipblock = self::newFromTarget( $autoblockIP );
 		if ( $ipblock ) {
 			# Check if the block is an autoblock and would exceed the user block
 			# if renewed. If so, do nothing, otherwise prolong the block time...
 			if ( $ipblock->mAuto && // @todo Why not compare $ipblock->mExpiry?
-				$this->mExpiry > Block::getAutoblockExpiry( $ipblock->mTimestamp )
+				$this->mExpiry > self::getAutoblockExpiry( $ipblock->mTimestamp )
 			) {
 				# Reset block timestamp to now and its expiry to
 				# $wgAutoblockExpiry in the future
@@ -784,11 +809,11 @@ class Block {
 
 		if ( $this->mExpiry == 'infinity' ) {
 			# Original block was indefinite, start an autoblock now
-			$autoblock->mExpiry = Block::getAutoblockExpiry( $timestamp );
+			$autoblock->mExpiry = self::getAutoblockExpiry( $timestamp );
 		} else {
 			# If the user is already blocked with an expiry date, we don't
 			# want to pile on top of that.
-			$autoblock->mExpiry = min( $this->mExpiry, Block::getAutoblockExpiry( $timestamp ) );
+			$autoblock->mExpiry = min( $this->mExpiry, self::getAutoblockExpiry( $timestamp ) );
 		}
 
 		# Insert the block...
@@ -803,7 +828,6 @@ class Block {
 	 * @return bool
 	 */
 	public function deleteIfExpired() {
-
 		if ( $this->isExpired() ) {
 			wfDebug( "Block::deleteIfExpired() -- deleting\n" );
 			$this->delete();
@@ -845,7 +869,7 @@ class Block {
 	public function updateTimestamp() {
 		if ( $this->mAuto ) {
 			$this->mTimestamp = wfTimestamp();
-			$this->mExpiry = Block::getAutoblockExpiry( $this->mTimestamp );
+			$this->mExpiry = self::getAutoblockExpiry( $this->mTimestamp );
 
 			$dbw = wfGetDB( DB_MASTER );
 			$dbw->update( 'ipblocks',
@@ -929,6 +953,15 @@ class Block {
 	 */
 	public function getId() {
 		return $this->mId;
+	}
+
+	/**
+	 * Get the system block type, if any
+	 * @since 1.29
+	 * @return string|null
+	 */
+	public function getSystemBlockType() {
+		return $this->systemBlockType;
 	}
 
 	/**
@@ -1077,20 +1110,19 @@ class Block {
 	 *     not be the same as the target you gave if you used $vagueTarget!
 	 */
 	public static function newFromTarget( $specificTarget, $vagueTarget = null, $fromMaster = false ) {
-
 		list( $target, $type ) = self::parseTarget( $specificTarget );
-		if ( $type == Block::TYPE_ID || $type == Block::TYPE_AUTO ) {
-			return Block::newFromID( $target );
+		if ( $type == self::TYPE_ID || $type == self::TYPE_AUTO ) {
+			return self::newFromID( $target );
 
 		} elseif ( $target === null && $vagueTarget == '' ) {
 			# We're not going to find anything useful here
 			# Be aware that the == '' check is explicit, since empty values will be
-			# passed by some callers (bug 29116)
+			# passed by some callers (T31116)
 			return null;
 
 		} elseif ( in_array(
 			$type,
-			[ Block::TYPE_USER, Block::TYPE_IP, Block::TYPE_RANGE, null ] )
+			[ self::TYPE_USER, self::TYPE_IP, self::TYPE_RANGE, null ] )
 		) {
 			$block = new Block();
 			$block->fromMaster( $fromMaster );
@@ -1110,9 +1142,9 @@ class Block {
 	 * Get all blocks that match any IP from an array of IP addresses
 	 *
 	 * @param array $ipChain List of IPs (strings), usually retrieved from the
-	 *	   X-Forwarded-For header of the request
+	 *     X-Forwarded-For header of the request
 	 * @param bool $isAnon Exclude anonymous-only blocks if false
-	 * @param bool $fromMaster Whether to query the master or slave database
+	 * @param bool $fromMaster Whether to query the master or replica DB
 	 * @return array Array of Blocks
 	 * @since 1.22
 	 */
@@ -1122,6 +1154,7 @@ class Block {
 		}
 
 		$conds = [];
+		$proxyLookup = MediaWikiServices::getInstance()->getProxyLookup();
 		foreach ( array_unique( $ipChain ) as $ipaddr ) {
 			# Discard invalid IP addresses. Since XFF can be spoofed and we do not
 			# necessarily trust the header given to us, make sure that we are only
@@ -1132,7 +1165,7 @@ class Block {
 				continue;
 			}
 			# Don't check trusted IPs (includes local squids which will be in every request)
-			if ( IP::isTrustedProxy( $ipaddr ) ) {
+			if ( $proxyLookup->isTrustedProxy( $ipaddr ) ) {
 				continue;
 			}
 			# Check both the original IP (to check against single blocks), as well as build
@@ -1148,7 +1181,7 @@ class Block {
 		if ( $fromMaster ) {
 			$db = wfGetDB( DB_MASTER );
 		} else {
-			$db = wfGetDB( DB_SLAVE );
+			$db = wfGetDB( DB_REPLICA );
 		}
 		$conds = $db->makeList( $conds, LIST_OR );
 		if ( !$isAnon ) {
@@ -1156,7 +1189,7 @@ class Block {
 		}
 		$selectFields = array_merge(
 			[ 'ipb_range_start', 'ipb_range_end' ],
-			Block::selectFields()
+			self::selectFields()
 		);
 		$rows = $db->select( 'ipblocks',
 			$selectFields,
@@ -1190,9 +1223,9 @@ class Block {
 	 *
 	 * @param array $blocks Array of Block objects
 	 * @param array $ipChain List of IPs (strings). This is used to determine how "close"
-	 * 	  a block is to the server, and if a block matches exactly, or is in a range.
-	 *	  The order is furthest from the server to nearest e.g., (Browser, proxy1, proxy2,
-	 *	  local-squid, ...)
+	 *     a block is to the server, and if a block matches exactly, or is in a range.
+	 *     The order is furthest from the server to nearest e.g., (Browser, proxy1, proxy2,
+	 *     local-squid, ...)
 	 * @throws MWException
 	 * @return Block|null The "best" block from the list
 	 */
@@ -1296,7 +1329,7 @@ class Block {
 	 * which in turn gives User::getName().
 	 *
 	 * @param string|int|User|null $target
-	 * @return array( User|String|null, Block::TYPE_ constant|null )
+	 * @return array [ User|String|null, Block::TYPE_ constant|null ]
 	 */
 	public static function parseTarget( $target ) {
 		# We may have been through this before
@@ -1317,12 +1350,12 @@ class Block {
 			# off validation checking (which would exclude IP addresses)
 			return [
 				User::newFromName( IP::sanitizeIP( $target ), false ),
-				Block::TYPE_IP
+				self::TYPE_IP
 			];
 
-		} elseif ( IP::isValidBlock( $target ) ) {
+		} elseif ( IP::isValidRange( $target ) ) {
 			# Can't create a User from an IP range
-			return [ IP::sanitizeRange( $target ), Block::TYPE_RANGE ];
+			return [ IP::sanitizeRange( $target ), self::TYPE_RANGE ];
 		}
 
 		# Consider the possibility that this is not a username at all
@@ -1337,11 +1370,11 @@ class Block {
 			# Note that since numbers are valid usernames, a $target of "12345" will be
 			# considered a User.  If you want to pass a block ID, prepend a hash "#12345",
 			# since hash characters are not valid in usernames or titles generally.
-			return [ $userObj, Block::TYPE_USER ];
+			return [ $userObj, self::TYPE_USER ];
 
 		} elseif ( preg_match( '/^#\d+$/', $target ) ) {
 			# Autoblock reference in the form "#12345"
-			return [ substr( $target, 1 ), Block::TYPE_AUTO ];
+			return [ substr( $target, 1 ), self::TYPE_AUTO ];
 
 		} else {
 			# WTF?
@@ -1363,7 +1396,7 @@ class Block {
 	 * Get the target and target type for this particular Block.  Note that for autoblocks,
 	 * this returns the unredacted name; frontend functions need to call $block->getRedactedName()
 	 * in this situation.
-	 * @return array( User|String, Block::TYPE_ constant )
+	 * @return array [ User|String, Block::TYPE_ constant ]
 	 * @todo FIXME: This should be an integral part of the Block member variables
 	 */
 	public function getTargetAndType() {
@@ -1414,6 +1447,94 @@ class Block {
 	}
 
 	/**
+	 * Set the 'BlockID' cookie to this block's ID and expiry time. The cookie's expiry will be
+	 * the same as the block's, to a maximum of 24 hours.
+	 *
+	 * @since 1.29
+	 *
+	 * @param WebResponse $response The response on which to set the cookie.
+	 */
+	public function setCookie( WebResponse $response ) {
+		// Calculate the default expiry time.
+		$maxExpiryTime = wfTimestamp( TS_MW, wfTimestamp() + ( 24 * 60 * 60 ) );
+
+		// Use the Block's expiry time only if it's less than the default.
+		$expiryTime = $this->getExpiry();
+		if ( $expiryTime === 'infinity' || $expiryTime > $maxExpiryTime ) {
+			$expiryTime = $maxExpiryTime;
+		}
+
+		// Set the cookie. Reformat the MediaWiki datetime as a Unix timestamp for the cookie.
+		$expiryValue = DateTime::createFromFormat( 'YmdHis', $expiryTime )->format( 'U' );
+		$cookieOptions = [ 'httpOnly' => false ];
+		$cookieValue = $this->getCookieValue();
+		$response->setCookie( 'BlockID', $cookieValue, $expiryValue, $cookieOptions );
+	}
+
+	/**
+	 * Unset the 'BlockID' cookie.
+	 *
+	 * @since 1.29
+	 *
+	 * @param WebResponse $response The response on which to unset the cookie.
+	 */
+	public static function clearCookie( WebResponse $response ) {
+		$response->clearCookie( 'BlockID', [ 'httpOnly' => false ] );
+	}
+
+	/**
+	 * Get the BlockID cookie's value for this block. This is usually the block ID concatenated
+	 * with an HMAC in order to avoid spoofing (T152951), but if wgSecretKey is not set will just
+	 * be the block ID.
+	 *
+	 * @since 1.29
+	 *
+	 * @return string The block ID, probably concatenated with "!" and the HMAC.
+	 */
+	public function getCookieValue() {
+		$config = RequestContext::getMain()->getConfig();
+		$id = $this->getId();
+		$secretKey = $config->get( 'SecretKey' );
+		if ( !$secretKey ) {
+			// If there's no secret key, don't append a HMAC.
+			return $id;
+		}
+		$hmac = MWCryptHash::hmac( $id, $secretKey, false );
+		$cookieValue = $id . '!' . $hmac;
+		return $cookieValue;
+	}
+
+	/**
+	 * Get the stored ID from the 'BlockID' cookie. The cookie's value is usually a combination of
+	 * the ID and a HMAC (see Block::setCookie), but will sometimes only be the ID.
+	 *
+	 * @since 1.29
+	 *
+	 * @param string $cookieValue The string in which to find the ID.
+	 *
+	 * @return int|null The block ID, or null if the HMAC is present and invalid.
+	 */
+	public static function getIdFromCookieValue( $cookieValue ) {
+		// Extract the ID prefix from the cookie value (may be the whole value, if no bang found).
+		$bangPos = strpos( $cookieValue, '!' );
+		$id = ( $bangPos === false ) ? $cookieValue : substr( $cookieValue, 0, $bangPos );
+		// Get the site-wide secret key.
+		$config = RequestContext::getMain()->getConfig();
+		$secretKey = $config->get( 'SecretKey' );
+		if ( !$secretKey ) {
+			// If there's no secret key, just use the ID as given.
+			return $id;
+		}
+		$storedHmac = substr( $cookieValue, $bangPos + 1 );
+		$calculatedHmac = MWCryptHash::hmac( $id, $secretKey, false );
+		if ( $calculatedHmac === $storedHmac ) {
+			return $id;
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * Get the key and parameters for the corresponding error message.
 	 *
 	 * @since 1.22
@@ -1438,14 +1559,18 @@ class Block {
 		 * This could be a username, an IP range, or a single IP. */
 		$intended = $this->getTarget();
 
+		$systemBlockType = $this->getSystemBlockType();
+
 		$lang = $context->getLanguage();
 		return [
-			$this->mAuto ? 'autoblockedtext' : 'blockedtext',
+			$systemBlockType !== null
+				? 'systemblockedtext'
+				: ( $this->mAuto ? 'autoblockedtext' : 'blockedtext' ),
 			$link,
 			$reason,
 			$context->getRequest()->getIP(),
 			$this->getByName(),
-			$this->getId(),
+			$systemBlockType !== null ? $systemBlockType : $this->getId(),
 			$lang->formatExpiry( $this->mExpiry ),
 			(string)$intended,
 			$lang->userTimeAndDate( $this->mTimestamp, $context->getUser() ),

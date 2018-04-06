@@ -33,16 +33,18 @@ class SpecialRedirect extends FormSpecialPage {
 	/**
 	 * The type of the redirect (user/file/revision)
 	 *
+	 * Example value: `'user'`
+	 *
 	 * @var string $mType
-	 * @example 'user'
 	 */
 	protected $mType;
 
 	/**
 	 * The identifier/value for the redirect (which id, which file)
 	 *
+	 * Example value: `'42'`
+	 *
 	 * @var string $mValue
-	 * @example '42'
 	 */
 	protected $mValue;
 
@@ -182,7 +184,7 @@ class SpecialRedirect extends FormSpecialPage {
 			'log_user_text',
 		];
 
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 
 		// Gets the nested SQL statement which
 		// returns timestamp of the log with the given log ID

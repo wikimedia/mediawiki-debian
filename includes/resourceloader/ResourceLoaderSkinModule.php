@@ -22,49 +22,102 @@
  */
 
 class ResourceLoaderSkinModule extends ResourceLoaderFileModule {
-
-	/* Methods */
+	/**
+	 * All skins are assumed to be compatible with mobile
+	 */
+	public $targets = [ 'desktop', 'mobile' ];
 
 	/**
 	 * @param ResourceLoaderContext $context
 	 * @return array
 	 */
 	public function getStyles( ResourceLoaderContext $context ) {
-		$conf = $this->getConfig();
-		$logo = $conf->get( 'Logo' );
-		$logoHD = $conf->get( 'LogoHD' );
-
-		$logo1 = OutputPage::transformResourcePath( $conf, $logo );
-		$logo15 = OutputPage::transformResourcePath( $conf, $logoHD['1.5x'] );
-		$logo2 = OutputPage::transformResourcePath( $conf, $logoHD['2x'] );
-
+		$logo = $this->getLogo( $this->getConfig() );
 		$styles = parent::getStyles( $context );
+		$this->normalizeStyles( $styles );
+
+		$default = !is_array( $logo ) ? $logo : $logo['1x'];
 		$styles['all'][] = '.mw-wiki-logo { background-image: ' .
-			CSSMin::buildUrlValue( $logo1 ) .
-			'; }';
-		if ( $logoHD ) {
-			if ( isset( $logoHD['1.5x'] ) ) {
+				CSSMin::buildUrlValue( $default ) .
+				'; }';
+
+		if ( is_array( $logo ) ) {
+			if ( isset( $logo['1.5x'] ) ) {
 				$styles[
 					'(-webkit-min-device-pixel-ratio: 1.5), ' .
 					'(min--moz-device-pixel-ratio: 1.5), ' .
 					'(min-resolution: 1.5dppx), ' .
 					'(min-resolution: 144dpi)'
 				][] = '.mw-wiki-logo { background-image: ' .
-				CSSMin::buildUrlValue( $logo15 ) . ';' .
+				CSSMin::buildUrlValue( $logo['1.5x'] ) . ';' .
 				'background-size: 135px auto; }';
 			}
-			if ( isset( $logoHD['2x'] ) ) {
+			if ( isset( $logo['2x'] ) ) {
 				$styles[
 					'(-webkit-min-device-pixel-ratio: 2), ' .
 					'(min--moz-device-pixel-ratio: 2),' .
 					'(min-resolution: 2dppx), ' .
 					'(min-resolution: 192dpi)'
 				][] = '.mw-wiki-logo { background-image: ' .
-				CSSMin::buildUrlValue( $logo2 ) . ';' .
+				CSSMin::buildUrlValue( $logo['2x'] ) . ';' .
 				'background-size: 135px auto; }';
 			}
 		}
+
 		return $styles;
+	}
+
+	/**
+	 * Ensure all media keys use array values.
+	 *
+	 * Normalises arrays returned by the ResourceLoaderFileModule::getStyles() method.
+	 *
+	 * @param array &$styles Associative array, keys are strings (media queries),
+	 *   values are strings or arrays
+	 */
+	private function normalizeStyles( &$styles ) {
+		foreach ( $styles as $key => $val ) {
+			if ( !is_array( $val ) ) {
+				$styles[$key] = [ $val ];
+			}
+		}
+	}
+
+	/**
+	 * @param Config $conf
+	 * @return string|array Single url if no variants are defined
+	 *  or array of logo urls keyed by dppx in form "<float>x".
+	 *  Key "1x" is always defined.
+	 */
+	public static function getLogo( Config $conf ) {
+		$logo = $conf->get( 'Logo' );
+		$logoHD = $conf->get( 'LogoHD' );
+
+		$logo1Url = OutputPage::transformResourcePath( $conf, $logo );
+
+		if ( !$logoHD ) {
+			return $logo1Url;
+		}
+
+		$logoUrls = [
+			'1x' => $logo1Url,
+		];
+
+		// Only 1.5x and 2x are supported
+		if ( isset( $logoHD['1.5x'] ) ) {
+			$logoUrls['1.5x'] = OutputPage::transformResourcePath(
+				$conf,
+				$logoHD['1.5x']
+			);
+		}
+		if ( isset( $logoHD['2x'] ) ) {
+			$logoUrls['2x'] = OutputPage::transformResourcePath(
+				$conf,
+				$logoHD['2x']
+			);
+		}
+
+		return $logoUrls;
 	}
 
 	/**
@@ -77,13 +130,12 @@ class ResourceLoaderSkinModule extends ResourceLoaderFileModule {
 		return false;
 	}
 
-	/**
-	 * @param ResourceLoaderContext $context
-	 * @return string: Hash
-	 */
-	public function getModifiedHash( ResourceLoaderContext $context ) {
-		$logo = $this->getConfig()->get( 'Logo' );
-		$logoHD = $this->getConfig()->get( 'LogoHD' );
-		return md5( parent::getModifiedHash( $context ) . $logo . json_encode( $logoHD ) );
+	public function getDefinitionSummary( ResourceLoaderContext $context ) {
+		$summary = parent::getDefinitionSummary( $context );
+		$summary[] = [
+			'logo' => $this->getConfig()->get( 'Logo' ),
+			'logoHD' => $this->getConfig()->get( 'LogoHD' ),
+		];
+		return $summary;
 	}
 }

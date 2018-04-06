@@ -76,31 +76,6 @@ class SrConverter extends LanguageConverter {
 	}
 
 	/**
-	 * rules should be defined as -{ekavian | iyekavian-} -or-
-	 * -{code:text | code:text | ...}-
-	 *
-	 * update: delete all rule parsing because it's not used
-	 * currently, and just produces a couple of bugs
-	 *
-	 * @param string $rule
-	 * @param array $flags
-	 * @return array
-	 */
-	function parseManualRule( $rule, $flags = [] ) {
-		if ( in_array( 'T', $flags ) ) {
-			return parent::parseManualRule( $rule, $flags );
-		}
-
-		$carray = [];
-		// otherwise ignore all formatting
-		foreach ( $this->mVariants as $v ) {
-			$carray[$v] = $rule;
-		}
-
-		return $carray;
-	}
-
-	/**
 	 * A function wrapper:
 	 *   - if there is no selected variant, leave the link
 	 *     names as they were
@@ -156,7 +131,7 @@ class SrConverter extends LanguageConverter {
 		$ret = $this->mTables[$toVariant]->replace( $m[0] );
 		$mstart = $m[1] + strlen( $m[0] );
 		foreach ( $matches as $m ) {
-			$ret .= substr( $text, $mstart, $m[1] -$mstart );
+			$ret .= substr( $text, $mstart, $m[1] - $mstart );
 			$ret .= parent::translate( $m[0], $toVariant );
 			$mstart = $m[1] + strlen( $m[0] );
 		}
@@ -186,7 +161,6 @@ class SrConverter extends LanguageConverter {
 		} else {
 			return false;
 		}
-
 	}
 
 }

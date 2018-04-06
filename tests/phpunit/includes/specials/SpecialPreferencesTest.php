@@ -21,11 +21,10 @@ class SpecialPreferencesTest extends MediaWikiTestCase {
 	 * @todo give this test a real name explaining what is being tested here
 	 */
 	public function testBug41337() {
-
 		// Set a low limit
 		$this->setMwGlobals( 'wgMaxSigChars', 2 );
 
-		$user = $this->getMock( 'User' );
+		$user = $this->createMock( 'User' );
 		$user->expects( $this->any() )
 			->method( 'isAnon' )
 			->will( $this->returnValue( false ) );

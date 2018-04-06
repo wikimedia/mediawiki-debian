@@ -17,6 +17,7 @@
  *
  * @file
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * Generic wrapper for template functions, with interface
@@ -24,6 +25,16 @@
  * @ingroup Skins
  */
 abstract class QuickTemplate {
+
+	/**
+	 * @var array
+	 */
+	public $data;
+
+	/**
+	 * @var MediaWikiI18N
+	 */
+	public $translator;
 
 	/** @var Config $config */
 	protected $config;
@@ -36,7 +47,7 @@ abstract class QuickTemplate {
 		$this->translator = new MediaWikiI18N();
 		if ( $config === null ) {
 			wfDebug( __METHOD__ . ' was called with no Config instance passed to it' );
-			$config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
+			$config = MediaWikiServices::getInstance()->getMainConfig();
 		}
 		$this->config = $config;
 	}
@@ -51,11 +62,11 @@ abstract class QuickTemplate {
 	}
 
 	/**
-	* extends the value of data with name $name with the value $value
-	* @since 1.25
-	* @param string $name
-	* @param mixed $value
-	*/
+	 * extends the value of data with name $name with the value $value
+	 * @since 1.25
+	 * @param string $name
+	 * @param mixed $value
+	 */
 	public function extend( $name, $value ) {
 		if ( $this->haveData( $name ) ) {
 			$this->data[$name] = $this->data[$name] . $value;
@@ -81,14 +92,14 @@ abstract class QuickTemplate {
 
 	/**
 	 * @param string $name
-	 * @param mixed $value
+	 * @param mixed &$value
 	 */
 	public function setRef( $name, &$value ) {
 		$this->data[$name] =& $value;
 	}
 
 	/**
-	 * @param MediaWikiI18N $t
+	 * @param MediaWikiI18N &$t
 	 */
 	public function setTranslator( &$t ) {
 		$this->translator = &$t;

@@ -27,11 +27,18 @@
 require_once __DIR__ . '/backup.inc';
 require_once __DIR__ . '/../includes/export/WikiExporter.php';
 
+use Wikimedia\Rdbms\IMaintainableDatabase;
+
 /**
  * @ingroup Maintenance
  */
 class TextPassDumper extends BackupDumper {
+	/** @var BaseDump */
 	public $prefetch = null;
+	/** @var string|bool */
+	private $thisPage;
+	/** @var string|bool */
+	private $thisRev;
 
 	// when we spend more than maxTimeAllowed seconds on this run, we continue
 	// processing until we write out the next complete page, then save output file(s),
@@ -74,6 +81,9 @@ class TextPassDumper extends BackupDumper {
 	 */
 	protected $spawnErr = false;
 
+	/**
+	 * @var bool|XmlDumpWriter
+	 */
 	protected $xmlwriterobj = false;
 
 	protected $timeExceeded = false;
@@ -83,7 +93,7 @@ class TextPassDumper extends BackupDumper {
 	protected $checkpointFiles = [];
 
 	/**
-	 * @var DatabaseBase
+	 * @var IMaintainableDatabase
 	 */
 	protected $db;
 
@@ -209,7 +219,6 @@ TEXT
 		// We do /not/ retry upon failure, but delegate to encapsulating logic, to avoid
 		// individually retrying at different layers of code.
 
-		// 1. The LoadBalancer.
 		try {
 			$this->lb = wfGetLBFactory()->newMainLB();
 		} catch ( Exception $e ) {
@@ -217,9 +226,8 @@ TEXT
 				. " rotating DB failed to obtain new load balancer (" . $e->getMessage() . ")" );
 		}
 
-		// 2. The Connection, through the load balancer.
 		try {
-			$this->db = $this->lb->getConnection( DB_SLAVE, 'dump' );
+			$this->db = $this->lb->getConnection( DB_REPLICA, 'dump' );
 		} catch ( Exception $e ) {
 			throw new MWException( __METHOD__
 				. " rotating DB failed to obtain new database (" . $e->getMessage() . ")" );
@@ -567,7 +575,6 @@ TEXT
 		}
 
 		while ( $failures < $this->maxFailures ) {
-
 			// As soon as we found a good text for the $id, we will return immediately.
 			// Hence, if we make it past the try catch block, we know that we did not
 			// find a good text.
@@ -580,8 +587,7 @@ TEXT
 				if ( $text === false && isset( $this->prefetch ) && $prefetchNotTried ) {
 					$prefetchNotTried = false;
 					$tryIsPrefetch = true;
-					$text = $this->prefetch->prefetch( intval( $this->thisPage ),
-						intval( $this->thisRev ) );
+					$text = $this->prefetch->prefetch( (int)$this->thisPage, (int)$this->thisRev );
 
 					if ( $text === null ) {
 						$text = false;

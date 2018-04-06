@@ -101,7 +101,7 @@ class CachingSiteStoreTest extends MediaWikiTestCase {
 
 		$dbSiteStore->expects( $this->any() )
 			->method( 'getSites' )
-			->will( $this->returnCallback( function() {
+			->will( $this->returnCallback( function () {
 				$siteList = new SiteList();
 				$siteList->setSite( $this->getTestSite() );
 
@@ -148,6 +148,11 @@ class CachingSiteStoreTest extends MediaWikiTestCase {
 		$this->assertEquals( 0, $sites->count() );
 	}
 
+	/**
+	 * @param Site[] $sites
+	 *
+	 * @return SiteStore
+	 */
 	private function getHashSiteStore( array $sites ) {
 		$siteStore = new HashSiteStore();
 		$siteStore->saveSites( $sites );

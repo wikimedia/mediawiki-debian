@@ -40,7 +40,7 @@ abstract class ContextSource implements IContextSource {
 	 */
 	public function getContext() {
 		if ( $this->context === null ) {
-			$class = get_class( $this );
+			$class = static::class;
 			wfDebug( __METHOD__ . " ($class): called and \$context is null. " .
 				"Using RequestContext::getMain() for sanity\n" );
 			$this->context = RequestContext::getMain();
@@ -170,10 +170,10 @@ abstract class ContextSource implements IContextSource {
 	 * @deprecated since 1.27 use a StatsdDataFactory from MediaWikiServices (preferably injected)
 	 *
 	 * @since 1.25
-	 * @return StatsdDataFactory
+	 * @return IBufferingStatsdDataFactory
 	 */
 	public function getStats() {
-		return $this->getContext()->getStats();
+		return MediaWikiServices::getInstance()->getStatsdDataFactory();
 	}
 
 	/**
@@ -181,10 +181,12 @@ abstract class ContextSource implements IContextSource {
 	 * Parameters are the same as wfMessage()
 	 *
 	 * @since 1.18
-	 * @param mixed ...
+	 * @param string|string[]|MessageSpecifier $key Message key, or array of keys,
+	 *   or a MessageSpecifier.
+	 * @param mixed $args,...
 	 * @return Message
 	 */
-	public function msg( /* $args */ ) {
+	public function msg( $key /* $args */ ) {
 		$args = func_get_args();
 
 		return call_user_func_array( [ $this->getContext(), 'msg' ], $args );

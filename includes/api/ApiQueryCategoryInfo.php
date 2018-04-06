@@ -47,7 +47,7 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 		$titles = $this->getPageSet()->getGoodAndMissingTitles();
 		$cattitles = [];
 		foreach ( $categories as $c ) {
-			/** @var $t Title */
+			/** @var Title $t */
 			$t = $titles[$c];
 			$cattitles[$c] = $t->getDBkey();
 		}
@@ -115,6 +115,6 @@ class ApiQueryCategoryInfo extends ApiQueryBase {
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/API:Categoryinfo';
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Categoryinfo';
 	}
 }

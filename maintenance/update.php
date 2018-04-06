@@ -25,8 +25,9 @@
  * @ingroup Maintenance
  */
 
-$wgUseMasterForMaintenance = true;
 require_once __DIR__ . '/Maintenance.php';
+
+use Wikimedia\Rdbms\IMaintainableDatabase;
 
 /**
  * Maintenance script to run database schema updates.
@@ -83,13 +84,6 @@ class UpdateMediaWiki extends Maintenance {
 				"ABORTING (see https://bugs.php.net/bug.php?id=45996).\n",
 				true );
 		}
-
-		if ( !function_exists( 'mb_strlen' ) ) {
-			$this->error(
-				"MediaWiki now requires the mbstring PHP extension, your system doesn't have it.\n"
-				. "ABORTING.\n",
-				true );
-		}
 	}
 
 	function execute() {
@@ -120,7 +114,7 @@ class UpdateMediaWiki extends Maintenance {
 		}
 
 		$lang = Language::factory( 'en' );
-		// Set global language to ensure localised errors are in English (bug 20633)
+		// Set global language to ensure localised errors are in English (T22633)
 		RequestContext::getMain()->setLanguage( $lang );
 		$wgLang = $lang; // BackCompat
 
@@ -151,8 +145,19 @@ class UpdateMediaWiki extends Maintenance {
 		# This will vomit up an error if there are permissions problems
 		$db = $this->getDB( DB_MASTER );
 
+		# Check to see whether the database server meets the minimum requirements
+		/** @var DatabaseInstaller $dbInstallerClass */
+		$dbInstallerClass = Installer::getDBInstallerClass( $db->getType() );
+		$status = $dbInstallerClass::meetsMinimumRequirement( $db->getServerVersion() );
+		if ( !$status->isOK() ) {
+			// This might output some wikitext like <strong> but it should be comprehensible
+			$text = $status->getWikiText();
+			$this->error( $text, 1 );
+		}
+
 		$this->output( "Going to run database updates for " . wfWikiID() . "\n" );
 		if ( $db->getType() === 'sqlite' ) {
+			/** @var IMaintainableDatabase|DatabaseSqlite $db */
 			$this->output( "Using SQLite file: '{$db->getDbFilePath()}'\n" );
 		}
 		$this->output( "Depending on the size of your database this may take a while!\n" );
@@ -167,9 +172,11 @@ class UpdateMediaWiki extends Maintenance {
 
 		$badPhpUnit = dirname( __DIR__ ) . '/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php';
 		if ( file_exists( $badPhpUnit ) ) {
+			// @codingStandardsIgnoreStart Generic.Files.LineLength.TooLong
 			// Bad versions of the file are:
 			// https://raw.githubusercontent.com/sebastianbergmann/phpunit/c820f915bfae34e5a836f94967a2a5ea5ef34f21/src/Util/PHP/eval-stdin.php
 			// https://raw.githubusercontent.com/sebastianbergmann/phpunit/3aaddb1c5bd9b9b8d070b4cf120e71c36fd08412/src/Util/PHP/eval-stdin.php
+			// @codingStandardsIgnoreEnd
 			$md5 = md5_file( $badPhpUnit );
 			if ( $md5 === '120ac49800671dc383b6f3709c25c099'
 				|| $md5 === '28af792cb38fc9a1b236b91c1aad2876'
@@ -228,7 +235,7 @@ class UpdateMediaWiki extends Maintenance {
 
 		# Don't try to access the database
 		# This needs to be disabled early since extensions will try to use the l10n
-		# cache from $wgExtensionFunctions (bug 20471)
+		# cache from $wgExtensionFunctions (T22471)
 		$wgLocalisationCacheConf = [
 			'class' => 'LocalisationCache',
 			'storeClass' => 'LCStoreNull',

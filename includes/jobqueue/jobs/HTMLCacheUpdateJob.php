@@ -22,6 +22,8 @@
  * @ingroup Cache
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Job to purge the cache for all pages that link to or use another page or file
  *
@@ -36,8 +38,15 @@
 class HTMLCacheUpdateJob extends Job {
 	function __construct( Title $title, array $params ) {
 		parent::__construct( 'htmlCacheUpdate', $title, $params );
-		// Base backlink purge jobs can be de-duplicated
-		$this->removeDuplicates = ( !isset( $params['range'] ) && !isset( $params['pages'] ) );
+		// Avoid the overhead of de-duplication when it would be pointless.
+		// Note that these jobs always set page_touched to the current time,
+		// so letting the older existing job "win" is still correct.
+		$this->removeDuplicates = (
+			// Ranges rarely will line up
+			!isset( $params['range'] ) &&
+			// Multiple pages per job make matches unlikely
+			!( isset( $params['pages'] ) && count( $params['pages'] ) != 1 )
+		);
 	}
 
 	/**
@@ -102,31 +111,33 @@ class HTMLCacheUpdateJob extends Job {
 			return;
 		}
 
-		// The page_touched field will need to be bumped for these pages.
-		// Only bump it to the present time if no "rootJobTimestamp" was known.
-		// If it is known, it can be used instead, which avoids invalidating output
-		// that was in fact generated *after* the relevant dependency change time
-		// (e.g. template edit). This is particularily useful since refreshLinks jobs
-		// save back parser output and usually run along side htmlCacheUpdate jobs;
-		// their saved output would be invalidated by using the current timestamp.
-		if ( isset( $this->params['rootJobTimestamp'] ) ) {
-			$touchTimestamp = $this->params['rootJobTimestamp'];
-		} else {
-			$touchTimestamp = wfTimestampNow();
-		}
+		// Bump page_touched to the current timestamp. This used to use the root job timestamp
+		// (e.g. template/file edit time), which was a bit more efficient when template edits are
+		// rare and don't effect the same pages much. However, this way allows for better
+		// de-duplication, which is much more useful for wikis with high edit rates. Note that
+		// RefreshLinksJob, which is enqueued alongside HTMLCacheUpdateJob, saves the parser output
+		// since it has to parse anyway. We assume that vast majority of the cache jobs finish
+		// before the link jobs, so using the current timestamp instead of the root timestamp is
+		// not expected to invalidate these cache entries too often.
+		$touchTimestamp = wfTimestampNow();
+		// If page_touched is higher than this, then something else already bumped it after enqueue
+		$condTimestamp = isset( $this->params['rootJobTimestamp'] )
+			? $this->params['rootJobTimestamp']
+			: $touchTimestamp;
 
 		$dbw = wfGetDB( DB_MASTER );
+		$factory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$ticket = $factory->getEmptyTransactionTicket( __METHOD__ );
 		// Update page_touched (skipping pages already touched since the root job).
 		// Check $wgUpdateRowsPerQuery for sanity; batch jobs are sized by that already.
 		foreach ( array_chunk( $pageIds, $wgUpdateRowsPerQuery ) as $batch ) {
-			$dbw->commit( __METHOD__, 'flush' );
-			wfGetLBFactory()->waitForReplication();
+			$factory->commitAndWaitForReplication( __METHOD__, $ticket );
 
 			$dbw->update( 'page',
 				[ 'page_touched' => $dbw->timestamp( $touchTimestamp ) ],
 				[ 'page_id' => $batch,
 					// don't invalidated pages that were already invalidated
-					"page_touched < " . $dbw->addQuotes( $dbw->timestamp( $touchTimestamp ) )
+					"page_touched < " . $dbw->addQuotes( $dbw->timestamp( $condTimestamp ) )
 				],
 				__METHOD__
 			);
@@ -139,9 +150,13 @@ class HTMLCacheUpdateJob extends Job {
 			__METHOD__
 		) );
 
-		// Update CDN
-		$u = CdnCacheUpdate::newFromTitles( $titleArray );
-		$u->doUpdate();
+		// Update CDN; call purge() directly so as to not bother with secondary purges
+		$urls = [];
+		foreach ( $titleArray as $title ) {
+			/** @var Title $title */
+			$urls = array_merge( $urls, $title->getCdnUrls() );
+		}
+		CdnCacheUpdate::purge( $urls );
 
 		// Update file cache
 		if ( $wgUseFileCache ) {
@@ -152,6 +167,12 @@ class HTMLCacheUpdateJob extends Job {
 	}
 
 	public function workItemCount() {
-		return isset( $this->params['pages'] ) ? count( $this->params['pages'] ) : 1;
+		if ( !empty( $this->params['recursive'] ) ) {
+			return 0; // nothing actually purged
+		} elseif ( isset( $this->params['pages'] ) ) {
+			return count( $this->params['pages'] );
+		}
+
+		return 1; // one title
 	}
 }
