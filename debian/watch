@@ -1,4 +1,4 @@
 version=3
 
 opts="dversionmangle=s/^[0-9]+://;s/\+dfsg$//,pgpsigurlmangle=s/$/.sig/" \
-https://releases.wikimedia.org/mediawiki/1.27/ mediawiki-([0-9.]*).tar.gz
+https://releases.wikimedia.org/mediawiki/1.30/ mediawiki-([0-9.]*).tar.gz
