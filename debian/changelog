@@ -5,8 +5,9 @@ mediawiki (1:1.30.0-1) UNRELEASED; urgency=medium
   * Update d/watch for 1.30
   * Update d/copyright for 1.30
   * Rebase patches, dropping php-jwt-fix-shebang.diff
+  * Don't try to install any *.phtml
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 05 Apr 2018 23:48:38 -0700
+ -- Kunal Mehta <legoktm@member.fsf.org>  Fri, 06 Apr 2018 00:15:01 -0700
 
 mediawiki (1:1.27.4-3) unstable; urgency=medium
 
