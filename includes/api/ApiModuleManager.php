@@ -81,14 +81,14 @@ class ApiModuleManager extends ContextSource {
 	 *
 	 * @code
 	 *  $modules['foo'] = 'ApiFoo';
-	 *  $modules['bar'] = array(
+	 *  $modules['bar'] = [
 	 *      'class' => 'ApiBar',
 	 *      'factory' => function( $main, $name ) { ... }
-	 *  );
-	 *  $modules['xyzzy'] = array(
+	 *  ];
+	 *  $modules['xyzzy'] = [
 	 *      'class' => 'ApiXyzzy',
-	 *      'factory' => array( 'XyzzyFactory', 'newApiModule' )
-	 *  );
+	 *      'factory' => [ 'XyzzyFactory', 'newApiModule' ]
+	 *  ];
 	 * @endcode
 	 *
 	 * @param array $modules A map of ModuleName => ModuleSpec; The ModuleSpec
@@ -97,7 +97,6 @@ class ApiModuleManager extends ContextSource {
 	 * @param string $group Which group modules belong to (action,format,...)
 	 */
 	public function addModules( array $modules, $group ) {
-
 		foreach ( $modules as $name => $moduleSpec ) {
 			if ( is_array( $moduleSpec ) ) {
 				$class = $moduleSpec['class'];

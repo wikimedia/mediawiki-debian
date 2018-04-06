@@ -20,14 +20,15 @@
  * @file
  * @ingroup FileRepo
  * @ingroup FileBackend
- * @author Aaron Schulz
  */
+
+use Wikimedia\Rdbms\DBConnRef;
 
 /**
  * @brief Proxy backend that manages file layout rewriting for FileRepo.
  *
  * LocalRepo may be configured to store files under their title names or by SHA-1.
- * This acts as a shim in the later case, providing backwards compatability for
+ * This acts as a shim in the latter case, providing backwards compatability for
  * most callers. All "public"/"deleted" zone files actually go in an "original"
  * container and are never changed.
  *
@@ -50,8 +51,10 @@ class FileBackendDBRepoWrapper extends FileBackend {
 	protected $dbs;
 
 	public function __construct( array $config ) {
-		$config['name'] = $config['backend']->getName();
-		$config['wikiId'] = $config['backend']->getWikiId();
+		/** @var FileBackend $backend */
+		$backend = $config['backend'];
+		$config['name'] = $backend->getName();
+		$config['wikiId'] = $backend->getWikiId();
 		parent::__construct( $config );
 		$this->backend = $config['backend'];
 		$this->repoName = $config['repoName'];
@@ -94,7 +97,7 @@ class FileBackendDBRepoWrapper extends FileBackend {
 	 * @return array Translated paths in same order
 	 */
 	public function getBackendPaths( array $paths, $latest = true ) {
-		$db = $this->getDB( $latest ? DB_MASTER : DB_SLAVE );
+		$db = $this->getDB( $latest ? DB_MASTER : DB_REPLICA );
 
 		// @TODO: batching
 		$resolved = [];
@@ -256,7 +259,7 @@ class FileBackendDBRepoWrapper extends FileBackend {
 		return $this->translateSrcParams( __FUNCTION__, $params );
 	}
 
-	public function getScopedLocksForOps( array $ops, Status $status ) {
+	public function getScopedLocksForOps( array $ops, StatusValue $status ) {
 		return $this->backend->getScopedLocksForOps( $ops, $status );
 	}
 
@@ -279,7 +282,7 @@ class FileBackendDBRepoWrapper extends FileBackend {
 	/**
 	 * Get a connection to the repo file registry DB
 	 *
-	 * @param integer $index
+	 * @param int $index
 	 * @return DBConnRef
 	 */
 	protected function getDB( $index ) {
@@ -295,6 +298,7 @@ class FileBackendDBRepoWrapper extends FileBackend {
 	 *
 	 * @param string $function
 	 * @param array $params
+	 * @return mixed
 	 */
 	protected function translateSrcParams( $function, array $params ) {
 		$latest = !empty( $params['latest'] );

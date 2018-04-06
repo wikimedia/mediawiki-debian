@@ -1,7 +1,7 @@
 /*!
  * VisualEditor ContentEditable MWReferencesListNode class.
  *
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -16,9 +16,9 @@
  * @param {ve.dm.MWReferencesListNode} model Model to observe
  * @param {Object} [config] Configuration options
  */
-ve.ce.MWReferencesListNode = function VeCeMWReferencesListNode( model, config ) {
+ve.ce.MWReferencesListNode = function VeCeMWReferencesListNode() {
 	// Parent constructor
-	ve.ce.LeafNode.call( this, model, config );
+	ve.ce.MWReferencesListNode.super.apply( this, arguments );
 
 	// Mixin constructors
 	ve.ce.FocusableNode.call( this );
@@ -29,15 +29,17 @@ ve.ce.MWReferencesListNode = function VeCeMWReferencesListNode( model, config ) 
 
 	// DOM changes
 	this.$element.addClass( 've-ce-mwReferencesListNode' );
-	this.$reflist = $( '<ol class="mw-references"></ol>' );
+	this.$reflist = $( '<ol>' ).addClass( 'mw-references references' );
 	this.$refmsg = $( '<p>' )
 		.addClass( 've-ce-mwReferencesListNode-muted' );
 
 	// Events
 	this.model.connect( this, { attributeChange: 'onAttributeChange' } );
 
+	this.updateDebounced = ve.debounce( this.update.bind( this ) );
+
 	// Initialization
-	this.update();
+	this.updateDebounced();
 };
 
 /* Inheritance */
@@ -78,7 +80,7 @@ ve.ce.MWReferencesListNode.prototype.onSetup = function () {
 	this.listNode.connect( this, { update: 'onListNodeUpdate' } );
 
 	// Parent method
-	ve.ce.LeafNode.prototype.onSetup.call( this );
+	ve.ce.MWReferencesListNode.super.prototype.onSetup.call( this );
 };
 
 /**
@@ -94,7 +96,7 @@ ve.ce.MWReferencesListNode.prototype.onTeardown = function () {
 	this.listNode = null;
 
 	// Parent method
-	ve.ce.LeafNode.prototype.onTeardown.call( this );
+	ve.ce.MWReferencesListNode.super.prototype.onTeardown.call( this );
 };
 
 /**
@@ -108,7 +110,7 @@ ve.ce.MWReferencesListNode.prototype.onTeardown = function () {
 ve.ce.MWReferencesListNode.prototype.onInternalListUpdate = function ( groupsChanged ) {
 	// Only update if this group has been changed
 	if ( groupsChanged.indexOf( this.model.getAttribute( 'listGroup' ) ) !== -1 ) {
-		this.update();
+		this.updateDebounced();
 	}
 };
 
@@ -120,8 +122,13 @@ ve.ce.MWReferencesListNode.prototype.onInternalListUpdate = function ( groupsCha
  * @param {string} to New value
  */
 ve.ce.MWReferencesListNode.prototype.onAttributeChange = function ( key ) {
-	if ( key === 'listGroup' ) {
-		this.update();
+	switch ( key ) {
+		case 'listGroup':
+			this.updateDebounced();
+			break;
+		case 'isResponsive':
+			this.updateClasses();
+			break;
 	}
 };
 
@@ -136,19 +143,41 @@ ve.ce.MWReferencesListNode.prototype.onListNodeUpdate = function () {
 	// When the list node updates we're not sure which list group the item
 	// belonged to so we always update
 	// TODO: Only re-render the reference which has been edited
-	this.update();
+	this.updateDebounced();
 };
 
 /**
  * Update the references list.
  */
 ve.ce.MWReferencesListNode.prototype.update = function () {
-	var i, j, n, iLen, jLen, index, firstNode, key, keyedNodes, modelNode, viewNode,
+	var i, j, iLen, jLen, index, firstNode, key, keyedNodes, modelNode, viewNode,
 		$li, $refSpan, $link,
 		internalList = this.model.getDocument().internalList,
 		refGroup = this.model.getAttribute( 'refGroup' ),
 		listGroup = this.model.getAttribute( 'listGroup' ),
 		nodes = internalList.getNodeGroup( listGroup );
+
+	function updateGeneratedContent( viewNode, $li ) {
+		// HACK: PHP parser doesn't wrap single lines in a paragraph
+		if (
+			viewNode.$element.children().length === 1 &&
+			viewNode.$element.children( 'p' ).length === 1
+		) {
+			// unwrap inner
+			viewNode.$element.children().replaceWith(
+				viewNode.$element.children().contents()
+			);
+		}
+		$li.append(
+			$( '<span>' )
+				.addClass( 'reference-text' )
+				.append( viewNode.$element )
+		);
+
+		// Since this is running after content generation has finished, it's
+		// safe to destroy the view.
+		viewNode.destroy();
+	}
 
 	this.$reflist.detach().empty();
 	this.$refmsg.detach();
@@ -167,14 +196,12 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 		}
 		this.$element.append( this.$refmsg );
 	} else {
-		n = 0;
 		for ( i = 0, iLen = nodes.indexOrder.length; i < iLen; i++ ) {
 			index = nodes.indexOrder[ i ];
 			firstNode = nodes.firstNodes[ index ];
 
 			key = internalList.keys[ index ];
 			keyedNodes = nodes.keyedNodes[ key ];
-			/*jshint loopfunc:true */
 			keyedNodes = keyedNodes.filter( function ( node ) {
 				// Exclude placeholder references
 				if ( node.getAttribute( 'placeholder' ) ) {
@@ -192,8 +219,6 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 			if ( !keyedNodes.length ) {
 				continue;
 			}
-			// Only increment counter for non-empty groups
-			n++;
 
 			$li = $( '<li>' );
 
@@ -224,26 +249,16 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 			modelNode = internalList.getItemNode( firstNode.getAttribute( 'listIndex' ) );
 			if ( modelNode && modelNode.length ) {
 				viewNode = new ve.ce.InternalItemNode( modelNode );
-				// HACK: PHP parser doesn't wrap single lines in a paragraph
-				if (
-					viewNode.$element.children().length === 1 &&
-					viewNode.$element.children( 'p' ).length === 1
-				) {
-					// unwrap inner
-					viewNode.$element.children().replaceWith(
-						viewNode.$element.children().contents()
-					);
-				}
-				$li.append(
-					$( '<span>' )
-						.addClass( 'reference-text' )
-						.append( viewNode.$element )
-				);
-				// HACK: See bug 62682 - We happen to know that destroy doesn't abort async
-				// rendering for generated content nodes, but we really can't guarantee that in the
-				// future - if you are here, debugging, because something isn't rendering properly,
-				// it's likely that something has changed and these assumptions are no longer valid
-				viewNode.destroy();
+
+				ve.ce.GeneratedContentNode.static.awaitGeneratedContent( viewNode )
+					.then( updateGeneratedContent.bind( this, viewNode, $li ) );
+
+				// Because this update runs a number of times when using the
+				// basic dialog, disconnect the model here rather than waiting
+				// for when it's destroyed after the generated content is
+				// finished. Failing to do this causes teardown errors with
+				// basic citations.
+				modelNode.disconnect( viewNode );
 			} else {
 				$li.append(
 					$( '<span>' )
@@ -254,8 +269,22 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 
 			this.$reflist.append( $li );
 		}
+		this.updateClasses();
 		this.$element.append( this.$reflist );
 	}
+};
+
+/**
+ * Update ref list classes.
+ *
+ * Currently used to set responsive layout
+ */
+ve.ce.MWReferencesListNode.prototype.updateClasses = function () {
+	var isResponsive = this.model.getAttribute( 'isResponsive' );
+
+	this.$element
+		.toggleClass( 'mw-references-wrap', isResponsive )
+		.toggleClass( 'mw-references-columns', isResponsive && this.$reflist.children().length > 10 );
 };
 
 /* Registration */

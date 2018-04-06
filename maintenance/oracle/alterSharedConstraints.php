@@ -19,6 +19,8 @@
  * @ingroup Maintenance
  */
 
+use Wikimedia\Rdbms\DBQueryError;
+
 /**
  * When using shared tables that are referenced by foreign keys on local
  * tables you have to change the constraints on local tables.
@@ -65,8 +67,8 @@ class AlterSharedConstraints extends Maintenance {
 						AND ucc.constraint_name = uc.constraint_name
 						AND uccpk.constraint_name = uc.r_constraint_name
 						AND uccpk.table_name = '$ltable'" );
-			while ( ( $row = $result->fetchRow() ) !== false ) {
 
+			while ( ( $row = $result->fetchRow() ) !== false ) {
 				$this->output( "Altering {$row['constraint_name']} ..." );
 
 				try {

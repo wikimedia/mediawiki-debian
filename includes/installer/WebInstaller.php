@@ -130,8 +130,6 @@ class WebInstaller extends Installer {
 	protected $currentPageName;
 
 	/**
-	 * Constructor.
-	 *
 	 * @param WebRequest $request
 	 */
 	public function __construct( WebRequest $request ) {
@@ -705,7 +703,7 @@ class WebInstaller extends Installer {
 			"<span class=\"config-help-field-hint\" title=\"" .
 			wfMessage( 'config-help-tooltip' )->escaped() . "\">" .
 			wfMessage( 'config-help' )->escaped() . "</span>\n" .
-			"<span class=\"config-help-field-data\">" . $html . "</span>\n" .
+			"<div class=\"config-help-field-data\">" . $html . "</div>\n" .
 			"</div>\n";
 	}
 
@@ -1007,6 +1005,7 @@ class WebInstaller extends Installer {
 	 *
 	 * @see getRadioSet
 	 *
+	 * @param mixed[] $params
 	 * @return array
 	 */
 	public function getRadioElements( $params ) {
@@ -1083,7 +1082,7 @@ class WebInstaller extends Installer {
 
 		foreach ( $varNames as $name ) {
 			$value = $this->request->getVal( $prefix . $name );
-			// bug 30524, do not trim passwords
+			// T32524, do not trim passwords
 			if ( stripos( $name, 'password' ) === false ) {
 				$value = trim( $value );
 			}

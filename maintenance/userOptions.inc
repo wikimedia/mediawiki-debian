@@ -47,7 +47,7 @@ class UserOptions {
 	 */
 	function __construct( $opts, $args ) {
 		if ( !$this->checkOpts( $opts, $args ) ) {
-			UserOptions::showUsageAndExit();
+			self::showUsageAndExit();
 		} else {
 			$this->mReady = $this->initializeOpts( $opts, $args );
 		}
@@ -82,7 +82,6 @@ class UserOptions {
 	 * @return bool
 	 */
 	private function initializeOpts( $opts, $args ) {
-
 		$this->mQuick = isset( $opts['nowarn'] );
 		$this->mQuiet = isset( $opts['quiet'] );
 		$this->mDry = isset( $opts['dry'] );
@@ -107,6 +106,7 @@ class UserOptions {
 
 	/**
 	 * Dumb stuff to run a mode.
+	 * @return bool
 	 */
 	public function run() {
 		if ( !$this->mReady ) {
@@ -140,8 +140,8 @@ class UserOptions {
 		$ret = [];
 		$defaultOptions = User::getDefaultOptions();
 
-		// We list user by user_id from one of the slave database
-		$dbr = wfGetDB( DB_SLAVE );
+		// We list user by user_id from one of the replica DBs
+		$dbr = wfGetDB( DB_REPLICA );
 		$result = $dbr->select( 'user',
 			[ 'user_id' ],
 			[],
@@ -149,12 +149,10 @@ class UserOptions {
 		);
 
 		foreach ( $result as $id ) {
-
 			$user = User::newFromId( $id->user_id );
 
 			// Get the options and update stats
 			if ( $this->mAnOption ) {
-
 				if ( !array_key_exists( $this->mAnOption, $defaultOptions ) ) {
 					print "Invalid user option. Use --list to see valid choices\n";
 					exit;
@@ -194,8 +192,8 @@ class UserOptions {
 	private function CHANGER() {
 		$this->warn();
 
-		// We list user by user_id from one of the slave database
-		$dbr = wfGetDB( DB_SLAVE );
+		// We list user by user_id from one of the replica DBs
+		$dbr = wfGetDB( DB_REPLICA );
 		$result = $dbr->select( 'user',
 			[ 'user_id' ],
 			[],
@@ -203,14 +201,12 @@ class UserOptions {
 		);
 
 		foreach ( $result as $id ) {
-
 			$user = User::newFromId( $id->user_id );
 
 			$curValue = $user->getOption( $this->mAnOption );
 			$username = $user->getName();
 
 			if ( $curValue == $this->mOldValue ) {
-
 				if ( !$this->mQuiet ) {
 					print "Setting {$this->mAnOption} for $username from '{$this->mOldValue}' " .
 						"to '{$this->mNewValue}'): ";
@@ -279,7 +275,6 @@ USAGE;
 	 * @return bool
 	 */
 	public function warn() {
-
 		if ( $this->mQuick ) {
 			return true;
 		}

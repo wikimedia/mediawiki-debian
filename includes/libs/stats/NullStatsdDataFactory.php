@@ -8,14 +8,14 @@ use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
  * @author Addshore
  * @since 1.27
  */
-class NullStatsdDataFactory implements StatsdDataFactoryInterface {
+class NullStatsdDataFactory implements IBufferingStatsdDataFactory {
 
 	/**
 	 * This function creates a 'timing' StatsdData.
 	 *
 	 * @param string|array $key The metric(s) to set.
 	 * @param float $time The elapsed time (ms) to log
-	 **/
+	 */
 	public function timing( $key, $time ) {
 	}
 
@@ -24,7 +24,7 @@ class NullStatsdDataFactory implements StatsdDataFactoryInterface {
 	 *
 	 * @param string|array $key The metric(s) to set.
 	 * @param float $value The value for the stats.
-	 **/
+	 */
 	public function gauge( $key, $value ) {
 	}
 
@@ -40,11 +40,11 @@ class NullStatsdDataFactory implements StatsdDataFactoryInterface {
 	 * and logged in users by sending the current userId of a user
 	 * with each request with a key of "uniques" (or similar).
 	 *
-	 * @param  string|array $key The metric(s) to set.
-	 * @param  float $value The value for the stats.
+	 * @param string|array $key The metric(s) to set.
+	 * @param float $value The value for the stats.
 	 *
 	 * @return array
-	 **/
+	 */
 	public function set( $key, $value ) {
 		return [];
 	}
@@ -53,10 +53,9 @@ class NullStatsdDataFactory implements StatsdDataFactoryInterface {
 	 * This function creates a 'increment' StatsdData object.
 	 *
 	 * @param string|array $key The metric(s) to increment.
-	 * @param float|1      $sampleRate The rate (0-1) for sampling.
 	 *
 	 * @return array
-	 **/
+	 */
 	public function increment( $key ) {
 		return [];
 	}
@@ -66,10 +65,9 @@ class NullStatsdDataFactory implements StatsdDataFactoryInterface {
 	 *
 	 *
 	 * @param string|array $key The metric(s) to decrement.
-	 * @param float|1      $sampleRate The rate (0-1) for sampling.
 	 *
 	 * @return mixed
-	 **/
+	 */
 	public function decrement( $key ) {
 		return [];
 	}
@@ -78,10 +76,10 @@ class NullStatsdDataFactory implements StatsdDataFactoryInterface {
 	 * This function creates a 'updateCount' StatsdData object.
 	 *
 	 * @param string|array $key The metric(s) to decrement.
-	 * @param integer $delta The delta to add to the each metric
+	 * @param int $delta The delta to add to the each metric
 	 *
 	 * @return mixed
-	 **/
+	 */
 	public function updateCount( $key, $delta ) {
 		return [];
 	}
@@ -95,7 +93,7 @@ class NullStatsdDataFactory implements StatsdDataFactoryInterface {
 	 *                      ("c" for count, "ms" for timing, "g" for gauge, "s" for set)
 	 *
 	 * @return StatsdDataInterface
-	 **/
+	 */
 	public function produceStatsdData(
 		$key,
 		$value = 1,
@@ -108,4 +106,28 @@ class NullStatsdDataFactory implements StatsdDataFactoryInterface {
 		return $data;
 	}
 
+	/**
+	 * Check whether this data factory has any data.
+	 * @return bool
+	 */
+	public function hasData() {
+		return false;
+	}
+
+	/**
+	 * Return data from the factory.
+	 * @return StatsdData[]
+	 */
+	public function getData() {
+		return [];
+	}
+
+	/**
+	 * Set collection enable status.
+	 * @param bool $enabled Will collection be enabled?
+	 * @return void
+	 */
+	public function setEnabled( $enabled ) {
+		// Nothing to do, null factory is always disabled.
+	}
 }

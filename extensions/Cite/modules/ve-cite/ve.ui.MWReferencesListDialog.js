@@ -1,7 +1,7 @@
 /*!
  * VisualEditor user interface MWReferencesListDialog class.
  *
- * @copyright 2011-2016 Cite VisualEditor Team and others; see AUTHORS.txt
+ * @copyright 2011-2017 Cite VisualEditor Team and others; see AUTHORS.txt
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
@@ -61,6 +61,8 @@ ve.ui.MWReferencesListDialog.prototype.getBodyHeight = function () {
  * @inheritdoc
  */
 ve.ui.MWReferencesListDialog.prototype.initialize = function () {
+	var groupField, responsiveField;
+
 	// Parent method
 	ve.ui.MWReferencesListDialog.super.prototype.initialize.call( this );
 
@@ -75,13 +77,19 @@ ve.ui.MWReferencesListDialog.prototype.initialize = function () {
 		$overlay: this.$overlay,
 		emptyGroupName: ve.msg( 'cite-ve-dialog-reference-options-group-placeholder' )
 	} );
-	this.groupField = new OO.ui.FieldLayout( this.groupInput, {
+	groupField = new OO.ui.FieldLayout( this.groupInput, {
 		align: 'top',
 		label: ve.msg( 'cite-ve-dialog-reference-options-group-label' )
 	} );
 
+	this.responsiveCheckbox = new OO.ui.CheckboxInputWidget();
+	responsiveField = new OO.ui.FieldLayout( this.responsiveCheckbox, {
+		align: 'inline',
+		label: ve.msg( 'cite-ve-dialog-reference-options-responsive-label' )
+	} );
+
 	// Initialization
-	this.optionsFieldset.addItems( [ this.groupField ] );
+	this.optionsFieldset.addItems( [ groupField, responsiveField ] );
 	this.editPanel.$element.append( this.optionsFieldset.$element );
 	this.panels.addItems( [ this.editPanel ] );
 	this.$body.append( this.panels.$element );
@@ -93,25 +101,28 @@ ve.ui.MWReferencesListDialog.prototype.initialize = function () {
 ve.ui.MWReferencesListDialog.prototype.getActionProcess = function ( action ) {
 	if ( action === 'apply' ) {
 		return new OO.ui.Process( function () {
-			var refGroup, listGroup, oldListGroup, attrChanges, doc,
+			var refGroup, listGroup, oldListGroup, isResponsive, oldResponsive, attrChanges, doc,
 				surfaceModel = this.getFragment().getSurface();
 
 			// Save changes
-			refGroup = this.groupInput.input.getValue();
+			refGroup = this.groupInput.getValue();
 			listGroup = 'mwReference/' + refGroup;
+			isResponsive = this.responsiveCheckbox.isSelected();
 
 			if ( this.selectedNode ) {
 				// Edit existing model
 				doc = surfaceModel.getDocument();
 				oldListGroup = this.selectedNode.getAttribute( 'listGroup' );
+				oldResponsive = this.selectedNode.getAttribute( 'isResponsive' );
 
-				if ( listGroup !== oldListGroup ) {
+				if ( listGroup !== oldListGroup || isResponsive !== oldResponsive ) {
 					attrChanges = {
 						listGroup: listGroup,
-						refGroup: refGroup
+						refGroup: refGroup,
+						isResponsive: isResponsive
 					};
 					surfaceModel.change(
-						ve.dm.Transaction.newFromAttributeChanges(
+						ve.dm.TransactionBuilder.static.newFromAttributeChanges(
 							doc, this.selectedNode.getOuterRange().start, attrChanges
 						)
 					);
@@ -137,8 +148,10 @@ ve.ui.MWReferencesListDialog.prototype.getSetupProcess = function ( data ) {
 
 			this.actions.setMode( 'edit' );
 
-			this.groupInput.input.setValue( this.selectedNode.getAttribute( 'refGroup' ) );
+			this.groupInput.setValue( this.selectedNode.getAttribute( 'refGroup' ) );
 			this.groupInput.populateMenu( this.getFragment().getDocument().getInternalList() );
+
+			this.responsiveCheckbox.setSelected( this.selectedNode.getAttribute( 'isResponsive' ) );
 		}, this );
 };
 

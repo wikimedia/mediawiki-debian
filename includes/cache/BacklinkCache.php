@@ -20,11 +20,14 @@
  *
  * @file
  * @author Tim Starling
- * @author Aaron Schulz
  * @copyright © 2009, Tim Starling, Domas Mituzas
  * @copyright © 2010, Max Sem
  * @copyright © 2011, Antoine Musso
  */
+
+use Wikimedia\Rdbms\ResultWrapper;
+use Wikimedia\Rdbms\FakeResultWrapper;
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * Class for fetching backlink lists, approximate backlink counts and
@@ -48,7 +51,7 @@ class BacklinkCache {
 	 *  > (string) links table name
 	 *   > (int) batch size
 	 *    > 'numRows' : Number of rows for this link table
-	 *    > 'batches' : array( $start, $end )
+	 *    > 'batches' : [ $start, $end ]
 	 *
 	 * @see BacklinkCache::partitionResult()
 	 *
@@ -137,13 +140,13 @@ class BacklinkCache {
 	}
 
 	/**
-	 * Get the slave connection to the database
+	 * Get the replica DB connection to the database
 	 * When non existing, will initialize the connection.
-	 * @return DatabaseBase
+	 * @return IDatabase
 	 */
 	protected function getDB() {
 		if ( !isset( $this->db ) ) {
-			$this->db = wfGetDB( DB_SLAVE );
+			$this->db = wfGetDB( DB_REPLICA );
 		}
 
 		return $this->db;
@@ -171,7 +174,6 @@ class BacklinkCache {
 	 * @return ResultWrapper
 	 */
 	protected function queryLinks( $table, $startId, $endId, $max, $select = 'all' ) {
-
 		$fromField = $this->getPrefix( $table ) . '_from';
 
 		if ( !$startId && !$endId && is_infinite( $max )
@@ -335,7 +337,11 @@ class BacklinkCache {
 			return min( $max, $this->fullResultCache[$table]->numRows() );
 		}
 
-		$memcKey = wfMemcKey( 'numbacklinks', md5( $this->title->getPrefixedDBkey() ), $table );
+		$memcKey = $cache->makeKey(
+			'numbacklinks',
+			md5( $this->title->getPrefixedDBkey() ),
+			$table
+		);
 
 		// 3) ... fallback to memcached ...
 		$count = $cache->get( $memcKey );
@@ -389,7 +395,7 @@ class BacklinkCache {
 			return $cacheEntry['batches'];
 		}
 
-		$memcKey = wfMemcKey(
+		$memcKey = $cache->makeKey(
 			'backlinks',
 			md5( $this->title->getPrefixedDBkey() ),
 			$table,
@@ -407,7 +413,7 @@ class BacklinkCache {
 
 		// 4) ... finally fetch from the slow database :(
 		$cacheEntry = [ 'numRows' => 0, 'batches' => [] ]; // final result
-		// Do the selects in batches to avoid client-side OOMs (bug 43452).
+		// Do the selects in batches to avoid client-side OOMs (T45452).
 		// Use a LIMIT that plays well with $batchSize to keep equal sized partitions.
 		$selectSize = max( $batchSize, 200000 - ( 200000 % $batchSize ) );
 		$start = false;
@@ -432,7 +438,11 @@ class BacklinkCache {
 		$cache->set( $memcKey, $cacheEntry, self::CACHE_EXPIRY );
 
 		// Save backlink count to memcached
-		$memcKey = wfMemcKey( 'numbacklinks', md5( $this->title->getPrefixedDBkey() ), $table );
+		$memcKey = $cache->makeKey(
+			'numbacklinks',
+			md5( $this->title->getPrefixedDBkey() ),
+			$table
+		);
 		$cache->set( $memcKey, $cacheEntry['numRows'], self::CACHE_EXPIRY );
 
 		wfDebug( __METHOD__ . ": got from database\n" );

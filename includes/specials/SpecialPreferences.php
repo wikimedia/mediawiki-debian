@@ -53,21 +53,22 @@ class SpecialPreferences extends SpecialPage {
 		$out->addModules( 'mediawiki.special.preferences' );
 		$out->addModuleStyles( 'mediawiki.special.preferences.styles' );
 
-		$request = $this->getRequest();
-		if ( $request->getSessionData( 'specialPreferencesSaveSuccess' ) ) {
+		$session = $this->getRequest()->getSession();
+		if ( $session->get( 'specialPreferencesSaveSuccess' ) ) {
 			// Remove session data for the success message
-			$request->setSessionData( 'specialPreferencesSaveSuccess', null );
+			$session->remove( 'specialPreferencesSaveSuccess' );
+			$out->addModuleStyles( 'mediawiki.notification.convertmessagebox.styles' );
 
-			$out->wrapWikiMsg(
+			$out->addHTML(
 				Html::rawElement(
 					'div',
 					[
-						'class' => 'mw-preferences-messagebox successbox',
-						'id' => 'mw-preferences-success'
+						'class' => 'mw-preferences-messagebox mw-notify-success successbox',
+						'id' => 'mw-preferences-success',
+						'data-mw-autohide' => 'false',
 					],
-					Html::element( 'p', [], '$1' )
-				),
-				'savedprefs'
+					Html::element( 'p', [], $this->msg( 'savedprefs' )->text() )
+				)
 			);
 		}
 
@@ -80,7 +81,7 @@ class SpecialPreferences extends SpecialPage {
 			$user = $this->getUser();
 		}
 
-		$htmlForm = Preferences::getFormObject( $user, $this->getContext() );
+		$htmlForm = $this->getFormObject( $user, $this->getContext() );
 		$htmlForm->setSubmitCallback( [ 'Preferences', 'tryUISubmit' ] );
 		$sectionTitles = $htmlForm->getPreferenceSections();
 
@@ -116,6 +117,16 @@ class SpecialPreferences extends SpecialPage {
 		$htmlForm->show();
 	}
 
+	/**
+	 * Get the preferences form to use.
+	 * @param User $user The user.
+	 * @param IContextSource $context The context.
+	 * @return PreferencesForm|HtmlForm
+	 */
+	protected function getFormObject( $user, IContextSource $context ) {
+		return Preferences::getFormObject( $user, $context );
+	}
+
 	private function showResetForm() {
 		if ( !$this->getUser()->isAllowed( 'editmyoptions' ) ) {
 			throw new PermissionsError( 'editmyoptions' );
@@ -145,7 +156,7 @@ class SpecialPreferences extends SpecialPage {
 		$user->saveSettings();
 
 		// Set session data for the success message
-		$this->getRequest()->setSessionData( 'specialPreferencesSaveSuccess', 1 );
+		$this->getRequest()->getSession()->set( 'specialPreferencesSaveSuccess', 1 );
 
 		$url = $this->getPageTitle()->getFullUrlForRedirect();
 		$this->getOutput()->redirect( $url );

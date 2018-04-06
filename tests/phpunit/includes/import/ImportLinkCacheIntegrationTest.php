@@ -1,4 +1,6 @@
 <?php
+use MediaWiki\MediaWikiServices;
+
 /**
  * Integration test that checks import success and
  * LinkCache integration.
@@ -25,7 +27,6 @@ class ImportLinkCacheIntegrationTest extends MediaWikiTestCase {
 	}
 
 	public function testImportForImportSource() {
-
 		$this->doImport( $this->importStreamSource );
 
 		// Imported title
@@ -54,7 +55,6 @@ class ImportLinkCacheIntegrationTest extends MediaWikiTestCase {
 	 * @depends testImportForImportSource
 	 */
 	public function testReImportForImportSource() {
-
 		$this->doImport( $this->importStreamSource );
 
 		// ReImported title
@@ -74,10 +74,9 @@ class ImportLinkCacheIntegrationTest extends MediaWikiTestCase {
 	}
 
 	private function doImport( $importStreamSource ) {
-
 		$importer = new WikiImporter(
 			$importStreamSource->value,
-			ConfigFactory::getDefaultInstance()->makeConfig( 'main' )
+			MediaWikiServices::getInstance()->getMainConfig()
 		);
 		$importer->setDebug( true );
 

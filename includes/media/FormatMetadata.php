@@ -24,6 +24,8 @@
  * @see http://exif.org/Exif2-2.PDF The Exif 2.2 specification
  * @file
  */
+use MediaWiki\MediaWikiServices;
+use Wikimedia\Timestamp\TimestampException;
 
 /**
  * Format Image metadata values into a human readable form.
@@ -102,7 +104,6 @@ class FormatMetadata extends ContextSource {
 		unset( $tags['ResolutionUnit'] );
 
 		foreach ( $tags as $tag => &$vals ) {
-
 			// This seems ugly to wrap non-array's in an array just to unwrap again,
 			// especially when most of the time it is not an array
 			if ( !is_array( $tags[$tag] ) ) {
@@ -165,7 +166,6 @@ class FormatMetadata extends ContextSource {
 			}
 
 			foreach ( $vals as &$val ) {
-
 				switch ( $tag ) {
 					case 'Compression':
 						switch ( $val ) {
@@ -418,12 +418,12 @@ class FormatMetadata extends ContextSource {
 
 					case 'Flash':
 						$flashDecode = [
-							'fired' => $val & bindec( '00000001' ),
-							'return' => ( $val & bindec( '00000110' ) ) >> 1,
-							'mode' => ( $val & bindec( '00011000' ) ) >> 3,
-							'function' => ( $val & bindec( '00100000' ) ) >> 5,
-							'redeye' => ( $val & bindec( '01000000' ) ) >> 6,
-// 						'reserved' => ($val & bindec( '10000000' )) >> 7,
+							'fired' => $val & 0b00000001,
+							'return' => ( $val & 0b00000110 ) >> 1,
+							'mode' => ( $val & 0b00011000 ) >> 3,
+							'function' => ( $val & 0b00100000 ) >> 5,
+							'redeye' => ( $val & 0b01000000 ) >> 6,
+							// 'reserved' => ( $val & 0b10000000 ) >> 7,
 						];
 						$flashMsgs = [];
 						# We do not need to handle unknown values since all are used.
@@ -866,6 +866,7 @@ class FormatMetadata extends ContextSource {
 					// are included here as we really don't want
 					// commas inserted.
 					case 'ImageDescription':
+					case 'UserComment':
 					case 'Artist':
 					case 'Copyright':
 					case 'RelatedSoundFile':
@@ -1581,14 +1582,14 @@ class FormatMetadata extends ContextSource {
 	 * @since 1.23
 	 */
 	public function fetchExtendedMetadata( File $file ) {
-		$cache = ObjectCache::getMainWANInstance();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		// If revision deleted, exit immediately
 		if ( $file->isDeleted( File::DELETED_FILE ) ) {
 			return [];
 		}
 
-		$cacheKey = wfMemcKey(
+		$cacheKey = $cache->makeKey(
 			'getExtendedMetadata',
 			$this->getLanguage()->getCode(),
 			(int)$this->singleLang,
@@ -1674,7 +1675,7 @@ class FormatMetadata extends ContextSource {
 	 *
 	 * @param File $file File to use
 	 * @param array $extendedMetadata
-	 * @param int $maxCacheTime Hook handlers might use this parameter to override cache time
+	 * @param int &$maxCacheTime Hook handlers might use this parameter to override cache time
 	 *
 	 * @return array [<property name> => ['value' => <value>]], or [] on error
 	 * @since 1.23
@@ -1682,7 +1683,6 @@ class FormatMetadata extends ContextSource {
 	protected function getExtendedMetadataFromHook( File $file, array $extendedMetadata,
 		&$maxCacheTime
 	) {
-
 		Hooks::run( 'GetExtendedMetadata', [
 			&$extendedMetadata,
 			$file,
@@ -1772,7 +1772,7 @@ class FormatMetadata extends ContextSource {
 	/**
 	 * Takes an array returned by the getExtendedMetadata* functions,
 	 * and resolves multi-language values in it.
-	 * @param array $metadata
+	 * @param array &$metadata
 	 * @since 1.23
 	 */
 	protected function resolveMultilangMetadata( &$metadata ) {
@@ -1789,7 +1789,7 @@ class FormatMetadata extends ContextSource {
 	/**
 	 * Takes an array returned by the getExtendedMetadata* functions,
 	 * and turns all fields into single-valued ones by dropping extra values.
-	 * @param array $metadata
+	 * @param array &$metadata
 	 * @since 1.25
 	 */
 	protected function discardMultipleValues( &$metadata ) {
@@ -1806,12 +1806,11 @@ class FormatMetadata extends ContextSource {
 				$field['value'] = $this->resolveMultivalueValue( $field['value'] );
 			}
 		}
-
 	}
 
 	/**
 	 * Makes sure the given array is a valid API response fragment
-	 * @param array $arr
+	 * @param array &$arr
 	 */
 	protected function sanitizeArrayForAPI( &$arr ) {
 		if ( !is_array( $arr ) ) {

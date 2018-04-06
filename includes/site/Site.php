@@ -122,8 +122,6 @@ class Site implements Serializable {
 	protected $internalId = null;
 
 	/**
-	 * Constructor.
-	 *
 	 * @since 1.21
 	 *
 	 * @param string $type
@@ -335,7 +333,7 @@ class Site implements Serializable {
 	 */
 	public function getLinkPath() {
 		$type = $this->getLinkPathType();
-		return $type === null ? null: $this->getPath( $type );
+		return $type === null ? null : $this->getPath( $type );
 	}
 
 	/**
@@ -463,6 +461,9 @@ class Site implements Serializable {
 	 * @param string $languageCode
 	 */
 	public function setLanguageCode( $languageCode ) {
+		if ( !Language::isValidCode( $languageCode ) ) {
+			throw new InvalidArgumentException( "$languageCode is not a valid language code." );
+		}
 		$this->languageCode = $languageCode;
 	}
 

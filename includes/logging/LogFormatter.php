@@ -22,6 +22,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  * @since 1.19
  */
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Implements the default log formatting.
@@ -101,6 +103,11 @@ class LogFormatter {
 	/** @var string */
 	protected $irctext = false;
 
+	/**
+	 * @var LinkRenderer|null
+	 */
+	private $linkRenderer;
+
 	protected function __construct( LogEntry $entry ) {
 		$this->entry = $entry;
 		$this->context = RequestContext::getMain();
@@ -112,6 +119,26 @@ class LogFormatter {
 	 */
 	public function setContext( IContextSource $context ) {
 		$this->context = $context;
+	}
+
+	/**
+	 * @since 1.30
+	 * @param LinkRenderer $linkRenderer
+	 */
+	public function setLinkRenderer( LinkRenderer $linkRenderer ) {
+		$this->linkRenderer = $linkRenderer;
+	}
+
+	/**
+	 * @since 1.30
+	 * @return LinkRenderer
+	 */
+	public function getLinkRenderer() {
+		if ( $this->linkRenderer !== null ) {
+			return $this->linkRenderer;
+		} else {
+			return MediaWikiServices::getInstance()->getLinkRenderer();
+		}
 	}
 
 	/**
@@ -167,7 +194,7 @@ class LogFormatter {
 
 	/**
 	 * Even uglier hack to maintain backwards compatibilty with IRC bots
-	 * (bug 34508).
+	 * (T36508).
 	 * @see getActionText()
 	 * @return string Text
 	 */
@@ -188,7 +215,7 @@ class LogFormatter {
 
 	/**
 	 * Even uglier hack to maintain backwards compatibilty with IRC bots
-	 * (bug 34508).
+	 * (T36508).
 	 * @see getActionText()
 	 * @return string Text
 	 */
@@ -353,7 +380,11 @@ class LogFormatter {
 							$rawDuration = $parameters['5::duration'];
 							$rawFlags = $parameters['6::flags'];
 						}
-						$duration = $wgContLang->translateBlockExpiry( $rawDuration );
+						$duration = $wgContLang->translateBlockExpiry(
+							$rawDuration,
+							null,
+							wfTimestamp( TS_UNIX, $entry->getTimestamp() )
+						);
 						$flags = BlockLogFormatter::formatBlockFlags( $rawFlags, $wgContLang );
 						$text = wfMessage( 'blocklogentry' )
 							->rawParams( $target, $duration, $flags )->inContentLanguage()->escaped();
@@ -363,7 +394,11 @@ class LogFormatter {
 							->rawParams( $target )->inContentLanguage()->escaped();
 						break;
 					case 'reblock':
-						$duration = $wgContLang->translateBlockExpiry( $parameters['5::duration'] );
+						$duration = $wgContLang->translateBlockExpiry(
+							$parameters['5::duration'],
+							null,
+							wfTimestamp( TS_UNIX, $entry->getTimestamp() )
+						);
 						$flags = BlockLogFormatter::formatBlockFlags( $parameters['6::flags'], $wgContLang );
 						$text = wfMessage( 'reblock-logentry' )
 							->rawParams( $target, $duration, $flags )->inContentLanguage()->escaped();
