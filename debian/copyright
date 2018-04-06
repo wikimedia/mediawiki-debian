@@ -4,7 +4,7 @@ Upstream-Contact: Kunal Mehta <legoktm@member.fsf.org>
 Source: https://releases.wikimedia.org/mediawiki/
 
 Files: *
-Copyright: 2001-2016, MediaWiki developers
+Copyright: 2001-2017, MediaWiki developers
 License: GPL-2.0+
 
 Files: extensions/Cite/*
@@ -17,8 +17,8 @@ Copyright: Ævar Arnfjörð Bjarmason
            Trevor Parscal
 License: GPL-2.0+
 
-Files: extensions/Cite/CiteDataModule.php extensions/Cite/CiteCSSFileModule.php extensions/Cite/CiteHooks.php extensions/Cite/modules/ve-cite/*
-Copyright: 2011-2016, Cite VisualEditor Team and others
+Files: extensions/Cite/includes/CiteDataModule.php extensions/Cite/includes/CiteCSSFileModule.php extensions/Cite/includes/CiteHooks.php extensions/Cite/modules/ve-cite/*
+Copyright: 2011-2017, Cite VisualEditor Team and others
 License: Expat
 
 Files: extensions/CiteThisPage/*
@@ -30,6 +30,10 @@ Files: extensions/ConfirmEdit/*
 Copyright: Brion Vibber
            Florian Schmidt
            Sam Reed
+License: GPL-2.0+
+
+Files: extensions/ConfirmEdit/captcha-old.py
+Copyright: 2005 Neil Harris
 License: GPL-2.0+
 
 Files: extensions/ConfirmEdit/ReCaptcha/recaptchalib.php
@@ -138,7 +142,7 @@ Files: includes/libs/CSSMin.php
 Copyright: 2010, Wikimedia Foundation
 License: Apache-2.0
 
-Files: includes/libs/IEContentAnalyzer.php
+Files: includes/libs/mime/IEContentAnalyzer.php
 Copyright: Tim Starling
 License: Tim-Starling-License
 
@@ -161,16 +165,19 @@ Copyright: 2003, Ryan T. Dean <rtdean@cytherianage.net>
 License: BSD-2-clause
 
 Files: includes/widget/*
-Copyright: 2011-2015, MediaWiki Widgets Team and others
+Copyright: 2011-2017, MediaWiki Widgets Team and others
 License: Expat
 
 Files: profileinfo.php
 Copyright: 2005, Kate Turner
 License: Expat
 
-Files: resources/lib/es5-shim/es5-shim.js
-Copyright: 2009-2014, Kristopher Michael Kowal and contributors
-License: Expat
+Files: resources/lib/html5shiv/*
+Copyright: @afarkas
+           @jdalton
+           @jon_neal
+           @rem
+License: Expat or GPL-2.0
 
 Files: resources/lib/jquery/jquery.appear.js
 Copyright: 2009, Michael Hixson
@@ -208,6 +215,14 @@ Files: resources/lib/jquery/jquery.jStorage.js
 Copyright: Andris Reinman <andris.reinman@gmail.com>
 License: Unlicense
 
+Files: resources/lib/jquery/jquery.migrate.js
+Copyright: jQuery Foundation and other contributors
+License: Expat
+
+Files: resources/lib/jquery/jquery3.js
+Copyright: JS Foundation and other contributors
+License: Expat
+
 Files: resources/lib/jquery/jquery.mockjax.js
 Copyright: 2010, appendTo LLC
 License: Expat or GPL-2.0
@@ -232,12 +247,8 @@ Files: resources/lib/jquery.ui/*
 Copyright: 2012, jQuery Foundation and other contributors
 License: Expat
 
-Files: resources/lib/json2/json2.js
-License: PD
-Copyright: Public Domain
-
 Files: resources/lib/moment/*
-Copyright: 2011-2014, Tim Wood, Iskren Chernev, Moment.js contributors
+Copyright: JS Foundation and other contributors
 License: Expat
 
 Files: resources/lib/mustache/*
@@ -246,11 +257,15 @@ Copyright: 2009, Chris Wanstrath
 License: Expat
 
 Files: resources/lib/oojs/*
-Copyright: 2011-2015, OOjs Team and other contributors
+Copyright: 2011-2017, OOjs Team and other contributors
+License: Expat
+
+Files: resources/lib/oojs-router/*
+Copyright: 2011-2016, OOjs Team and other contributors
 License: Expat
 
 Files: resources/lib/oojs-ui/*
-Copyright: 2011-2015, OOjs Team and other contributors
+Copyright: 2011-2017, OOjs Team and other contributors
 License: Expat
 
 Files: resources/lib/qunitjs/*
@@ -284,13 +299,6 @@ Files: resources/src/jquery/jquery.makeCollapsible.*
 License: CC-BY-3.0 or GPL-2.0
 Copyright: 2011-2012 Krinkle
 
-Files: resources/src/jquery/jquery.placeholder.js
-Copyright: Mathias Bynens <http://mathiasbynens.be/>
-           2012, Trevor Parscal <tparscal@wikimedia.org>
-           2012, Krinkle <krinklemail@gmail.com>
-           2013, Alex Ivanov <alexivanov97@gmail.com>
-License: Expat
-
 Files: resources/src/jquery/jquery.tablesorter.*
 Copyright: 2007, Christian Bach
            2011, Leo Koppelkamm
@@ -314,7 +322,7 @@ Copyright: 2009, Ben Leslie
 License: Expat
 
 Files: resources/src/mediawiki.widgets/*
-Copyright: 2011-2015, MediaWiki Widgets Team and others
+Copyright: 2011-2017, MediaWiki Widgets Team and others
 License: Expat
 
 Files: skins/CologneBlue/*
@@ -334,11 +342,11 @@ Copyright: Trevor Parscal, Roan Kattouw, and others
 License: GPL-2.0+
 
 Files: vendor/autoload.php
-Copyright: 2015, Nils Adermann, Jordi Boggiano
+Copyright: Nils Adermann, Jordi Boggiano
 License: Expat
 
 Files: vendor/composer/*
-Copyright: 2015, Nils Adermann, Jordi Boggiano
+Copyright: Nils Adermann, Jordi Boggiano
 License: Expat
 
 Files: vendor/cssjanus/cssjanus/*
@@ -350,9 +358,16 @@ Files: vendor/firebase/php-jwt/*
 Copyright: 2011, Neuman Vong
 License: BSD-3-clause
 
+Files: vendor/james-heinrich/getid3/*
+Copyright: James Heinrich <info@getid3.org>
+License: GPL-2.0 or GPL-3.0
+
 Files: vendor/justinrainbow/json-schema/*
-Copyright: 2008, Gradua Networks
-License: BSD-3-clause
+Copyright: Bruno Prieto Reis
+           Justin Rainbow
+           Igor Wiedler
+           Robert Schönthal
+License: MIT
 
 Files: vendor/liuggio/statsd-php-client/*
 Copyright: Giulio De Donato
@@ -366,12 +381,17 @@ Files: vendor/monolog/monolog/*
 Copyright: 2011-2016 Jordi Boggiano
 License: Expat
 
+Files: vendor/mustangostang/spyc/*
+Copyright: 2005-2006 Chris Wanstrath
+           2006-2011 Vladimir Andersen
+License: Expat
+
 Files: vendor/nmred/kafka-php/*
 Copyright: 2014, SWANSOFT
 License: BSD-3-clause
 
 Files: vendor/oojs/oojs-ui/*
-Copyright: 2011-2016, OOjs UI Team and other contributors
+Copyright: 2011-2017, OOjs UI Team and other contributors
 License: Expat
 
 Files: vendor/oyejorge/less.php/*
@@ -382,9 +402,8 @@ Files: vendor/pear/console_getopt/*
 Copyright: 2001-2015, The PEAR developers
 License: BSD-2-clause
 
-# XXX: https://pear.php.net/bugs/bug.php?id=21082
 Files: vendor/pear/mail/*
-Copyright: 2010, Chuck Hagenbuch
+Copyright: 1997-2017, Chuck Hagenbuch & Richard Heyes
 License: BSD-3-clause
 
 Files: vendor/pear/mail_mime/*
@@ -401,8 +420,8 @@ Copyright: 2002-2015, Jon Parise and Chuck Hagenbuch
 License: PHP-3.01
 
 Files: vendor/pear/net_socket/*
-Copyright: 1997-2003, The PHP Group
-License: PHP-2.02
+Copyright: 1997-2017, The PHP Group
+License: BSD-2-clause
 
 Files: vendor/pear/pear-core-minimal/*
 Copyright: 1997-2010, Sterling Hughes <sterling@php.net>
@@ -419,6 +438,10 @@ Copyright: 1997-2009, Stig Bakken <ssb@php.net>
                       Martin Jansen <mj@php.net>
 License: BSD-2-clause
 
+Files: vendor/pimple/pimple/*
+Copyright: 2009-2015 Fabien Potencier
+License: Expat
+
 Files: vendor/psr/log/*
 Copyright: 2012, PHP Framework Interoperability Group
 License: Expat
@@ -427,8 +450,12 @@ Files: vendor/ruflin/elastica/*
 Copyright: 2014, Nicolas Ruflin
 License: Expat
 
+Files: vendor/stil/gd-text/*
+Copyright: stil
+License: Expat
+
 Files: vendor/symfony/process/*
-Copyright: 2004-2016, Fabien Potencier
+Copyright: 2004-2017, Fabien Potencier
 License: Expat
 
 Files: vendor/wikimedia/assert/*
@@ -456,32 +483,68 @@ Files: vendor/wikimedia/composer-merge-plugin/*
 Copyright: 2015, Bryan Davis, Wikimedia Foundation, and contributors
 License: Expat
 
+Files: vendor/wikimedia/css-sanitizer/*
+Copyright: Brad Jorsch <bjorsch@wikimedia.org>
+License: Apache-2.0
+
 Files: vendor/wikimedia/html-formatter/*
 Copyright: MediaWiki contributors
 License: GPL-2.0+
 
 Files: vendor/wikimedia/ip-set/*
-Copyright: 2014, 2015 Brandon Black <blblack@gmail.com>
+Copyright: 2014-2015, Brandon Black <blblack@gmail.com>
 License: GPL-2.0+
 
 Files: vendor/wikimedia/php-session-serializer/*
 Copyright: 2015, Brad Jorsch <bjorsch@wikimedia.org>
 License: GPL-2.0+
 
+Files: vendor/wikimedia/purtle/*
+Copyright: Daniel Kinzler
+           Stanislav Malyshev
+           Thiemo Mättig
+License: GPL-2.0+
+
+Files: vendor/wikimedia/purtle/src/UnicodeEscaper.php
+Copyright: 2009-2013, Nicholas J Humfrey
+License: BSD-3-clause
+
 Files: vendor/wikimedia/relpath/*
 Copyright: 2015, Ori Livneh <ori@wikimedia.org>
+License: Expat
+
+Files: vendor/wikimedia/remex-html/*
+Copyright: 2016, Wikimedia Foundation
 License: Expat
 
 Files: vendor/wikimedia/running-stat/*
 Copyright: Ori Livneh
 License: GPL-2.0+
 
+Files: vendor/wikimedia/scoped-callback/*
+Copyright: 2016 Aaron Schulz <aschulz@wikimedia.org>
+License: GPL-2.0+
+
+Files: vendor/wikimedia/testing-access-wrapper/*
+Copyright: Adam Roses Wight
+           Brad Jorsch
+           Gergő Tisza
+License: GPL-2.0+
+
 Files: vendor/wikimedia/textcat/*
 Copyright: Stanislav Malyshev
 License: LGPL-2.1
 
+Files: vendor/wikimedia/timestamp/*
+Copyright: 2012, Tyler Romeo <tylerromeo@gmail.com>
+License: GPL-2.0+
+
 Files: vendor/wikimedia/utfnormal/*
 Copyright: 2004, Brion Vibber <brion@pobox.com>
+License: GPL-2.0+
+
+Files: vendor/wikimedia/wait-condition-loop/*
+Copyright: 2016, Aaron Schulz <aschulz@wikimedia.org>
 License: GPL-2.0+
 
 Files: vendor/wikimedia/wrappedstring/*
