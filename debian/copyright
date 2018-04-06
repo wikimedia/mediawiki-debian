@@ -4,7 +4,7 @@ Upstream-Contact: Kunal Mehta <legoktm@member.fsf.org>
 Source: https://releases.wikimedia.org/mediawiki/
 
 Files: *
-Copyright: 2001-2016, MediaWiki developers
+Copyright: 2001-2017, MediaWiki developers
 License: GPL-2.0+
 
 Files: extensions/Cite/*
@@ -17,8 +17,8 @@ Copyright: Ævar Arnfjörð Bjarmason
            Trevor Parscal
 License: GPL-2.0+
 
-Files: extensions/Cite/CiteDataModule.php extensions/Cite/CiteCSSFileModule.php extensions/Cite/CiteHooks.php extensions/Cite/modules/ve-cite/*
-Copyright: 2011-2016, Cite VisualEditor Team and others
+Files: extensions/Cite/includes/CiteDataModule.php extensions/Cite/includes/CiteCSSFileModule.php extensions/Cite/includes/CiteHooks.php extensions/Cite/modules/ve-cite/*
+Copyright: 2011-2017, Cite VisualEditor Team and others
 License: Expat
 
 Files: extensions/CiteThisPage/*
@@ -30,6 +30,10 @@ Files: extensions/ConfirmEdit/*
 Copyright: Brion Vibber
            Florian Schmidt
            Sam Reed
+License: GPL-2.0+
+
+Files: extensions/ConfirmEdit/captcha-old.py
+Copyright: 2005 Neil Harris
 License: GPL-2.0+
 
 Files: extensions/ConfirmEdit/ReCaptcha/recaptchalib.php
@@ -138,7 +142,7 @@ Files: includes/libs/CSSMin.php
 Copyright: 2010, Wikimedia Foundation
 License: Apache-2.0
 
-Files: includes/libs/IEContentAnalyzer.php
+Files: includes/libs/mime/IEContentAnalyzer.php
 Copyright: Tim Starling
 License: Tim-Starling-License
 
@@ -161,16 +165,19 @@ Copyright: 2003, Ryan T. Dean <rtdean@cytherianage.net>
 License: BSD-2-clause
 
 Files: includes/widget/*
-Copyright: 2011-2015, MediaWiki Widgets Team and others
+Copyright: 2011-2017, MediaWiki Widgets Team and others
 License: Expat
 
 Files: profileinfo.php
 Copyright: 2005, Kate Turner
 License: Expat
 
-Files: resources/lib/es5-shim/es5-shim.js
-Copyright: 2009-2014, Kristopher Michael Kowal and contributors
-License: Expat
+Files: resources/lib/html5shiv/*
+Copyright: @afarkas
+           @jdalton
+           @jon_neal
+           @rem
+License: Expat or GPL-2.0
 
 Files: resources/lib/jquery/jquery.appear.js
 Copyright: 2009, Michael Hixson
@@ -208,6 +215,14 @@ Files: resources/lib/jquery/jquery.jStorage.js
 Copyright: Andris Reinman <andris.reinman@gmail.com>
 License: Unlicense
 
+Files: resources/lib/jquery/jquery.migrate.js
+Copyright: jQuery Foundation and other contributors
+License: Expat
+
+Files: resources/lib/jquery/jquery3.js
+Copyright: JS Foundation and other contributors
+License: Expat
+
 Files: resources/lib/jquery/jquery.mockjax.js
 Copyright: 2010, appendTo LLC
 License: Expat or GPL-2.0
@@ -232,12 +247,8 @@ Files: resources/lib/jquery.ui/*
 Copyright: 2012, jQuery Foundation and other contributors
 License: Expat
 
-Files: resources/lib/json2/json2.js
-License: PD
-Copyright: Public Domain
-
 Files: resources/lib/moment/*
-Copyright: 2011-2014, Tim Wood, Iskren Chernev, Moment.js contributors
+Copyright: JS Foundation and other contributors
 License: Expat
 
 Files: resources/lib/mustache/*
@@ -246,11 +257,15 @@ Copyright: 2009, Chris Wanstrath
 License: Expat
 
 Files: resources/lib/oojs/*
-Copyright: 2011-2015, OOjs Team and other contributors
+Copyright: 2011-2017, OOjs Team and other contributors
+License: Expat
+
+Files: resources/lib/oojs-router/*
+Copyright: 2011-2016, OOjs Team and other contributors
 License: Expat
 
 Files: resources/lib/oojs-ui/*
-Copyright: 2011-2015, OOjs Team and other contributors
+Copyright: 2011-2017, OOjs Team and other contributors
 License: Expat
 
 Files: resources/lib/qunitjs/*
@@ -284,13 +299,6 @@ Files: resources/src/jquery/jquery.makeCollapsible.*
 License: CC-BY-3.0 or GPL-2.0
 Copyright: 2011-2012 Krinkle
 
-Files: resources/src/jquery/jquery.placeholder.js
-Copyright: Mathias Bynens <http://mathiasbynens.be/>
-           2012, Trevor Parscal <tparscal@wikimedia.org>
-           2012, Krinkle <krinklemail@gmail.com>
-           2013, Alex Ivanov <alexivanov97@gmail.com>
-License: Expat
-
 Files: resources/src/jquery/jquery.tablesorter.*
 Copyright: 2007, Christian Bach
            2011, Leo Koppelkamm
@@ -314,7 +322,7 @@ Copyright: 2009, Ben Leslie
 License: Expat
 
 Files: resources/src/mediawiki.widgets/*
-Copyright: 2011-2015, MediaWiki Widgets Team and others
+Copyright: 2011-2017, MediaWiki Widgets Team and others
 License: Expat
 
 Files: skins/CologneBlue/*
@@ -334,11 +342,11 @@ Copyright: Trevor Parscal, Roan Kattouw, and others
 License: GPL-2.0+
 
 Files: vendor/autoload.php
-Copyright: 2015, Nils Adermann, Jordi Boggiano
+Copyright: Nils Adermann, Jordi Boggiano
 License: Expat
 
 Files: vendor/composer/*
-Copyright: 2015, Nils Adermann, Jordi Boggiano
+Copyright: Nils Adermann, Jordi Boggiano
 License: Expat
 
 Files: vendor/cssjanus/cssjanus/*
@@ -350,9 +358,16 @@ Files: vendor/firebase/php-jwt/*
 Copyright: 2011, Neuman Vong
 License: BSD-3-clause
 
+Files: vendor/james-heinrich/getid3/*
+Copyright: James Heinrich <info@getid3.org>
+License: GPL-2.0 or GPL-3.0
+
 Files: vendor/justinrainbow/json-schema/*
-Copyright: 2008, Gradua Networks
-License: BSD-3-clause
+Copyright: Bruno Prieto Reis
+           Justin Rainbow
+           Igor Wiedler
+           Robert Schönthal
+License: Expat
 
 Files: vendor/liuggio/statsd-php-client/*
 Copyright: Giulio De Donato
@@ -366,12 +381,17 @@ Files: vendor/monolog/monolog/*
 Copyright: 2011-2016 Jordi Boggiano
 License: Expat
 
+Files: vendor/mustangostang/spyc/*
+Copyright: 2005-2006 Chris Wanstrath
+           2006-2011 Vladimir Andersen
+License: Expat
+
 Files: vendor/nmred/kafka-php/*
 Copyright: 2014, SWANSOFT
 License: BSD-3-clause
 
 Files: vendor/oojs/oojs-ui/*
-Copyright: 2011-2016, OOjs UI Team and other contributors
+Copyright: 2011-2017, OOjs UI Team and other contributors
 License: Expat
 
 Files: vendor/oyejorge/less.php/*
@@ -382,9 +402,8 @@ Files: vendor/pear/console_getopt/*
 Copyright: 2001-2015, The PEAR developers
 License: BSD-2-clause
 
-# XXX: https://pear.php.net/bugs/bug.php?id=21082
 Files: vendor/pear/mail/*
-Copyright: 2010, Chuck Hagenbuch
+Copyright: 1997-2017, Chuck Hagenbuch & Richard Heyes
 License: BSD-3-clause
 
 Files: vendor/pear/mail_mime/*
@@ -401,8 +420,8 @@ Copyright: 2002-2015, Jon Parise and Chuck Hagenbuch
 License: PHP-3.01
 
 Files: vendor/pear/net_socket/*
-Copyright: 1997-2003, The PHP Group
-License: PHP-2.02
+Copyright: 1997-2017, The PHP Group
+License: BSD-2-clause
 
 Files: vendor/pear/pear-core-minimal/*
 Copyright: 1997-2010, Sterling Hughes <sterling@php.net>
@@ -419,6 +438,10 @@ Copyright: 1997-2009, Stig Bakken <ssb@php.net>
                       Martin Jansen <mj@php.net>
 License: BSD-2-clause
 
+Files: vendor/pimple/pimple/*
+Copyright: 2009-2015 Fabien Potencier
+License: Expat
+
 Files: vendor/psr/log/*
 Copyright: 2012, PHP Framework Interoperability Group
 License: Expat
@@ -427,8 +450,12 @@ Files: vendor/ruflin/elastica/*
 Copyright: 2014, Nicolas Ruflin
 License: Expat
 
+Files: vendor/stil/gd-text/*
+Copyright: stil
+License: Expat
+
 Files: vendor/symfony/process/*
-Copyright: 2004-2016, Fabien Potencier
+Copyright: 2004-2017, Fabien Potencier
 License: Expat
 
 Files: vendor/wikimedia/assert/*
@@ -456,32 +483,68 @@ Files: vendor/wikimedia/composer-merge-plugin/*
 Copyright: 2015, Bryan Davis, Wikimedia Foundation, and contributors
 License: Expat
 
+Files: vendor/wikimedia/css-sanitizer/*
+Copyright: Brad Jorsch <bjorsch@wikimedia.org>
+License: Apache-2.0
+
 Files: vendor/wikimedia/html-formatter/*
 Copyright: MediaWiki contributors
 License: GPL-2.0+
 
 Files: vendor/wikimedia/ip-set/*
-Copyright: 2014, 2015 Brandon Black <blblack@gmail.com>
+Copyright: 2014-2015, Brandon Black <blblack@gmail.com>
 License: GPL-2.0+
 
 Files: vendor/wikimedia/php-session-serializer/*
 Copyright: 2015, Brad Jorsch <bjorsch@wikimedia.org>
 License: GPL-2.0+
 
+Files: vendor/wikimedia/purtle/*
+Copyright: Daniel Kinzler
+           Stanislav Malyshev
+           Thiemo Mättig
+License: GPL-2.0+
+
+Files: vendor/wikimedia/purtle/src/UnicodeEscaper.php
+Copyright: 2009-2013, Nicholas J Humfrey
+License: BSD-3-clause
+
 Files: vendor/wikimedia/relpath/*
 Copyright: 2015, Ori Livneh <ori@wikimedia.org>
+License: Expat
+
+Files: vendor/wikimedia/remex-html/*
+Copyright: 2016, Wikimedia Foundation
 License: Expat
 
 Files: vendor/wikimedia/running-stat/*
 Copyright: Ori Livneh
 License: GPL-2.0+
 
+Files: vendor/wikimedia/scoped-callback/*
+Copyright: 2016 Aaron Schulz <aschulz@wikimedia.org>
+License: GPL-2.0+
+
+Files: vendor/wikimedia/testing-access-wrapper/*
+Copyright: Adam Roses Wight
+           Brad Jorsch
+           Gergő Tisza
+License: GPL-2.0+
+
 Files: vendor/wikimedia/textcat/*
 Copyright: Stanislav Malyshev
 License: LGPL-2.1
 
+Files: vendor/wikimedia/timestamp/*
+Copyright: 2012, Tyler Romeo <tylerromeo@gmail.com>
+License: GPL-2.0+
+
 Files: vendor/wikimedia/utfnormal/*
 Copyright: 2004, Brion Vibber <brion@pobox.com>
+License: GPL-2.0+
+
+Files: vendor/wikimedia/wait-condition-loop/*
+Copyright: 2016, Aaron Schulz <aschulz@wikimedia.org>
 License: GPL-2.0+
 
 Files: vendor/wikimedia/wrappedstring/*
@@ -517,6 +580,23 @@ License: GPL-2.0+
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2`.
+
+License: GPL-3.0
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, version 3 of the License.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 3 can be found in the file
+ `/usr/share/common-licenses/GPL-3`.
 
 License: Expat
  Permission is hereby granted, free of charge, to any person
@@ -1518,11 +1598,6 @@ License: CC-BY-SA-3.0
  .
      Creative Commons may be contacted at https://creativecommons.org/.
 
-License: PD
- Public Domain.
- .
- NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
-
 License: LGPL-2.1
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -1612,79 +1687,3 @@ License: PHP-3.01
  PHP includes the Zend Engine, freely available at
  <http://www.zend.com>.
 
-License: PHP-2.02
- -------------------------------------------------------------------- 
-                   The PHP License, version 2.02
- Copyright (c) 1999 - 2002 The PHP Group. All rights reserved.
- -------------------------------------------------------------------- 
- .
- Redistribution and use in source and binary forms, with or without
- modification, is permitted provided that the following conditions
- are met:
- .
-   1. Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer. 
- .
-   2. Redistributions in binary form must reproduce the above 
-      copyright notice, this list of conditions and the following 
-      disclaimer in the documentation and/or other materials provided
-      with the distribution.
- .
-   3. The name "PHP" must not be used to endorse or promote products 
-      derived from this software without prior permission from the 
-      PHP Group.  This does not apply to add-on libraries or tools
-      that work in conjunction with PHP.  In such a case the PHP
-      name may be used to indicate that the product supports PHP.
- .
-   4. The PHP Group may publish revised and/or new versions of the
-      license from time to time. Each version will be given a
-      distinguishing version number.
-      Once covered code has been published under a particular version
-      of the license, you may always continue to use it under the
-      terms of that version. You may also choose to use such covered
-      code under the terms of any subsequent version of the license
-      published by the PHP Group. No one other than the PHP Group has
-      the right to modify the terms applicable to covered code created
-      under this License.
- .
-   5. Redistributions of any form whatsoever must retain the following
-      acknowledgment:
-      "This product includes PHP, freely available from
-      http://www.php.net/".
- .
-   6. The software incorporates the Zend Engine, a product of Zend
-      Technologies, Ltd. ("Zend"). The Zend Engine is licensed to the
-      PHP Association (pursuant to a grant from Zend that can be
-      found at http://www.php.net/license/ZendGrant/) for
-      distribution to you under this license agreement, only as a
-      part of PHP.  In the event that you separate the Zend Engine
-      (or any portion thereof) from the rest of the software, or
-      modify the Zend Engine, or any portion thereof, your use of the
-      separated or modified Zend Engine software shall not be governed
-      by this license, and instead shall be governed by the license
-      set forth at http://www.zend.com/license/ZendLicense/. 
- .
- .
- .
- THIS SOFTWARE IS PROVIDED BY THE PHP DEVELOPMENT TEAM ``AS IS'' AND 
- ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
- PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PHP
- DEVELOPMENT TEAM OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- OF THE POSSIBILITY OF SUCH DAMAGE.
- .
- -------------------------------------------------------------------- 
- .
- This software consists of voluntary contributions made by many
- individuals on behalf of the PHP Group.
- .
- The PHP Group can be contacted via Email at group@php.net.
- .
- For more information on the PHP Group and the PHP project, 
- please see <http://www.php.net>.
