@@ -34,7 +34,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 	const LINKS = 'links';
 	const TEMPLATES = 'templates';
 
-	private $table, $prefix, $helpUrl;
+	private $table, $prefix, $titlesParam, $helpUrl;
 
 	public function __construct( ApiQuery $query, $moduleName ) {
 		switch ( $moduleName ) {
@@ -42,13 +42,13 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 				$this->table = 'pagelinks';
 				$this->prefix = 'pl';
 				$this->titlesParam = 'titles';
-				$this->helpUrl = 'https://www.mediawiki.org/wiki/API:Links';
+				$this->helpUrl = 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Links';
 				break;
 			case self::TEMPLATES:
 				$this->table = 'templatelinks';
 				$this->prefix = 'tl';
 				$this->titlesParam = 'templates';
-				$this->helpUrl = 'https://www.mediawiki.org/wiki/API:Templates';
+				$this->helpUrl = 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Templates';
 				break;
 			default:
 				ApiBase::dieDebug( __METHOD__, 'Unknown module name' );
@@ -94,7 +94,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 			foreach ( $params[$this->titlesParam] as $t ) {
 				$title = Title::newFromText( $t );
 				if ( !$title ) {
-					$this->setWarning( "\"$t\" is not a valid title" );
+					$this->addWarning( [ 'apiwarn-invalidtitle', wfEscapeWikiText( $t ) ] );
 				} else {
 					$lb->addObj( $title );
 				}
@@ -137,7 +137,6 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 
 		$order[] = $this->prefix . '_title' . $sort;
 		$this->addOption( 'ORDER BY', $order );
-		$this->addOption( 'USE INDEX', $this->prefix . '_from' );
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 
 		$res = $this->select( __METHOD__ );
@@ -182,7 +181,8 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		return [
 			'namespace' => [
 				ApiBase::PARAM_TYPE => 'namespace',
-				ApiBase::PARAM_ISMULTI => true
+				ApiBase::PARAM_ISMULTI => true,
+				ApiBase::PARAM_EXTRA_NAMESPACES => [ NS_MEDIA, NS_SPECIAL ],
 			],
 			'limit' => [
 				ApiBase::PARAM_DFLT => 10,

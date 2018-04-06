@@ -20,6 +20,8 @@
  * @file
  */
 
+use Wikimedia\Rdbms\ResultWrapper;
+
 /**
  * Class for viewing MediaWiki file description pages
  *
@@ -50,18 +52,6 @@ class ImagePage extends Article {
 	protected function newPage( Title $title ) {
 		// Overload mPage with a file-specific page
 		return new WikiFilePage( $title );
-	}
-
-	/**
-	 * Constructor from a page id
-	 * @param int $id Article ID to load
-	 * @return ImagePage|null
-	 */
-	public static function newFromID( $id ) {
-		$t = Title::newFromID( $id );
-		# @todo FIXME: Doesn't inherit right
-		return $t == null ? null : new self( $t );
-		# return $t == null ? null : new static( $t ); // PHP 5.3
 	}
 
 	/**
@@ -125,23 +115,11 @@ class ImagePage extends Article {
 
 		if ( $this->getTitle()->getNamespace() == NS_FILE && $this->mPage->getFile()->getRedirected() ) {
 			if ( $this->getTitle()->getDBkey() == $this->mPage->getFile()->getName() || $diff !== null ) {
-				// mTitle is the same as the redirect target so ask Article
-				// to perform the redirect for us.
 				$request->setVal( 'diffonly', 'true' );
-				parent::view();
-				return;
-			} else {
-				// mTitle is not the same as the redirect target so it is
-				// probably the redirect page itself. Fake the redirect symbol
-				$out->setPageTitle( $this->getTitle()->getPrefixedText() );
-				$out->addHTML( $this->viewRedirect(
-					Title::makeTitle( NS_FILE, $this->mPage->getFile()->getName() ),
-					/* $appendSubtitle */ true,
-					/* $forceKnown */ true )
-				);
-				$this->mPage->doViewUpdates( $this->getContext()->getUser(), $this->getOldID() );
-				return;
 			}
+
+			parent::view();
+			return;
 		}
 
 		if ( $wgShowEXIF && $this->displayImg->exists() ) {
@@ -223,11 +201,11 @@ class ImagePage extends Article {
 				$out->addStyle( $css );
 			}
 		}
-		// always show the local local Filepage.css, bug 29277
-		$out->addModuleStyles( 'filepage' );
 
-		// Add MediaWiki styles for a file page
-		$out->addModuleStyles( 'mediawiki.action.view.filepage' );
+		$out->addModuleStyles( [
+			'filepage', // always show the local local Filepage.css, T31277
+			'mediawiki.action.view.filepage', // Add MediaWiki styles for a file page
+		] );
 	}
 
 	/**
@@ -276,15 +254,16 @@ class ImagePage extends Article {
 		$r .= "<table id=\"mw_metadata\" class=\"mw_metadata\">\n";
 		foreach ( $metadata as $type => $stuff ) {
 			foreach ( $stuff as $v ) {
-				# @todo FIXME: Why is this using escapeId for a class?!
-				$class = Sanitizer::escapeId( $v['id'] );
+				$class = str_replace( ' ', '_', $v['id'] );
 				if ( $type == 'collapsed' ) {
 					// Handled by mediawiki.action.view.metadata module.
 					$class .= ' collapsable';
 				}
-				$r .= "<tr class=\"$class\">\n";
-				$r .= "<th>{$v['name']}</th>\n";
-				$r .= "<td>{$v['value']}</td>\n</tr>";
+				$r .= Html::rawElement( 'tr',
+					[ 'class' => $class ],
+					Html::rawElement( 'th', [], $v['name'] )
+						. Html::rawElement( 'td', [], $v['value'] )
+				);
 			}
 		}
 		$r .= "</table>\n</div>\n";
@@ -348,7 +327,7 @@ class ImagePage extends Article {
 			$filename = wfEscapeWikiText( $this->displayImg->getName() );
 			$linktext = $filename;
 
-			// Use of &$this in hooks triggers warnings in PHP 7.1
+			// Avoid PHP 7.1 warning from passing $this by reference
 			$imagePage = $this;
 
 			Hooks::run( 'ImageOpenShowImageInlineBefore', [ &$imagePage, &$out ] );
@@ -444,7 +423,7 @@ class ImagePage extends Article {
 					$count = $this->displayImg->pageCount();
 
 					if ( $page > 1 ) {
-						$label = $out->parse( $this->getContext()->msg( 'imgmultipageprev' )->text(), false );
+						$label = $this->getContext()->msg( 'imgmultipageprev' )->text();
 						// on the client side, this link is generated in ajaxifyPageNavigation()
 						// in the mediawiki.page.image.pagination module
 						$link = Linker::linkKnown(
@@ -504,6 +483,7 @@ class ImagePage extends Article {
 						Xml::openElement( 'form', $formParams ) .
 						Html::hidden( 'title', $this->getTitle()->getPrefixedDBkey() ) .
 						$this->getContext()->msg( 'imgmultigoto' )->rawParams( $select )->parse() .
+						$this->getContext()->msg( 'word-separator' )->escaped() .
 						Xml::submitButton( $this->getContext()->msg( 'imgmultigo' )->text() ) .
 						Xml::closeElement( 'form' ) .
 						"<hr />$thumb1\n$thumb2<br style=\"clear: both\" /></div></td></tr></table>"
@@ -546,7 +526,7 @@ class ImagePage extends Article {
 				// this will get messy.
 				// The dirmark, however, must not be immediately adjacent
 				// to the filename, because it can get copied with it.
-				// See bug 25277.
+				// See T27277.
 				// @codingStandardsIgnoreStart Ignore long line
 				$out->addWikiText( <<<EOT
 <div class="fullMedia"><span class="dangerousLink">{$medialink}</span> $dirmark<span class="fileInfo">$longDesc</span></div>
@@ -597,6 +577,8 @@ EOT
 		} else {
 			# Image does not exist
 			if ( !$this->getId() ) {
+				$dbr = wfGetDB( DB_REPLICA );
+
 				# No article exists either
 				# Show deletion log to be consistent with normal articles
 				LogEventsList::showLogExtract(
@@ -605,7 +587,7 @@ EOT
 					$this->getTitle()->getPrefixedText(),
 					'',
 					[ 'lim' => 10,
-						'conds' => [ "log_action != 'revision'" ],
+						'conds' => [ 'log_action != ' . $dbr->addQuotes( 'revision' ) ],
 						'showIfEmpty' => false,
 						'msgKey' => [ 'moveddeleted-notice' ]
 					]
@@ -639,8 +621,8 @@ EOT
 	/**
 	 * Make the text under the image to say what size preview
 	 *
-	 * @param $params array parameters for thumbnail
-	 * @param $sizeLinkBigImagePreview HTML for the current size
+	 * @param array $params parameters for thumbnail
+	 * @param string $sizeLinkBigImagePreview HTML for the current size
 	 * @return string HTML output
 	 */
 	private function getThumbPrevText( $params, $sizeLinkBigImagePreview ) {
@@ -813,7 +795,7 @@ EOT
 	 * @return ResultWrapper
 	 */
 	protected function queryImageLinks( $target, $limit ) {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 
 		return $dbr->select(
 			[ 'imagelinks', 'page' ],

@@ -28,6 +28,8 @@
  * @since 1.19
  */
 
+use Wikimedia\Rdbms\IDatabase;
+
 /**
  * Interface for log entries. Every log entry has these methods.
  *
@@ -168,19 +170,21 @@ class DatabaseLogEntry extends LogEntryBase {
 	 * @return array
 	 */
 	public static function getSelectQueryData() {
-		$tables = [ 'logging', 'user' ];
+		$commentQuery = CommentStore::newKey( 'log_comment' )->getJoin();
+
+		$tables = [ 'logging', 'user' ] + $commentQuery['tables'];
 		$fields = [
 			'log_id', 'log_type', 'log_action', 'log_timestamp',
 			'log_user', 'log_user_text',
 			'log_namespace', 'log_title', // unused log_page
-			'log_comment', 'log_params', 'log_deleted',
+			'log_params', 'log_deleted',
 			'user_id', 'user_name', 'user_editcount',
-		];
+		] + $commentQuery['fields'];
 
 		$joins = [
 			// IPs don't have an entry in user table
 			'user' => [ 'LEFT JOIN', 'log_user=user_id' ],
-		];
+		] + $commentQuery['joins'];
 
 		return [
 			'tables' => $tables,
@@ -320,7 +324,7 @@ class DatabaseLogEntry extends LogEntryBase {
 	}
 
 	public function getComment() {
-		return $this->row->log_comment;
+		return CommentStore::newKey( 'log_comment' )->getComment( $this->row )->text;
 	}
 
 	public function getDeleted() {
@@ -378,7 +382,9 @@ class RCDatabaseLogEntry extends DatabaseLogEntry {
 	}
 
 	public function getComment() {
-		return $this->row->rc_comment;
+		return CommentStore::newKey( 'rc_comment' )
+			// Legacy because the row probably used RecentChange::selectFields()
+			->getCommentLegacy( wfGetDB( DB_REPLICA ), $this->row )->text;
 	}
 
 	public function getDeleted() {
@@ -428,15 +434,13 @@ class ManualLogEntry extends LogEntryBase {
 	/** @var int ID of the log entry */
 	protected $id;
 
-	/** @var Can this log entry be patrolled? */
+	/** @var bool Can this log entry be patrolled? */
 	protected $isPatrollable = false;
 
 	/** @var bool Whether this is a legacy log entry */
 	protected $legacy = false;
 
 	/**
-	 * Constructor.
-	 *
 	 * @since 1.19
 	 * @param string $type
 	 * @param string $subtype
@@ -589,10 +593,7 @@ class ManualLogEntry extends LogEntryBase {
 	 * @throws MWException
 	 */
 	public function insert( IDatabase $dbw = null ) {
-		global $wgContLang;
-
 		$dbw = $dbw ?: wfGetDB( DB_MASTER );
-		$id = $dbw->nextSequenceValue( 'logging_log_id_seq' );
 
 		if ( $this->timestamp === null ) {
 			$this->timestamp = wfTimestampNow();
@@ -600,9 +601,6 @@ class ManualLogEntry extends LogEntryBase {
 
 		// Trim spaces on user supplied text
 		$comment = trim( $this->getComment() );
-
-		// Truncate for whole multibyte characters.
-		$comment = $wgContLang->truncate( $comment, 255 );
 
 		$params = $this->getParameters();
 		$relations = $this->relations;
@@ -615,7 +613,6 @@ class ManualLogEntry extends LogEntryBase {
 		}
 
 		$data = [
-			'log_id' => $id,
 			'log_type' => $this->getType(),
 			'log_action' => $this->getSubtype(),
 			'log_timestamp' => $dbw->timestamp( $this->getTimestamp() ),
@@ -624,15 +621,15 @@ class ManualLogEntry extends LogEntryBase {
 			'log_namespace' => $this->getTarget()->getNamespace(),
 			'log_title' => $this->getTarget()->getDBkey(),
 			'log_page' => $this->getTarget()->getArticleID(),
-			'log_comment' => $comment,
 			'log_params' => LogEntryBase::makeParamBlob( $params ),
 		];
 		if ( isset( $this->deleted ) ) {
 			$data['log_deleted'] = $this->deleted;
 		}
+		$data += CommentStore::newKey( 'log_comment' )->insert( $dbw, $comment );
 
 		$dbw->insert( 'logging', $data, __METHOD__ );
-		$this->id = !is_null( $id ) ? $id : $dbw->insertId();
+		$this->id = $dbw->insertId();
 
 		$rows = [];
 		foreach ( $relations as $tag => $values ) {
@@ -705,39 +702,39 @@ class ManualLogEntry extends LogEntryBase {
 	 *
 	 * @param int $newId Id of the log entry.
 	 * @param string $to One of: rcandudp (default), rc, udp
-	 * @return RecentChange|null
 	 */
 	public function publish( $newId, $to = 'rcandudp' ) {
-		$log = new LogPage( $this->getType() );
-		if ( $log->isRestricted() ) {
-			return null;
-		}
+		DeferredUpdates::addCallableUpdate(
+			function () use ( $newId, $to ) {
+				$log = new LogPage( $this->getType() );
+				if ( !$log->isRestricted() ) {
+					$rc = $this->getRecentChange( $newId );
 
-		$rc = $this->getRecentChange( $newId );
+					if ( $to === 'rc' || $to === 'rcandudp' ) {
+						// save RC, passing tags so they are applied there
+						$tags = $this->getTags();
+						if ( is_null( $tags ) ) {
+							$tags = [];
+						}
+						$rc->addTags( $tags );
+						$rc->save( 'pleasedontudp' );
+					}
 
-		if ( $to === 'rc' || $to === 'rcandudp' ) {
-			$rc->save( 'pleasedontudp' );
-		}
+					if ( $to === 'udp' || $to === 'rcandudp' ) {
+						$rc->notifyRCFeeds();
+					}
 
-		if ( $to === 'udp' || $to === 'rcandudp' ) {
-			$rc->notifyRCFeeds();
-		}
-
-		// Log the autopatrol if the log entry is patrollable
-		if ( $this->getIsPatrollable() &&
-			$rc->getAttribute( 'rc_patrolled' ) === 1 ) {
-			PatrolLog::record( $rc, true, $this->getPerformer() );
-		}
-
-		// Add change tags to the log entry and (if applicable) the associated revision
-		$tags = $this->getTags();
-		if ( !is_null( $tags ) ) {
-			$rcId = $rc->getAttribute( 'rc_id' );
-			$revId = $this->getAssociatedRevId(); // Use null if $revId is 0
-			ChangeTags::addTags( $tags, $rcId, $revId > 0 ? $revId : null, $newId );
-		}
-
-		return $rc;
+					// Log the autopatrol if the log entry is patrollable
+					if ( $this->getIsPatrollable() &&
+						$rc->getAttribute( 'rc_patrolled' ) === 1
+					) {
+						PatrolLog::record( $rc, true, $this->getPerformer() );
+					}
+				}
+			},
+			DeferredUpdates::POSTSEND,
+			wfGetDB( DB_MASTER )
+		);
 	}
 
 	public function getType() {

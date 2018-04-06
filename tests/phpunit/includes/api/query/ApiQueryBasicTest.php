@@ -248,7 +248,6 @@ class ApiQueryBasicTest extends ApiQueryTestBase {
 	 * Test basic lists
 	 */
 	public function testAllTogether() {
-
 		// All props together
 		$this->check( $this->merge(
 			self::$links,
@@ -325,7 +324,7 @@ class ApiQueryBasicTest extends ApiQueryTestBase {
 	}
 
 	/**
-	 * Test bug 51821
+	 * Test T53821
 	 */
 	public function testGeneratorRedirects() {
 		$this->editPage( 'AQBT-Target', 'test' );

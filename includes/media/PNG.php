@@ -30,7 +30,7 @@ class PNGHandler extends BitmapHandler {
 	const BROKEN_FILE = '0';
 
 	/**
-	 * @param File $image
+	 * @param File|FSFile $image
 	 * @param string $filename
 	 * @return string
 	 */
@@ -112,7 +112,6 @@ class PNGHandler extends BitmapHandler {
 	}
 
 	function isMetadataValid( $image, $metadata ) {
-
 		if ( $metadata === self::BROKEN_FILE ) {
 			// Do not repetitivly regenerate metadata on broken file.
 			return self::METADATA_GOOD;

@@ -43,12 +43,12 @@
  *
  * @par Example:
  * @code
- * $magicWords = array();
+ * $magicWords = [];
  *
- * $magicWords['en'] = array(
- * 	'magicwordkey' => array( 0, 'case_insensitive_magic_word' ),
- * 	'magicwordkey2' => array( 1, 'CASE_sensitive_magic_word2' ),
- * );
+ * $magicWords['en'] = [
+ *   'magicwordkey' => [ 0, 'case_insensitive_magic_word' ],
+ *   'magicwordkey2' => [ 1, 'CASE_sensitive_magic_word2' ],
+ * ];
  * @endcode
  *
  * For magic words which are also Parser variables, add a MagicWordwgVariableIDs
@@ -169,6 +169,7 @@ class MagicWord {
 		'localtimestamp',
 		'directionmark',
 		'contentlanguage',
+		'pagelanguage',
 		'numberofadmins',
 		'cascadingsources',
 	];
@@ -501,7 +502,7 @@ class MagicWord {
 			# multiple matched parts (variable match); some will be empty because of
 			# synonyms. The variable will be the second non-empty one so remove any
 			# blank elements and re-sort the indices.
-			# See also bug 6526
+			# See also T8526
 
 			$matches = array_values( array_filter( $matches ) );
 
@@ -517,7 +518,7 @@ class MagicWord {
 	 * Returns true if the text matches the word, and alters the
 	 * input string, removing all instances of the word
 	 *
-	 * @param string $text
+	 * @param string &$text
 	 *
 	 * @return bool
 	 */
@@ -533,7 +534,7 @@ class MagicWord {
 	}
 
 	/**
-	 * @param string $text
+	 * @param string &$text
 	 * @return bool
 	 */
 	public function matchStartAndRemove( &$text ) {
@@ -646,37 +647,10 @@ class MagicWord {
 	}
 
 	/**
-	 * $magicarr is an associative array of (magic word ID => replacement)
-	 * This method uses the php feature to do several replacements at the same time,
-	 * thereby gaining some efficiency. The result is placed in the out variable
-	 * $result. The return value is true if something was replaced.
-	 * @deprecated since 1.25, unused
-	 *
-	 * @param array $magicarr
-	 * @param string $subject
-	 * @param string $result
-	 *
-	 * @return bool
-	 */
-	public function replaceMultiple( $magicarr, $subject, &$result ) {
-		wfDeprecated( __METHOD__, '1.25' );
-		$search = [];
-		$replace = [];
-		foreach ( $magicarr as $id => $replacement ) {
-			$mw = MagicWord::get( $id );
-			$search[] = $mw->getRegex();
-			$replace[] = $replacement;
-		}
-
-		$result = preg_replace( $search, $replace, $subject );
-		return $result !== $subject;
-	}
-
-	/**
 	 * Adds all the synonyms of this MagicWord to an array, to allow quick
 	 * lookup in a list of magic words
 	 *
-	 * @param array $array
+	 * @param array &$array
 	 * @param string $value
 	 */
 	public function addToArray( &$array, $value ) {

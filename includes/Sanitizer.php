@@ -41,7 +41,7 @@ class Sanitizer {
 
 	/**
 	 * Acceptable tag name charset from HTML5 parsing spec
-	 * http://www.w3.org/TR/html5/syntax.html#tag-open-state
+	 * https://www.w3.org/TR/html5/syntax.html#tag-open-state
 	 */
 	const ELEMENT_BITS_REGEX = '!^(/?)([A-Za-z][^\t\n\v />\0]*+)([^>]*?)(/?>)([^<]*)$!';
 
@@ -57,8 +57,23 @@ class Sanitizer {
 	const XMLNS_ATTRIBUTE_PATTERN = "/^xmlns:[:A-Z_a-z-.0-9]+$/";
 
 	/**
+	 * Tells escapeUrlForHtml() to encode the ID using the wiki's primary encoding.
+	 *
+	 * @since 1.30
+	 */
+	const ID_PRIMARY = 0;
+
+	/**
+	 * Tells escapeUrlForHtml() to encode the ID using the fallback encoding, or return false
+	 * if no fallback is configured.
+	 *
+	 * @since 1.30
+	 */
+	const ID_FALLBACK = 1;
+
+	/**
 	 * List of all named character entities defined in HTML 4.01
-	 * http://www.w3.org/TR/html4/sgml/entities.html
+	 * https://www.w3.org/TR/html4/sgml/entities.html
 	 * As well as &apos; which is only defined starting in XHTML1.
 	 */
 	private static $htmlEntities = [
@@ -333,25 +348,25 @@ class Sanitizer {
 	/**
 	 * Regular expression to match HTML/XML attribute pairs within a tag.
 	 * Allows some... latitude. Based on,
-	 * http://www.w3.org/TR/html5/syntax.html#before-attribute-value-state
+	 * https://www.w3.org/TR/html5/syntax.html#before-attribute-value-state
 	 * Used in Sanitizer::fixTagAttributes and Sanitizer::decodeTagAttributes
 	 * @return string
 	 */
 	static function getAttribsRegex() {
 		if ( self::$attribsRegex === null ) {
-			$attribFirst = '[:A-Z_a-z0-9]';
-			$attrib = '[:A-Z_a-z-.0-9]';
+			$attribFirst = "[:_\p{L}\p{N}]";
+			$attrib = "[:_\.\-\p{L}\p{N}]";
 			$space = '[\x09\x0a\x0c\x0d\x20]';
 			self::$attribsRegex =
 				"/(?:^|$space)({$attribFirst}{$attrib}*)
-				  ($space*=$space*
+					($space*=$space*
 					(?:
-					 # The attribute value: quoted or alone
-					  \"([^\"]*)(?:\"|\$)
-					 | '([^']*)(?:'|\$)
-					 |  (((?!$space|>).)*)
+						# The attribute value: quoted or alone
+						\"([^\"]*)(?:\"|\$)
+						| '([^']*)(?:'|\$)
+						| (((?!$space|>).)*)
 					)
-				)?(?=$space|\$)/sx";
+				)?(?=$space|\$)/sxu";
 		}
 		return self::$attribsRegex;
 	}
@@ -381,14 +396,17 @@ class Sanitizer {
 				'kbd', 'samp', 'data', 'time', 'mark'
 			];
 			$htmlsingle = [
-				'br', 'wbr', 'hr', 'li', 'dt', 'dd'
-			];
-			$htmlsingleonly = [ # Elements that cannot have close tags
-				'br', 'wbr', 'hr'
+				'br', 'wbr', 'hr', 'li', 'dt', 'dd', 'meta', 'link'
 			];
 
-			$htmlsingle[] = $htmlsingleonly[] = 'meta';
-			$htmlsingle[] = $htmlsingleonly[] = 'link';
+			# Elements that cannot have close tags. This is (not coincidentally)
+			# also the list of tags for which the HTML 5 parsing algorithm
+			# requires you to "acknowledge the token's self-closing flag", i.e.
+			# a self-closing tag like <br/> is not an HTML 5 parse error only
+			# for this list.
+			$htmlsingleonly = [
+				'br', 'wbr', 'hr', 'meta', 'link'
+			];
 
 			$htmlnest = [ # Tags that can be nested--??
 				'table', 'tr', 'td', 'th', 'div', 'blockquote', 'ol', 'ul',
@@ -450,15 +468,19 @@ class Sanitizer {
 	 * @param array|bool $args Arguments for the processing callback
 	 * @param array $extratags For any extra tags to include
 	 * @param array $removetags For any tags (default or extra) to exclude
+	 * @param callable $warnCallback (Deprecated) Callback allowing the
+	 *   addition of a tracking category when bad input is encountered.
+	 *   DO NOT ADD NEW PARAMETERS AFTER $warnCallback, since it will be
+	 *   removed shortly.
 	 * @return string
 	 */
 	public static function removeHTMLtags( $text, $processCallback = null,
-		$args = [], $extratags = [], $removetags = []
+		$args = [], $extratags = [], $removetags = [], $warnCallback = null
 	) {
 		extract( self::getRecognizedTagData( $extratags, $removetags ) );
 
 		# Remove HTML comments
-		$text = Sanitizer::removeHTMLcomments( $text );
+		$text = self::removeHTMLcomments( $text );
 		$bits = explode( '<', $text );
 		$text = str_replace( '>', '&gt;', array_shift( $bits ) );
 		if ( !MWTidy::isEnabled() ) {
@@ -538,8 +560,16 @@ class Sanitizer {
 							$badtag = true;
 						} elseif ( in_array( $t, $tagstack ) && !isset( $htmlnest[$t] ) ) {
 							$badtag = true;
-						#  Is it a self closed htmlpair ? (bug 5487)
+						#  Is it a self closed htmlpair ? (T7487)
 						} elseif ( $brace == '/>' && isset( $htmlpairs[$t] ) ) {
+							// Eventually we'll just remove the self-closing
+							// slash, in order to be consistent with HTML5
+							// semantics.
+							// $brace = '>';
+							// For now, let's just warn authors to clean up.
+							if ( is_callable( $warnCallback ) ) {
+								call_user_func_array( $warnCallback, [ 'deprecated-self-close-category' ] );
+							}
 							$badtag = true;
 						} elseif ( isset( $htmlsingleonly[$t] ) ) {
 							# Hack to force empty tag for unclosable elements
@@ -568,12 +598,12 @@ class Sanitizer {
 							call_user_func_array( $processCallback, [ &$params, $args ] );
 						}
 
-						if ( !Sanitizer::validateTag( $params, $t ) ) {
+						if ( !self::validateTag( $params, $t ) ) {
 							$badtag = true;
 						}
 
 						# Strip non-approved attributes from the tag
-						$newparams = Sanitizer::fixTagAttributes( $params, $t );
+						$newparams = self::fixTagAttributes( $params, $t );
 					}
 					if ( !$badtag ) {
 						$rest = str_replace( '>', '&gt;', $rest );
@@ -604,12 +634,29 @@ class Sanitizer {
 							call_user_func_array( $processCallback, [ &$params, $args ] );
 						}
 
-						if ( !Sanitizer::validateTag( $params, $t ) ) {
+						if ( $brace == '/>' && !( isset( $htmlsingle[$t] ) || isset( $htmlsingleonly[$t] ) ) ) {
+							// Eventually we'll just remove the self-closing
+							// slash, in order to be consistent with HTML5
+							// semantics.
+							// $brace = '>';
+							// For now, let's just warn authors to clean up.
+							if ( is_callable( $warnCallback ) ) {
+								call_user_func_array( $warnCallback, [ 'deprecated-self-close-category' ] );
+							}
+						}
+						if ( !self::validateTag( $params, $t ) ) {
 							$badtag = true;
 						}
 
-						$newparams = Sanitizer::fixTagAttributes( $params, $t );
+						$newparams = self::fixTagAttributes( $params, $t );
 						if ( !$badtag ) {
+							if ( $brace === '/>' && !isset( $htmlsingleonly[$t] ) ) {
+								# Interpret self-closing tags as empty tags even when
+								# HTML 5 would interpret them as start tags. Such input
+								# is commonly seen on Wikimedia wikis with this intention.
+								$brace = "></$t>";
+							}
+
 							$rest = str_replace( '>', '&gt;', $rest );
 							$text .= "<$slash$t$newparams$brace$rest";
 							continue;
@@ -678,7 +725,7 @@ class Sanitizer {
 	 * @return bool
 	 */
 	static function validateTag( $params, $element ) {
-		$params = Sanitizer::decodeTagAttributes( $params );
+		$params = self::decodeTagAttributes( $params );
 
 		if ( $element == 'meta' || $element == 'link' ) {
 			if ( !isset( $params['itemprop'] ) ) {
@@ -714,8 +761,8 @@ class Sanitizer {
 	 * @todo Check for unique id attribute :P
 	 */
 	static function validateTagAttributes( $attribs, $element ) {
-		return Sanitizer::validateAttributes( $attribs,
-			Sanitizer::attributeWhitelist( $element ) );
+		return self::validateAttributes( $attribs,
+			self::attributeWhitelist( $element ) );
 	}
 
 	/**
@@ -750,28 +797,25 @@ class Sanitizer {
 
 			# Allow any attribute beginning with "data-"
 			# However:
-			# * data-ooui is reserved for ooui
-			# * data-mw and data-parsoid are reserved for parsoid
-			# * data-mw-<name here> is reserved for extensions (or core) if
-			#   they need to communicate some data to the client and want to be
-			#   sure that it isn't coming from an untrusted user.
+			# * Disallow data attributes used by MediaWiki code
 			# * Ensure that the attribute is not namespaced by banning
 			#   colons.
-			if ( !preg_match( '/^data-(?!ooui|mw|parsoid)[^:]*$/i', $attribute )
+			if ( !preg_match( '/^data-[^:]*$/i', $attribute )
 				&& !isset( $whitelist[$attribute] )
+				|| self::isReservedDataAttribute( $attribute )
 			) {
 				continue;
 			}
 
 			# Strip javascript "expression" from stylesheets.
-			# http://msdn.microsoft.com/workshop/author/dhtml/overview/recalc.asp
+			# https://msdn.microsoft.com/en-us/library/ms537634.aspx
 			if ( $attribute == 'style' ) {
-				$value = Sanitizer::checkCss( $value );
+				$value = self::checkCss( $value );
 			}
 
 			# Escape HTML id attributes
 			if ( $attribute === 'id' ) {
-				$value = Sanitizer::escapeId( $value, 'noninitial' );
+				$value = self::escapeIdForAttribute( $value, self::ID_PRIMARY );
 			}
 
 			# Escape HTML id reference lists
@@ -780,7 +824,7 @@ class Sanitizer {
 				|| $attribute === 'aria-labelledby'
 				|| $attribute === 'aria-owns'
 			) {
-				$value = Sanitizer::escapeIdReferenceList( $value, 'noninitial' );
+				$value = self::escapeIdReferenceList( $value, 'noninitial' );
 			}
 
 			// RDFa and microdata properties allow URLs, URIs and/or CURIs.
@@ -803,7 +847,7 @@ class Sanitizer {
 
 			# NOTE: even though elements using href/src are not allowed directly, supply
 			#       validation code that can be used by tag hook handlers, etc
-			if ( $attribute === 'href' || $attribute === 'src' ) {
+			if ( $attribute === 'href' || $attribute === 'src' || $attribute === 'poster' ) {
 				if ( !preg_match( $hrefExp, $value ) ) {
 					continue; // drop any href or src attributes not using an allowed protocol.
 					// NOTE: this also drops all relative URLs
@@ -824,6 +868,24 @@ class Sanitizer {
 		# TODO: Strip itemprop if we aren't descendants of an itemscope or pointed to by an itemref.
 
 		return $out;
+	}
+
+	/**
+	 * Given an attribute name, checks whether it is a reserved data attribute
+	 * (such as data-mw-foo) which is unavailable to user-generated HTML so MediaWiki
+	 * core and extension code can safely use it to communicate with frontend code.
+	 * @param string $attr Attribute name.
+	 * @return bool
+	 */
+	public static function isReservedDataAttribute( $attr ) {
+		// data-ooui is reserved for ooui.
+		// data-mw and data-parsoid are reserved for parsoid.
+		// data-mw-<name here> is reserved for extensions (or core) if
+		// they need to communicate some data to the client and want to be
+		// sure that it isn't coming from an untrusted user.
+		// We ignore the possibility of namespaces since user-generated HTML
+		// can't use them anymore.
+		return (bool)preg_match( '/^data-(ooui|mw|parsoid)/i', $attr );
 	}
 
 	/**
@@ -859,9 +921,8 @@ class Sanitizer {
 	 * @return string normalized css
 	 */
 	public static function normalizeCss( $value ) {
-
 		// Decode character references like &#123;
-		$value = Sanitizer::decodeCharReferences( $value );
+		$value = self::decodeCharReferences( $value );
 
 		// Decode escape sequences and line continuation
 		// See the grammar in the CSS 2 spec, appendix D.
@@ -890,7 +951,7 @@ class Sanitizer {
 
 		// Normalize Halfwidth and Fullwidth Unicode block that IE6 might treat as ascii
 		$value = preg_replace_callback(
-			'/[！-［］-ｚ]/u', // U+FF01 to U+FF5A, excluding U+FF3C (bug 58088)
+			'/[！-［］-ｚ]/u', // U+FF01 to U+FF5A, excluding U+FF3C (T60088)
 			function ( $matches ) {
 				$cp = UtfNormal\Utils::utf8ToCodepoint( $matches[0] );
 				if ( $cp === false ) {
@@ -1029,20 +1090,26 @@ class Sanitizer {
 	 * - Double attributes are discarded
 	 * - Unsafe style attributes are discarded
 	 * - Prepends space if there are attributes.
+	 * - (Optionally) Sorts attributes by name.
 	 *
 	 * @param string $text
 	 * @param string $element
+	 * @param bool $sorted Whether to sort the attributes (default: false)
 	 * @return string
 	 */
-	static function fixTagAttributes( $text, $element ) {
+	static function fixTagAttributes( $text, $element, $sorted = false ) {
 		if ( trim( $text ) == '' ) {
 			return '';
 		}
 
-		$decoded = Sanitizer::decodeTagAttributes( $text );
-		$stripped = Sanitizer::validateTagAttributes( $decoded, $element );
+		$decoded = self::decodeTagAttributes( $text );
+		$stripped = self::validateTagAttributes( $decoded, $element );
 
-		return Sanitizer::safeEncodeTagAttributes( $stripped );
+		if ( $sorted ) {
+			ksort( $stripped );
+		}
+
+		return self::safeEncodeTagAttributes( $stripped );
 	}
 
 	/**
@@ -1072,7 +1139,7 @@ class Sanitizer {
 	 * @return string HTML-encoded text fragment
 	 */
 	static function safeEncodeAttribute( $text ) {
-		$encValue = Sanitizer::encodeAttribute( $text );
+		$encValue = self::encodeAttribute( $text );
 
 		# Templates and links may be expanded in later parsing,
 		# creating invalid or dangerous output. Suppress this.
@@ -1081,6 +1148,7 @@ class Sanitizer {
 			'>'    => '&gt;',   // we've received invalid input
 			'"'    => '&quot;', // which should have been escaped.
 			'{'    => '&#123;',
+			'}'    => '&#125;', // prevent unpaired language conversion syntax
 			'['    => '&#91;',
 			"''"   => '&#39;&#39;',
 			'ISBN' => '&#73;SBN',
@@ -1111,11 +1179,13 @@ class Sanitizer {
 	 * ambiguous if it's part of something that looks like a percent escape
 	 * (which don't work reliably in fragments cross-browser).
 	 *
-	 * @see http://www.w3.org/TR/html401/types.html#type-name Valid characters
+	 * @deprecated since 1.30, use one of this class' escapeIdFor*() functions
+	 *
+	 * @see https://www.w3.org/TR/html401/types.html#type-name Valid characters
 	 *   in the id and name attributes
-	 * @see http://www.w3.org/TR/html401/struct/links.html#h-12.2.3 Anchors with
+	 * @see https://www.w3.org/TR/html401/struct/links.html#h-12.2.3 Anchors with
 	 *   the id attribute
-	 * @see http://www.whatwg.org/html/elements.html#the-id-attribute
+	 * @see https://www.w3.org/TR/html5/dom.html#the-id-attribute
 	 *   HTML5 definition of id attribute
 	 *
 	 * @param string $id Id to escape
@@ -1132,8 +1202,6 @@ class Sanitizer {
 	static function escapeId( $id, $options = [] ) {
 		global $wgExperimentalHtmlIds;
 		$options = (array)$options;
-
-		$id = Sanitizer::decodeCharReferences( $id );
 
 		if ( $wgExperimentalHtmlIds && !in_array( 'legacy', $options ) ) {
 			$id = preg_replace( '/[ \t\n\r\f_\'"&#%]+/', '_', $id );
@@ -1153,7 +1221,7 @@ class Sanitizer {
 		];
 
 		$id = urlencode( strtr( $id, ' ', '_' ) );
-		$id = str_replace( array_keys( $replace ), array_values( $replace ), $id );
+		$id = strtr( $id, $replace );
 
 		if ( !preg_match( '/^[a-zA-Z]/', $id ) && !in_array( 'noninitial', $options ) ) {
 			// Initial character must be a letter!
@@ -1163,20 +1231,125 @@ class Sanitizer {
 	}
 
 	/**
+	 * Given a section name or other user-generated or otherwise unsafe string, escapes it to be
+	 * a valid HTML id attribute.
+	 *
+	 * WARNING: unlike escapeId(), the output of this function is not guaranteed to be HTML safe,
+	 * be sure to use proper escaping.
+	 *
+	 * @param string $id String to escape
+	 * @param int $mode One of ID_* constants, specifying whether the primary or fallback encoding
+	 *     should be used.
+	 * @return string|bool Escaped ID or false if fallback encoding is requested but it's not
+	 *     configured.
+	 *
+	 * @since 1.30
+	 */
+	public static function escapeIdForAttribute( $id, $mode = self::ID_PRIMARY ) {
+		global $wgFragmentMode;
+
+		if ( !isset( $wgFragmentMode[$mode] ) ) {
+			if ( $mode === self::ID_PRIMARY ) {
+				throw new UnexpectedValueException( '$wgFragmentMode is configured with no primary mode' );
+			}
+			return false;
+		}
+
+		$internalMode = $wgFragmentMode[$mode];
+
+		return self::escapeIdInternal( $id, $internalMode );
+	}
+
+	/**
+	 * Given a section name or other user-generated or otherwise unsafe string, escapes it to be
+	 * a valid URL fragment.
+	 *
+	 * WARNING: unlike escapeId(), the output of this function is not guaranteed to be HTML safe,
+	 * be sure to use proper escaping.
+	 *
+	 * @param string $id String to escape
+	 * @return string Escaped ID
+	 *
+	 * @since 1.30
+	 */
+	public static function escapeIdForLink( $id ) {
+		global $wgFragmentMode;
+
+		if ( !isset( $wgFragmentMode[self::ID_PRIMARY] ) ) {
+			throw new UnexpectedValueException( '$wgFragmentMode is configured with no primary mode' );
+		}
+
+		$mode = $wgFragmentMode[self::ID_PRIMARY];
+
+		$id = self::escapeIdInternal( $id, $mode );
+
+		return $id;
+	}
+
+	/**
+	 * Given a section name or other user-generated or otherwise unsafe string, escapes it to be
+	 * a valid URL fragment for external interwikis.
+	 *
+	 * @param string $id String to escape
+	 * @return string Escaped ID
+	 *
+	 * @since 1.30
+	 */
+	public static function escapeIdForExternalInterwiki( $id ) {
+		global $wgExternalInterwikiFragmentMode;
+
+		$id = self::escapeIdInternal( $id, $wgExternalInterwikiFragmentMode );
+
+		return $id;
+	}
+
+	/**
+	 * Helper for escapeIdFor*() functions. Performs most of the actual escaping.
+	 *
+	 * @param string $id String to escape
+	 * @param string $mode One of modes from $wgFragmentMode
+	 * @return string
+	 */
+	private static function escapeIdInternal( $id, $mode ) {
+		switch ( $mode ) {
+			case 'html5':
+				$id = str_replace( ' ', '_', $id );
+				break;
+			case 'legacy':
+				// This corresponds to 'noninitial' mode of the old escapeId()
+				static $replace = [
+					'%3A' => ':',
+					'%' => '.'
+				];
+
+				$id = urlencode( str_replace( ' ', '_', $id ) );
+				$id = strtr( $id, $replace );
+				break;
+			case 'html5-legacy':
+				$id = preg_replace( '/[ \t\n\r\f_\'"&#%]+/', '_', $id );
+				$id = trim( $id, '_' );
+				if ( $id === '' ) {
+					// Must have been all whitespace to start with.
+					$id = '_';
+				}
+				break;
+			default:
+				throw new InvalidArgumentException( "Invalid mode '$mode' passed to '" . __METHOD__ );
+		}
+
+		return $id;
+	}
+
+	/**
 	 * Given a string containing a space delimited list of ids, escape each id
 	 * to match ids escaped by the escapeId() function.
+	 *
+	 * @todo wfDeprecated() uses of $options in 1.31, remove completely in 1.32
 	 *
 	 * @since 1.27
 	 *
 	 * @param string $referenceString Space delimited list of ids
-	 * @param string|array $options String or array of strings (default is array()):
-	 *   'noninitial': This is a non-initial fragment of an id, not a full id,
-	 *       so don't pay attention if the first character isn't valid at the
-	 *       beginning of an id.  Only matters if $wgExperimentalHtmlIds is
-	 *       false.
-	 *   'legacy': Behave the way the old HTML 4-based ID escaping worked even
-	 *       if $wgExperimentalHtmlIds is used, so we can generate extra
-	 *       anchors and links won't break.
+	 * @param string|array $options Deprecated and does nothing.
 	 * @return string
 	 */
 	static function escapeIdReferenceList( $referenceString, $options = [] ) {
@@ -1185,7 +1358,7 @@ class Sanitizer {
 
 		# Escape each token as an id
 		foreach ( $references as &$ref ) {
-			$ref = Sanitizer::escapeId( $ref, $options );
+			$ref = self::escapeIdForAttribute( $ref );
 		}
 
 		# Merge the array back to a space delimited list string
@@ -1201,7 +1374,7 @@ class Sanitizer {
 	 *
 	 * @todo For extra validity, input should be validated UTF-8.
 	 *
-	 * @see http://www.w3.org/TR/CSS21/syndata.html Valid characters/format
+	 * @see https://www.w3.org/TR/CSS21/syndata.html Valid characters/format
 	 *
 	 * @param string $class
 	 * @return string
@@ -1222,10 +1395,11 @@ class Sanitizer {
 	 * @return string Escaped input
 	 */
 	static function escapeHtmlAllowEntities( $html ) {
-		$html = Sanitizer::decodeCharReferences( $html );
+		$html = self::decodeCharReferences( $html );
 		# It seems wise to escape ' as well as ", as a matter of course.  Can't
-		# hurt.
-		$html = htmlspecialchars( $html, ENT_QUOTES );
+		# hurt. Use ENT_SUBSTITUTE so that incorrectly truncated multibyte characters
+		# don't cause the entire string to disappear.
+		$html = htmlspecialchars( $html, ENT_QUOTES | ENT_SUBSTITUTE );
 		return $html;
 	}
 
@@ -1263,14 +1437,14 @@ class Sanitizer {
 
 		foreach ( $pairs as $set ) {
 			$attribute = strtolower( $set[1] );
-			$value = Sanitizer::getTagAttributeCallback( $set );
+			$value = self::getTagAttributeCallback( $set );
 
 			// Normalize whitespace
 			$value = preg_replace( '/[\t\r\n ]+/', ' ', $value );
 			$value = trim( $value );
 
 			// Decode character references
-			$attribs[$attribute] = Sanitizer::decodeCharReferences( $value );
+			$attribs[$attribute] = self::decodeCharReferences( $value );
 		}
 		return $attribs;
 	}
@@ -1286,7 +1460,7 @@ class Sanitizer {
 		$attribs = [];
 		foreach ( $assoc_array as $attribute => $value ) {
 			$encAttribute = htmlspecialchars( $attribute );
-			$encValue = Sanitizer::safeEncodeAttribute( $value );
+			$encValue = self::safeEncodeAttribute( $value );
 
 			$attribs[] = "$encAttribute=\"$encValue\"";
 		}
@@ -1314,7 +1488,7 @@ class Sanitizer {
 		} elseif ( !isset( $set[2] ) ) {
 			# In XHTML, attributes must have a value so return an empty string.
 			# See "Empty attribute syntax",
-			# http://www.w3.org/TR/html5/syntax.html#syntax-attribute-name
+			# https://www.w3.org/TR/html5/syntax.html#syntax-attribute-name
 			return "";
 		} else {
 			throw new MWException( "Tag conditions not met. This should never happen and is a bug." );
@@ -1373,11 +1547,11 @@ class Sanitizer {
 	static function normalizeCharReferencesCallback( $matches ) {
 		$ret = null;
 		if ( $matches[1] != '' ) {
-			$ret = Sanitizer::normalizeEntity( $matches[1] );
+			$ret = self::normalizeEntity( $matches[1] );
 		} elseif ( $matches[2] != '' ) {
-			$ret = Sanitizer::decCharReference( $matches[2] );
+			$ret = self::decCharReference( $matches[2] );
 		} elseif ( $matches[3] != '' ) {
-			$ret = Sanitizer::hexCharReference( $matches[3] );
+			$ret = self::hexCharReference( $matches[3] );
 		}
 		if ( is_null( $ret ) ) {
 			return htmlspecialchars( $matches[0] );
@@ -1414,7 +1588,7 @@ class Sanitizer {
 	 */
 	static function decCharReference( $codepoint ) {
 		$point = intval( $codepoint );
-		if ( Sanitizer::validateCodepoint( $point ) ) {
+		if ( self::validateCodepoint( $point ) ) {
 			return sprintf( '&#%d;', $point );
 		} else {
 			return null;
@@ -1427,7 +1601,7 @@ class Sanitizer {
 	 */
 	static function hexCharReference( $codepoint ) {
 		$point = hexdec( $codepoint );
-		if ( Sanitizer::validateCodepoint( $point ) ) {
+		if ( self::validateCodepoint( $point ) ) {
 			return sprintf( '&#x%x;', $point );
 		} else {
 			return null;
@@ -1468,7 +1642,7 @@ class Sanitizer {
 
 	/**
 	 * Decode any character references, numeric or named entities,
-	 * in the next and normalize the resulting string. (bug 14952)
+	 * in the next and normalize the resulting string. (T16952)
 	 *
 	 * This is useful for page titles, not for text to be displayed,
 	 * MediaWiki allows HTML entities to escape normalization as a feature.
@@ -1481,7 +1655,10 @@ class Sanitizer {
 		$text = preg_replace_callback(
 			self::CHAR_REFS_REGEX,
 			[ 'Sanitizer', 'decodeCharReferencesCallback' ],
-			$text, /* limit */ -1, $count );
+			$text,
+			-1, //limit
+			$count
+		);
 
 		if ( $count ) {
 			return $wgContLang->normalize( $text );
@@ -1496,11 +1673,11 @@ class Sanitizer {
 	 */
 	static function decodeCharReferencesCallback( $matches ) {
 		if ( $matches[1] != '' ) {
-			return Sanitizer::decodeEntity( $matches[1] );
+			return self::decodeEntity( $matches[1] );
 		} elseif ( $matches[2] != '' ) {
-			return Sanitizer::decodeChar( intval( $matches[2] ) );
+			return self::decodeChar( intval( $matches[2] ) );
 		} elseif ( $matches[3] != '' ) {
-			return Sanitizer::decodeChar( hexdec( $matches[3] ) );
+			return self::decodeChar( hexdec( $matches[3] ) );
 		}
 		# Last case should be an ampersand by itself
 		return $matches[0];
@@ -1514,7 +1691,7 @@ class Sanitizer {
 	 * @private
 	 */
 	static function decodeChar( $codepoint ) {
-		if ( Sanitizer::validateCodepoint( $codepoint ) ) {
+		if ( self::validateCodepoint( $codepoint ) ) {
 			return UtfNormal\Utils::codepointToUtf8( $codepoint );
 		} else {
 			return UtfNormal\Constants::UTF8_REPLACEMENT;
@@ -1547,7 +1724,7 @@ class Sanitizer {
 	 * @return array
 	 */
 	static function attributeWhitelist( $element ) {
-		$list = Sanitizer::setupAttributeWhitelist();
+		$list = self::setupAttributeWhitelist();
 		return isset( $list[$element] )
 			? $list[$element]
 			: [];
@@ -1584,7 +1761,7 @@ class Sanitizer {
 
 			# RDFa
 			# These attributes are specified in section 9 of
-			# http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014
+			# https://www.w3.org/TR/2008/REC-rdfa-syntax-20081014
 			'about',
 			'property',
 			'resource',
@@ -1592,7 +1769,7 @@ class Sanitizer {
 			'typeof',
 
 			# Microdata. These are specified by
-			# http://www.whatwg.org/html/microdata.html#the-microdata-model
+			# https://html.spec.whatwg.org/multipage/microdata.html#the-microdata-model
 			'itemid',
 			'itemprop',
 			'itemref',
@@ -1616,7 +1793,7 @@ class Sanitizer {
 		];
 
 		# Numbers refer to sections in HTML 4.01 standard describing the element.
-		# See: http://www.w3.org/TR/html4/
+		# See: https://www.w3.org/TR/html4/
 		$whitelist = [
 			# 7.5.4
 			'div'        => $block,
@@ -1663,7 +1840,7 @@ class Sanitizer {
 			# 9.3.2
 			'br'         => array_merge( $common, [ 'clear' ] ),
 
-			# http://www.whatwg.org/html/text-level-semantics.html#the-wbr-element
+			# https://www.w3.org/TR/html5/text-level-semantics.html#the-wbr-element
 			'wbr'        => $common,
 
 			# 9.3.4
@@ -1718,7 +1895,11 @@ class Sanitizer {
 			# Not usually allowed, but may be used for extension-style hooks
 			# such as <math> when it is rasterized, or if $wgAllowImageTag is
 			# true
-			'img'        => array_merge( $common, [ 'alt', 'src', 'width', 'height' ] ),
+			'img'        => array_merge( $common, [ 'alt', 'src', 'width', 'height', 'srcset' ] ),
+
+			'video'      => array_merge( $common, [ 'poster', 'controls', 'preload', 'width', 'height' ] ),
+			'source'     => array_merge( $common, [ 'type', 'src' ] ),
+			'track'      => array_merge( $common, [ 'type', 'src', 'srclang', 'kind', 'label' ] ),
 
 			# 15.2.1
 			'tt'         => $common,
@@ -1738,24 +1919,28 @@ class Sanitizer {
 			'hr'         => array_merge( $common, [ 'width' ] ),
 
 			# HTML Ruby annotation text module, simple ruby only.
-			# http://www.whatwg.org/html/text-level-semantics.html#the-ruby-element
+			# https://www.w3.org/TR/html5/text-level-semantics.html#the-ruby-element
 			'ruby'       => $common,
 			# rbc
 			'rb'         => $common,
 			'rp'         => $common,
 			'rt'         => $common, # array_merge( $common, array( 'rbspan' ) ),
-			'rtc'         => $common,
+			'rtc'        => $common,
 
 			# MathML root element, where used for extensions
 			# 'title' may not be 100% valid here; it's XHTML
-			# http://www.w3.org/TR/REC-MathML/
+			# https://www.w3.org/TR/REC-MathML/
 			'math'       => [ 'class', 'style', 'id', 'title' ],
+
+			// HTML 5 section 4.5
+			'figure'     => $common,
+			'figcaption' => $common,
 
 			# HTML 5 section 4.6
 			'bdi' => $common,
 
 			# HTML5 elements, defined by:
-			# http://www.whatwg.org/html/
+			# https://html.spec.whatwg.org/multipage/semantics.html#the-data-element
 			'data' => array_merge( $common, [ 'value' ] ),
 			'time' => array_merge( $common, [ 'datetime' ] ),
 			'mark' => $common,
@@ -1766,7 +1951,7 @@ class Sanitizer {
 			// (ie: validateTag rejects tags missing the attributes needed for Microdata)
 			// So we don't bother including $common attributes that have no purpose.
 			'meta' => [ 'itemprop', 'content' ],
-			'link' => [ 'itemprop', 'href' ],
+			'link' => [ 'itemprop', 'href', 'title' ],
 		];
 
 		return $whitelist;
@@ -1818,7 +2003,7 @@ class Sanitizer {
 	static function cleanUrl( $url ) {
 		# Normalize any HTML entities in input. They will be
 		# re-escaped by makeExternalLink().
-		$url = Sanitizer::decodeCharReferences( $url );
+		$url = self::decodeCharReferences( $url );
 
 		# Escape any control characters introduced by the above step
 		$url = preg_replace_callback( '/[\][<>"\\x00-\\x20\\x7F\|]/',
@@ -1830,7 +2015,7 @@ class Sanitizer {
 			list( /* $whole */, $protocol, $host, $rest ) = $matches;
 
 			// Characters that will be ignored in IDNs.
-			// http://tools.ietf.org/html/3454#section-3.1
+			// https://tools.ietf.org/html/rfc3454#section-3.1
 			// Strip them before further processing so blacklists and such work.
 			$strip = "/
 				\\s|          # general whitespace
@@ -1886,7 +2071,7 @@ class Sanitizer {
 	 *   3.5.
 	 *
 	 * This function is an implementation of the specification as requested in
-	 * bug 22449.
+	 * T24449.
 	 *
 	 * Client-side forms will use the same standard validation rules via JS or
 	 * HTML 5 validation; additional restrictions can be enforced server-side
@@ -1909,7 +2094,7 @@ class Sanitizer {
 
 		// Please note strings below are enclosed in brackets [], this make the
 		// hyphen "-" a range indicator. Hence it is double backslashed below.
-		// See bug 26948
+		// See T28948
 		$rfc5322_atext = "a-z0-9!#$%&'*+\\-\/=?^_`{|}~";
 		$rfc1034_ldh_str = "a-z0-9\\-";
 

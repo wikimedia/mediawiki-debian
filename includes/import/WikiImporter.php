@@ -23,6 +23,7 @@
  * @file
  * @ingroup SpecialPage
  */
+use MediaWiki\MediaWikiServices;
 
 /**
  * XML file reader for the page data importer.
@@ -38,12 +39,15 @@ class WikiImporter {
 	private $mNoticeCallback, $mDebug;
 	private $mImportUploads, $mImageBasePath;
 	private $mNoUpdates = false;
+	private $pageOffset = 0;
 	/** @var Config */
 	private $config;
 	/** @var ImportTitleFactory */
 	private $importTitleFactory;
 	/** @var array */
 	private $countableCache = [];
+	/** @var bool */
+	private $disableStatisticsUpdate = false;
 
 	/**
 	 * Creates an ImportXMLReader drawing from the source provided
@@ -51,16 +55,12 @@ class WikiImporter {
 	 * @param Config $config
 	 * @throws Exception
 	 */
-	function __construct( ImportSource $source, Config $config = null ) {
+	function __construct( ImportSource $source, Config $config ) {
 		if ( !class_exists( 'XMLReader' ) ) {
 			throw new Exception( 'Import requires PHP to have been compiled with libxml support' );
 		}
 
 		$this->reader = new XMLReader();
-		if ( !$config ) {
-			wfDeprecated( __METHOD__ . ' without a Config instance', '1.25' );
-			$config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
-		}
 		$this->config = $config;
 
 		if ( !in_array( 'uploadsource', stream_get_wrappers() ) ) {
@@ -141,6 +141,16 @@ class WikiImporter {
 	 */
 	function setNoUpdates( $noupdates ) {
 		$this->mNoUpdates = $noupdates;
+	}
+
+	/**
+	 * Sets 'pageOffset' value. So it will skip the first n-1 pages
+	 * and start from the nth page. It's 1-based indexing.
+	 * @param int $nthPage
+	 * @since 1.29
+	 */
+	function setPageOffset( $nthPage ) {
+		$this->pageOffset = $nthPage;
 	}
 
 	/**
@@ -303,6 +313,14 @@ class WikiImporter {
 	}
 
 	/**
+	 * Statistics update can cause a lot of time
+	 * @since 1.29
+	 */
+	public function disableStatisticsUpdate() {
+		$this->disableStatisticsUpdate = true;
+	}
+
+	/**
 	 * Default per-page callback. Sets up some things related to site statistics
 	 * @param array $titleAndForeignTitle Two-element array, with Title object at
 	 * index 0 and ForeignTitle object at index 1
@@ -332,8 +350,7 @@ class WikiImporter {
 		}
 
 		try {
-			$dbw = wfGetDB( DB_MASTER );
-			return $dbw->deadlockLoop( [ $revision, 'importOldRevision' ] );
+			return $revision->importOldRevision();
 		} catch ( MWContentSerializationException $ex ) {
 			$this->notice( 'import-error-unserialize',
 				$revision->getTitle()->getPrefixedText(),
@@ -351,8 +368,7 @@ class WikiImporter {
 	 * @return bool
 	 */
 	public function importLogItem( $revision ) {
-		$dbw = wfGetDB( DB_MASTER );
-		return $dbw->deadlockLoop( [ $revision, 'importLogItem' ] );
+		return $revision->importLogItem();
 	}
 
 	/**
@@ -361,8 +377,7 @@ class WikiImporter {
 	 * @return bool
 	 */
 	public function importUpload( $revision ) {
-		$dbw = wfGetDB( DB_MASTER );
-		return $dbw->deadlockLoop( [ $revision, 'importUpload' ] );
+		return $revision->importUpload();
 	}
 
 	/**
@@ -375,29 +390,31 @@ class WikiImporter {
 	 * @return bool
 	 */
 	public function finishImportPage( $title, $foreignTitle, $revCount,
-			$sRevCount, $pageInfo ) {
-
+		$sRevCount, $pageInfo
+	) {
 		// Update article count statistics (T42009)
 		// The normal counting logic in WikiPage->doEditUpdates() is designed for
 		// one-revision-at-a-time editing, not bulk imports. In this situation it
-		// suffers from issues of slave lag. We let WikiPage handle the total page
+		// suffers from issues of replica DB lag. We let WikiPage handle the total page
 		// and revision count, and we implement our own custom logic for the
 		// article (content page) count.
-		$page = WikiPage::factory( $title );
-		$page->loadPageData( 'fromdbmaster' );
-		$content = $page->getContent();
-		if ( $content === null ) {
-			wfDebug( __METHOD__ . ': Skipping article count adjustment for ' . $title .
-				' because WikiPage::getContent() returned null' );
-		} else {
-			$editInfo = $page->prepareContentForEdit( $content );
-			$countKey = 'title_' . $title->getPrefixedText();
-			$countable = $page->isCountable( $editInfo );
-			if ( array_key_exists( $countKey, $this->countableCache ) &&
-				$countable != $this->countableCache[$countKey] ) {
-				DeferredUpdates::addUpdate( SiteStatsUpdate::factory( [
-					'articles' => ( (int)$countable - (int)$this->countableCache[$countKey] )
-				] ) );
+		if ( !$this->disableStatisticsUpdate ) {
+			$page = WikiPage::factory( $title );
+			$page->loadPageData( 'fromdbmaster' );
+			$content = $page->getContent();
+			if ( $content === null ) {
+				wfDebug( __METHOD__ . ': Skipping article count adjustment for ' . $title .
+					' because WikiPage::getContent() returned null' );
+			} else {
+				$editInfo = $page->prepareContentForEdit( $content );
+				$countKey = 'title_' . $title->getPrefixedText();
+				$countable = $page->isCountable( $editInfo );
+				if ( array_key_exists( $countKey, $this->countableCache ) &&
+					$countable != $this->countableCache[$countKey] ) {
+					DeferredUpdates::addUpdate( SiteStatsUpdate::factory( [
+						'articles' => ( (int)$countable - (int)$this->countableCache[$countKey] )
+					] ) );
+				}
 			}
 		}
 
@@ -407,7 +424,7 @@ class WikiImporter {
 
 	/**
 	 * Alternate per-revision callback, for debugging.
-	 * @param WikiRevision $revision
+	 * @param WikiRevision &$revision
 	 */
 	public function debugRevisionHandler( &$revision ) {
 		$this->debug( "Got revision:" );
@@ -536,7 +553,7 @@ class WikiImporter {
 	public function doImport() {
 		// Calls to reader->read need to be wrapped in calls to
 		// libxml_disable_entity_loader() to avoid local file
-		// inclusion attacks (bug 46932).
+		// inclusion attacks (T48932).
 		$oldDisable = libxml_disable_entity_loader( true );
 		$this->reader->read();
 
@@ -552,9 +569,19 @@ class WikiImporter {
 		$keepReading = $this->reader->read();
 		$skip = false;
 		$rethrow = null;
+		$pageCount = 0;
 		try {
 			while ( $keepReading ) {
 				$tag = $this->reader->localName;
+				if ( $this->pageOffset ) {
+					if ( $tag === 'page' ) {
+						$pageCount++;
+					}
+					if ( $pageCount < $this->pageOffset ) {
+						$keepReading = $this->reader->next();
+						continue;
+					}
+				}
 				$type = $this->reader->nodeType;
 
 				if ( !Hooks::run( 'ImportHandleToplevelXMLTag', [ $this ] ) ) {
@@ -660,7 +687,6 @@ class WikiImporter {
 	 * @return bool|mixed
 	 */
 	private function processLogItem( $logInfo ) {
-
 		$revision = new WikiRevision( $this->config );
 
 		if ( isset( $logInfo['id'] ) ) {
@@ -787,7 +813,7 @@ class WikiImporter {
 		$this->debug( "Enter revision handler" );
 		$revisionInfo = [];
 
-		$normalFields = [ 'id', 'timestamp', 'comment', 'minor', 'model', 'format', 'text' ];
+		$normalFields = [ 'id', 'timestamp', 'comment', 'minor', 'model', 'format', 'text', 'sha1' ];
 
 		$skip = false;
 
@@ -840,7 +866,7 @@ class WikiImporter {
 				'text',
 				''
 			] ) ) &&
-			(int)( strlen( $revisionInfo['text'] ) / 1024 ) > $wgMaxArticleSize
+			strlen( $revisionInfo['text'] ) > $wgMaxArticleSize * 1024
 		) {
 			throw new MWException( 'The text of ' .
 				( isset( $revisionInfo['id'] ) ?
@@ -889,6 +915,9 @@ class WikiImporter {
 			$revision->setUsername( $revisionInfo['contributor']['username'] );
 		} else {
 			$revision->setUsername( 'Unknown user' );
+		}
+		if ( isset( $revisionInfo['sha1'] ) ) {
+			$revision->setSha1Base36( $revisionInfo['sha1'] );
 		}
 		$revision->setNoUpdates( $this->mNoUpdates );
 

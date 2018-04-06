@@ -38,16 +38,12 @@ class ApiQueryFilearchive extends ApiQueryBase {
 	}
 
 	public function execute() {
-		$user = $this->getUser();
 		// Before doing anything at all, let's check permissions
-		if ( !$user->isAllowed( 'deletedhistory' ) ) {
-			$this->dieUsage(
-				'You don\'t have permission to view deleted file information',
-				'permissiondenied'
-			);
-		}
+		$this->checkUserRightsAny( 'deletedhistory' );
 
+		$user = $this->getUser();
 		$db = $this->getDB();
+		$commentStore = new CommentStore( 'fa_description' );
 
 		$params = $this->extractRequestParams();
 
@@ -71,12 +67,18 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		$this->addFieldsIf( 'fa_sha1', $fld_sha1 );
 		$this->addFieldsIf( [ 'fa_user', 'fa_user_text' ], $fld_user );
 		$this->addFieldsIf( [ 'fa_height', 'fa_width', 'fa_size' ], $fld_dimensions || $fld_size );
-		$this->addFieldsIf( 'fa_description', $fld_description );
 		$this->addFieldsIf( [ 'fa_major_mime', 'fa_minor_mime' ], $fld_mime );
 		$this->addFieldsIf( 'fa_media_type', $fld_mediatype );
 		$this->addFieldsIf( 'fa_metadata', $fld_metadata );
 		$this->addFieldsIf( 'fa_bits', $fld_bitdepth );
 		$this->addFieldsIf( 'fa_archive_name', $fld_archivename );
+
+		if ( $fld_description ) {
+			$commentQuery = $commentStore->getJoin();
+			$this->addTables( $commentQuery['tables'] );
+			$this->addFields( $commentQuery['fields'] );
+			$this->addJoinConds( $commentQuery['joins'] );
+		}
 
 		if ( !is_null( $params['continue'] ) ) {
 			$cont = explode( '|', $params['continue'] );
@@ -112,13 +114,13 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			if ( $sha1Set ) {
 				$sha1 = strtolower( $params['sha1'] );
 				if ( !$this->validateSha1Hash( $sha1 ) ) {
-					$this->dieUsage( 'The SHA1 hash provided is not valid', 'invalidsha1hash' );
+					$this->dieWithError( 'apierror-invalidsha1hash' );
 				}
 				$sha1 = Wikimedia\base_convert( $sha1, 16, 36, 31 );
 			} elseif ( $sha1base36Set ) {
 				$sha1 = strtolower( $params['sha1base36'] );
 				if ( !$this->validateSha1Base36Hash( $sha1 ) ) {
-					$this->dieUsage( 'The SHA1Base36 hash provided is not valid', 'invalidsha1base36hash' );
+					$this->dieWithError( 'apierror-invalidsha1base36hash' );
 				}
 			}
 			if ( $sha1 ) {
@@ -170,10 +172,10 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			if ( $fld_description &&
 				Revision::userCanBitfield( $row->fa_deleted, File::DELETED_COMMENT, $user )
 			) {
-				$file['description'] = $row->fa_description;
+				$file['description'] = $commentStore->getComment( $row )->text;
 				if ( isset( $prop['parseddescription'] ) ) {
 					$file['parseddescription'] = Linker::formatComment(
-						$row->fa_description, $title );
+						$file['description'], $title );
 				}
 			}
 			if ( $fld_user &&
@@ -297,6 +299,6 @@ class ApiQueryFilearchive extends ApiQueryBase {
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/API:Filearchive';
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Filearchive';
 	}
 }

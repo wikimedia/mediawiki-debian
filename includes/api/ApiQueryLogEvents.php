@@ -31,6 +31,8 @@
  */
 class ApiQueryLogEvents extends ApiQueryBase {
 
+	private $commentStore;
+
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'le' );
 	}
@@ -43,6 +45,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 		$db = $this->getDB();
+		$this->commentStore = new CommentStore( 'log_comment' );
 		$this->requireMaxOneParameter( $params, 'title', 'prefix', 'namespace' );
 
 		$prop = array_flip( $params['prop'] );
@@ -91,8 +94,14 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			[ 'log_namespace', 'log_title' ],
 			$this->fld_title || $this->fld_parsedcomment
 		);
-		$this->addFieldsIf( 'log_comment', $this->fld_comment || $this->fld_parsedcomment );
 		$this->addFieldsIf( 'log_params', $this->fld_details );
+
+		if ( $this->fld_comment || $this->fld_parsedcomment ) {
+			$commentQuery = $this->commentStore->getJoin();
+			$this->addTables( $commentQuery['tables'] );
+			$this->addFields( $commentQuery['fields'] );
+			$this->addJoinConds( $commentQuery['joins'] );
+		}
 
 		if ( $this->fld_tags ) {
 			$this->addTables( 'tag_summary' );
@@ -121,10 +130,10 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			}
 
 			if ( !$valid ) {
-				$valueName = $this->encodeParamName( 'action' );
-				$this->dieUsage(
-					"Unrecognized value for parameter '$valueName': {$logAction}",
-					"unknown_$valueName"
+				$encParamName = $this->encodeParamName( 'action' );
+				$this->dieWithError(
+					[ 'apierror-unrecognizedvalue', $encParamName, wfEscapeWikiText( $logAction ) ],
+					"unknown_$encParamName"
 				);
 			}
 
@@ -173,7 +182,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		if ( !is_null( $title ) ) {
 			$titleObj = Title::newFromText( $title );
 			if ( is_null( $titleObj ) ) {
-				$this->dieUsage( "Bad title value '$title'", 'param_title' );
+				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $title ) ] );
 			}
 			$this->addWhereFld( 'log_namespace', $titleObj->getNamespace() );
 			$this->addWhereFld( 'log_title', $titleObj->getDBkey() );
@@ -187,18 +196,18 @@ class ApiQueryLogEvents extends ApiQueryBase {
 
 		if ( !is_null( $prefix ) ) {
 			if ( $this->getConfig()->get( 'MiserMode' ) ) {
-				$this->dieUsage( 'Prefix search disabled in Miser Mode', 'prefixsearchdisabled' );
+				$this->dieWithError( 'apierror-prefixsearchdisabled' );
 			}
 
 			$title = Title::newFromText( $prefix );
 			if ( is_null( $title ) ) {
-				$this->dieUsage( "Bad title value '$prefix'", 'param_prefix' );
+				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $prefix ) ] );
 			}
 			$this->addWhereFld( 'log_namespace', $title->getNamespace() );
 			$this->addWhere( 'log_title ' . $db->buildLike( $title->getDBkey(), $db->anyString() ) );
 		}
 
-		// Paranoia: avoid brute force searches (bug 17342)
+		// Paranoia: avoid brute force searches (T19342)
 		if ( $params['namespace'] !== null || !is_null( $title ) || !is_null( $user ) ) {
 			if ( !$this->getUser()->isAllowed( 'deletedhistory' ) ) {
 				$titleBits = LogPage::DELETED_ACTION;
@@ -242,7 +251,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	/**
 	 * @deprecated since 1.25 Use LogFormatter::formatParametersForApi instead
 	 * @param ApiResult $result
-	 * @param array $vals
+	 * @param array &$vals
 	 * @param string $params
 	 * @param string $type
 	 * @param string $action
@@ -327,18 +336,19 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			$vals['timestamp'] = wfTimestamp( TS_ISO_8601, $row->log_timestamp );
 		}
 
-		if ( ( $this->fld_comment || $this->fld_parsedcomment ) && isset( $row->log_comment ) ) {
+		if ( $this->fld_comment || $this->fld_parsedcomment ) {
 			if ( LogEventsList::isDeleted( $row, LogPage::DELETED_COMMENT ) ) {
 				$vals['commenthidden'] = true;
 				$anyHidden = true;
 			}
 			if ( LogEventsList::userCan( $row, LogPage::DELETED_COMMENT, $user ) ) {
+				$comment = $this->commentStore->getComment( $row )->text;
 				if ( $this->fld_comment ) {
-					$vals['comment'] = $row->log_comment;
+					$vals['comment'] = $comment;
 				}
 
 				if ( $this->fld_parsedcomment ) {
-					$vals['parsedcomment'] = Linker::formatComment( $row->log_comment, $title );
+					$vals['parsedcomment'] = Linker::formatComment( $comment, $title );
 				}
 			}
 		}
@@ -435,7 +445,8 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			],
 			'title' => null,
 			'namespace' => [
-				ApiBase::PARAM_TYPE => 'namespace'
+				ApiBase::PARAM_TYPE => 'namespace',
+				ApiBase::PARAM_EXTRA_NAMESPACES => [ NS_MEDIA, NS_SPECIAL ],
 			],
 			'prefix' => [],
 			'tag' => null,
@@ -466,6 +477,6 @@ class ApiQueryLogEvents extends ApiQueryBase {
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/API:Logevents';
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Logevents';
 	}
 }

@@ -21,6 +21,8 @@
  * @license GPL 2+
  * @author Daniel Kinzler
  */
+use MediaWiki\Interwiki\InterwikiLookup;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Linker\LinkTarget;
 
 /**
@@ -51,16 +53,24 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	protected $localInterwikis;
 
 	/**
+	 * @var InterwikiLookup
+	 */
+	protected $interwikiLookup;
+
+	/**
 	 * @param Language $language The language object to use for localizing namespace names.
 	 * @param GenderCache $genderCache The gender cache for generating gendered namespace names
 	 * @param string[]|string $localInterwikis
+	 * @param InterwikiLookup|null $interwikiLookup
 	 */
 	public function __construct( Language $language, GenderCache $genderCache,
-		$localInterwikis = []
+		$localInterwikis = [], $interwikiLookup = null
 	) {
 		$this->language = $language;
 		$this->genderCache = $genderCache;
 		$this->localInterwikis = (array)$localInterwikis;
+		$this->interwikiLookup = $interwikiLookup ?:
+			MediaWikiServices::getInstance()->getInterwikiLookup();
 	}
 
 	/**
@@ -76,7 +86,6 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 		if ( $this->language->needsGenderDistinction() &&
 			MWNamespace::hasGenderDistinction( $namespace )
 		) {
-
 			// NOTE: we are assuming here that the title text is a user name!
 			$gender = $this->genderCache->getGenderOf( $text, __METHOD__ );
 			$name = $this->language->getGenderNsText( $namespace, $gender );
@@ -105,10 +114,16 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 	 */
 	public function formatTitle( $namespace, $text, $fragment = '', $interwiki = '' ) {
 		if ( $namespace !== false ) {
-			$namespace = $this->getNamespaceName( $namespace, $text );
+			// Try to get a namespace name, but fallback
+			// to empty string if it doesn't exist
+			try {
+				$nsName = $this->getNamespaceName( $namespace, $text );
+			} catch ( InvalidArgumentException $e ) {
+				$nsName = '';
+			}
 
-			if ( $namespace !== '' ) {
-				$text = $namespace . ':' . $text;
+			if ( $namespace !== 0 ) {
+				$text = $nsName . ':' . $text;
 			}
 		}
 
@@ -286,7 +301,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 
 		# Initial colon indicates main namespace rather than specified default
 		# but should not create invalid {ns,title} pairs such as {0,Project:Foo}
-		if ( $dbkey !== '' && ':' == $dbkey[0] ) {
+		if ( $dbkey !== '' && $dbkey[0] == ':' ) {
 			$parts['namespace'] = NS_MAIN;
 			$dbkey = substr( $dbkey, 1 ); # remove the colon but continue processing
 			$dbkey = trim( $dbkey, '_' ); # remove any subsequent whitespace
@@ -312,13 +327,12 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 						if ( $this->language->getNsIndex( $x[1] ) ) {
 							# Disallow Talk:File:x type titles...
 							throw new MalformedTitleException( 'title-invalid-talk-namespace', $text );
-						} elseif ( Interwiki::isValidInterwiki( $x[1] ) ) {
-							// TODO: get rid of global state!
+						} elseif ( $this->interwikiLookup->isValidInterwiki( $x[1] ) ) {
 							# Disallow Talk:Interwiki:x type titles...
 							throw new MalformedTitleException( 'title-invalid-talk-namespace', $text );
 						}
 					}
-				} elseif ( Interwiki::isValidInterwiki( $p ) ) {
+				} elseif ( $this->interwikiLookup->isValidInterwiki( $p ) ) {
 					# Interwiki link
 					$dbkey = $m[2];
 					$parts['interwiki'] = $this->language->lc( $p );
@@ -353,6 +367,7 @@ class MediaWikiTitleCodec implements TitleFormatter, TitleParser {
 					if ( $dbkey !== '' && $dbkey[0] == ':' ) {
 						$parts['namespace'] = NS_MAIN;
 						$dbkey = substr( $dbkey, 1 );
+						$dbkey = trim( $dbkey, '_' );
 					}
 				}
 				# If there's no recognized interwiki or namespace,

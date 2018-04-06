@@ -37,6 +37,7 @@ class BackupReader extends Maintenance {
 	public $revCount = 0;
 	public $dryRun = false;
 	public $uploads = false;
+	protected $uploadCount = 0;
 	public $imageBasePath = false;
 	public $nsFilter = false;
 
@@ -80,6 +81,7 @@ TEXT
 			'Disable link table updates. Is faster but leaves the wiki in an inconsistent state'
 		);
 		$this->addOption( 'image-base-path', 'Import files from a specified path', false, true );
+		$this->addOption( 'skip-to', 'Start from nth page by skipping first n-1 pages', false, true );
 		$this->addArg( 'file', 'Dump file to import [else use stdin]', false );
 	}
 
@@ -109,7 +111,8 @@ TEXT
 		}
 
 		$this->output( "Done!\n" );
-		$this->output( "You might want to run rebuildrecentchanges.php to regenerate RecentChanges\n" );
+		$this->output( "You might want to run rebuildrecentchanges.php to regenerate RecentChanges,\n" );
+		$this->output( "and initSiteStats.php to update page and revision counts\n" );
 	}
 
 	function setNsfilter( array $namespaces ) {
@@ -283,6 +286,9 @@ TEXT
 		$source = new ImportStreamSource( $handle );
 		$importer = new WikiImporter( $source, $this->getConfig() );
 
+		// Updating statistics require a lot of time so disable it
+		$importer->disableStatisticsUpdate();
+
 		if ( $this->hasOption( 'debug' ) ) {
 			$importer->setDebug( true );
 		}
@@ -296,6 +302,11 @@ TEXT
 				$this->error( $statusRootPage->getMessage()->text(), 1 );
 				return false;
 			}
+		}
+		if ( $this->hasOption( 'skip-to' ) ) {
+			$nthPage = (int)$this->getOption( 'skip-to' );
+			$importer->setPageOffset( $nthPage );
+			$this->pageCount = $nthPage - 1;
 		}
 		$importer->setPageCallback( [ $this, 'reportPage' ] );
 		$this->importCallback = $importer->setRevisionCallback(

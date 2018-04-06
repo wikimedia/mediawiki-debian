@@ -1,12 +1,11 @@
 <?php
 /**
  * This does the initial set up for a web request.
- * It does some security checks, starts the profiler and loads the
- * configuration, and optionally loads Setup.php depending on whether
- * MW_NO_SETUP is defined.
  *
- * Setup.php (if loaded) then sets up GlobalFunctions, the AutoLoader,
- * and the configuration globals.
+ * It does some security checks, loads autoloaders, constants, and
+ * global functions, starts the profiler, loads the configuration,
+ * and loads Setup.php, which loads extensions using the extension
+ * registration system and initializes the application's global state.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +29,7 @@ if ( ini_get( 'mbstring.func_overload' ) ) {
 	die( 'MediaWiki does not support installations where mbstring.func_overload is non-zero.' );
 }
 
-# bug 15461: Make IE8 turn off content sniffing. Everybody else should ignore this
+# T17461: Make IE8 turn off content sniffing. Everybody else should ignore this
 # We're adding it here so that it's *always* set, even for alternate entry
 # points and when $wgOut gets disabled or overridden.
 header( 'X-Content-Type-Options: nosniff' );
@@ -60,31 +59,7 @@ if ( $IP === false ) {
 	$IP = realpath( '.' ) ?: dirname( __DIR__ );
 }
 
-# Grab profiling functions
-require_once "$IP/includes/profiler/ProfilerFunctions.php";
-
-# Start the autoloader, so that extensions can derive classes from core files
-require_once "$IP/includes/AutoLoader.php";
-
-# Load up some global defines.
-require_once "$IP/includes/Defines.php";
-
-# Start the profiler
-$wgProfiler = [];
-if ( file_exists( "$IP/StartProfiler.php" ) ) {
-	require "$IP/StartProfiler.php";
-}
-
-# Load default settings
-require_once "$IP/includes/DefaultSettings.php";
-
-# Load global functions
-require_once "$IP/includes/GlobalFunctions.php";
-
-# Load composer's autoloader if present
-if ( is_readable( "$IP/vendor/autoload.php" ) ) {
-	require_once "$IP/vendor/autoload.php";
-}
+require_once "$IP/includes/PreConfigSetup.php";
 
 # Assert that composer dependencies were successfully loaded
 # Purposely no leading \ due to it breaking HHVM RepoAuthorative mode
@@ -103,6 +78,9 @@ if ( !interface_exists( 'Psr\Log\LoggerInterface' ) ) {
 	trigger_error( $message, E_USER_ERROR );
 	die( 1 );
 }
+
+# Install a header callback
+MediaWiki\HeaderCallback::register();
 
 if ( defined( 'MW_CONFIG_CALLBACK' ) ) {
 	# Use a callback function to configure MediaWiki
@@ -133,9 +111,7 @@ if ( ob_get_level() == 0 ) {
 	ob_start( 'wfOutputHandler' );
 }
 
-if ( !defined( 'MW_NO_SETUP' ) ) {
-	require_once "$IP/includes/Setup.php";
-}
+require_once "$IP/includes/Setup.php";
 
 # Multiple DBs or commits might be used; keep the request as transactional as possible
 if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' ) {

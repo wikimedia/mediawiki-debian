@@ -20,6 +20,7 @@
  * @file
  * @ingroup Media
  */
+use Wikimedia\ScopedCallback;
 
 /**
  * Handler for SVG images.
@@ -125,7 +126,7 @@ class SvgHandler extends ImageHandler {
 
 	/**
 	 * @param File $image
-	 * @param array $params
+	 * @param array &$params
 	 * @return bool
 	 */
 	function normaliseParams( $image, &$params ) {
@@ -177,14 +178,14 @@ class SvgHandler extends ImageHandler {
 
 		$metadata = $this->unpackMetadata( $image->getMetadata() );
 		if ( isset( $metadata['error'] ) ) { // sanity check
-			$err = wfMessage( 'svg-long-error', $metadata['error']['message'] )->text();
+			$err = wfMessage( 'svg-long-error', $metadata['error']['message'] );
 
 			return new MediaTransformError( 'thumbnail_error', $clientWidth, $clientHeight, $err );
 		}
 
 		if ( !wfMkdirParents( dirname( $dstPath ), null, __METHOD__ ) ) {
 			return new MediaTransformError( 'thumbnail_error', $clientWidth, $clientHeight,
-				wfMessage( 'thumbnail_dest_directory' )->text() );
+				wfMessage( 'thumbnail_dest_directory' ) );
 		}
 
 		$srcPath = $image->getLocalRefPath();
@@ -195,7 +196,7 @@ class SvgHandler extends ImageHandler {
 
 			return new MediaTransformError( 'thumbnail_error',
 				$params['width'], $params['height'],
-				wfMessage( 'filemissing' )->text()
+				wfMessage( 'filemissing' )
 			);
 		}
 
@@ -204,7 +205,17 @@ class SvgHandler extends ImageHandler {
 		// https://git.gnome.org/browse/librsvg/commit/?id=f01aded72c38f0e18bc7ff67dee800e380251c8e
 		$tmpDir = wfTempDir() . '/svg_' . wfRandomString( 24 );
 		$lnPath = "$tmpDir/" . basename( $srcPath );
-		$ok = mkdir( $tmpDir, 0771 ) && symlink( $srcPath, $lnPath );
+		$ok = mkdir( $tmpDir, 0771 );
+		if ( !$ok ) {
+			wfDebugLog( 'thumbnail',
+				sprintf( 'Thumbnail failed on %s: could not create temporary directory %s',
+					wfHostname(), $tmpDir ) );
+			return new MediaTransformError( 'thumbnail_error',
+				$params['width'], $params['height'],
+				wfMessage( 'thumbnail-temp-create' )->text()
+			);
+		}
+		$ok = symlink( $srcPath, $lnPath );
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$cleaner = new ScopedCallback( function () use ( $tmpDir, $lnPath ) {
 			MediaWiki\suppressWarnings();
@@ -218,7 +229,7 @@ class SvgHandler extends ImageHandler {
 					wfHostname(), $lnPath, $srcPath ) );
 			return new MediaTransformError( 'thumbnail_error',
 				$params['width'], $params['height'],
-				wfMessage( 'thumbnail-temp-create' )->text()
+				wfMessage( 'thumbnail-temp-create' )
 			);
 		}
 
@@ -301,13 +312,13 @@ class SvgHandler extends ImageHandler {
 	}
 
 	/**
-	 * @param File $file
+	 * @param File|FSFile $file
 	 * @param string $path Unused
 	 * @param bool|array $metadata
 	 * @return array
 	 */
 	function getImageSize( $file, $path, $metadata = false ) {
-		if ( $metadata === false ) {
+		if ( $metadata === false && $file instanceof File ) {
 			$metadata = $file->getMetadata();
 		}
 		$metadata = $this->unpackMetadata( $metadata );
@@ -355,7 +366,7 @@ class SvgHandler extends ImageHandler {
 	}
 
 	/**
-	 * @param File $file
+	 * @param File|FSFile $file
 	 * @param string $filename
 	 * @return string Serialised metadata
 	 */

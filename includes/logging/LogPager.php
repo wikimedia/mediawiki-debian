@@ -2,7 +2,7 @@
 /**
  * Contain classes to list log entries
  *
- * Copyright © 2004 Brion Vibber <brion@pobox.com>, 2008 Aaron Schulz
+ * Copyright © 2004 Brion Vibber <brion@pobox.com>
  * https://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,8 +49,6 @@ class LogPager extends ReverseChronologicalPager {
 	public $mLogEventsList;
 
 	/**
-	 * Constructor
-	 *
 	 * @param LogEventsList $list
 	 * @param string|array $types Log types to show
 	 * @param string $performer The user who made the log entries
@@ -78,7 +76,7 @@ class LogPager extends ReverseChronologicalPager {
 		$this->getDateCond( $year, $month );
 		$this->mTagFilter = $tagFilter;
 
-		$this->mDb = wfGetDB( DB_SLAVE, 'logpager' );
+		$this->mDb = wfGetDB( DB_REPLICA, 'logpager' );
 	}
 
 	public function getDefaultQuery() {
@@ -171,6 +169,9 @@ class LogPager extends ReverseChronologicalPager {
 		if ( is_null( $usertitle ) ) {
 			return;
 		}
+		// Normalize username first so that non-existent users used
+		// in maintenance scripts work
+		$name = $usertitle->getText();
 		/* Fetch userid at first, if known, provides awesome query plan afterwards */
 		$userid = User::idFromName( $name );
 		if ( !$userid ) {
@@ -178,7 +179,7 @@ class LogPager extends ReverseChronologicalPager {
 		} else {
 			$this->mConds['log_user'] = $userid;
 		}
-		// Paranoia: avoid brute force searches (bug 17342)
+		// Paranoia: avoid brute force searches (T19342)
 		$user = $this->getUser();
 		if ( !$user->isAllowed( 'deletedhistory' ) ) {
 			$this->mConds[] = $this->mDb->bitAnd( 'log_deleted', LogPage::DELETED_USER ) . ' = 0';
@@ -187,7 +188,7 @@ class LogPager extends ReverseChronologicalPager {
 				' != ' . LogPage::SUPPRESSED_USER;
 		}
 
-		$this->performer = $usertitle->getText();
+		$this->performer = $name;
 	}
 
 	/**
@@ -253,7 +254,7 @@ class LogPager extends ReverseChronologicalPager {
 		} else {
 			$this->mConds['log_title'] = $title->getDBkey();
 		}
-		// Paranoia: avoid brute force searches (bug 17342)
+		// Paranoia: avoid brute force searches (T19342)
 		$user = $this->getUser();
 		if ( !$user->isAllowed( 'deletedhistory' ) ) {
 			$this->mConds[] = $db->bitAnd( 'log_deleted', LogPage::DELETED_ACTION ) . ' = 0';
@@ -302,14 +303,13 @@ class LogPager extends ReverseChronologicalPager {
 		$options = $basic['options'];
 		$joins = $basic['join_conds'];
 
-		$index = [];
 		# Add log_search table if there are conditions on it.
 		# This filters the results to only include log rows that have
 		# log_search records with the specified ls_field and ls_value values.
 		if ( array_key_exists( 'ls_field', $this->mConds ) ) {
 			$tables[] = 'log_search';
-			$index['log_search'] = 'ls_field_val';
-			$index['logging'] = 'PRIMARY';
+			$options['IGNORE INDEX'] = [ 'log_search' => 'ls_log_id' ];
+			$options['USE INDEX'] = [ 'logging' => 'PRIMARY' ];
 			if ( !$this->hasEqualsClause( 'ls_field' )
 				|| !$this->hasEqualsClause( 'ls_value' )
 			) {
@@ -318,9 +318,6 @@ class LogPager extends ReverseChronologicalPager {
 				# no duplicate log rows. Otherwise, we need to remove the duplicates.
 				$options[] = 'DISTINCT';
 			}
-		}
-		if ( count( $index ) ) {
-			$options['USE INDEX'] = $index;
 		}
 		# Don't show duplicate rows when using log_search
 		$joins['log_search'] = [ 'INNER JOIN', 'ls_log_id=log_id' ];

@@ -39,6 +39,7 @@ class FeedUtils {
 		global $wgRequest, $wgUser;
 
 		$purge = $wgRequest->getVal( 'action' ) === 'purge';
+		// Allow users with 'purge' right to clear feed caches
 		if ( $purge && $wgUser->isAllowed( 'purge' ) ) {
 			$cache = ObjectCache::getMainWANInstance();
 			$cache->delete( $timekey, 1 );
@@ -71,7 +72,8 @@ class FeedUtils {
 	/**
 	 * Format a diff for the newsfeed
 	 *
-	 * @param object $row Row from the recentchanges table
+	 * @param object $row Row from the recentchanges table, including fields as
+	 *  appropriate for CommentStore
 	 * @return string
 	 */
 	public static function formatDiff( $row ) {
@@ -87,7 +89,9 @@ class FeedUtils {
 			$timestamp,
 			$row->rc_deleted & Revision::DELETED_COMMENT
 				? wfMessage( 'rev-deleted-comment' )->escaped()
-				: $row->rc_comment,
+				: CommentStore::newKey( 'rc_comment' )
+					// Legacy from RecentChange::selectFields() via ChangesListSpecialPage::doMainQuery()
+					->getCommentLegacy( wfGetDB( DB_REPLICA ), $row )->text,
 			$actiontext
 		);
 	}
@@ -128,13 +132,6 @@ class FeedUtils {
 		}
 
 		if ( $oldid ) {
-
-			# $diffText = $de->getDiff( wfMessage( 'revisionasof',
-			# 	$wgLang->timeanddate( $timestamp ),
-			# 	$wgLang->date( $timestamp ),
-			# 	$wgLang->time( $timestamp ) )->text(),
-			# 	wfMessage( 'currentrev' )->text() );
-
 			$diffText = '';
 			// Don't bother generating the diff if we won't be able to show it
 			if ( $wgFeedDiffCutoff > 0 ) {
@@ -194,8 +191,7 @@ class FeedUtils {
 			}
 
 			if ( $html === null ) {
-
-				// Omit large new page diffs, bug 29110
+				// Omit large new page diffs, T31110
 				// Also use diff link for non-textual content
 				$diffText = self::getDiffLink( $title, $newid );
 			} else {

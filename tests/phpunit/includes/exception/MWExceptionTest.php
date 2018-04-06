@@ -76,53 +76,6 @@ class MWExceptionTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @dataProvider provideRunHooks
-	 * @covers MWException::runHooks
-	 */
-	public function testRunHooks( $wgExceptionHooks, $name, $args, $expectedReturn ) {
-		$this->setMwGlobals( [
-			'wgExceptionHooks' => $wgExceptionHooks,
-		] );
-		$e = new MWException();
-		$this->assertEquals( $expectedReturn, $e->runHooks( $name, $args ) );
-	}
-
-	public static function provideRunHooks() {
-		return [
-			[ null, null, null, null ],
-			[ [], 'name', [], null ],
-			[ [ 'name' => false ], 'name', [], null ],
-			[
-				[ 'mockHook' => [ 'MWExceptionTest::mockHook' ] ],
-				'mockHook', [], 'YAY.[]'
-			],
-			[
-				[ 'mockHook' => [ 'MWExceptionTest::mockHook' ] ],
-				'mockHook', [ 'a' ], 'YAY.{"1":"a"}'
-			],
-			[
-				[ 'mockHook' => [ 'MWExceptionTest::mockHook' ] ],
-				'mockHook', [ null ], null
-			],
-		];
-	}
-
-	/**
-	 * Used in conjunction with provideRunHooks and testRunHooks as a mock callback for a hook
-	 */
-	public static function mockHook() {
-		$args = func_get_args();
-		if ( !$args[0] instanceof MWException ) {
-			return '$caller not instance of MWException';
-		}
-		unset( $args[0] );
-		if ( array_key_exists( 1, $args ) && $args[1] === null ) {
-			return null;
-		}
-		return 'YAY.' . json_encode( $args );
-	}
-
-	/**
 	 * @dataProvider provideIsCommandLine
 	 * @covers MWException::isCommandLine
 	 */
@@ -173,7 +126,6 @@ class MWExceptionTest extends MediaWikiTestCase {
 	 * @dataProvider provideJsonSerializedKeys
 	 */
 	public function testJsonserializeexceptionKeys( $expectedKeyType, $exClass, $key ) {
-
 		# Make sure we log a backtrace:
 		$this->setMwGlobals( [ 'wgLogExceptionBacktrace' => true ] );
 
@@ -235,7 +187,6 @@ class MWExceptionTest extends MediaWikiTestCase {
 			MWExceptionHandler::jsonSerializeException( new Exception() )
 		);
 		$this->assertObjectNotHasAttribute( 'backtrace', $json );
-
 	}
 
 }

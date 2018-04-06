@@ -14,7 +14,7 @@
 			$table = $( '#mw_metadata' ),
 			$tbody = $table.find( 'tbody' );
 
-		if ( !$tbody.length || !$tbody.find( '.collapsable' ).length ) {
+		if ( !$tbody.find( '.collapsable' ).length ) {
 			return;
 		}
 
@@ -22,17 +22,24 @@
 		$col = $( '<td colspan="2"></td>' );
 
 		$link = $( '<a>' )
-		.text( showText )
-		.attr( 'href', '#' )
-		.click( function () {
-			if ( $table.hasClass( 'collapsed' ) ) {
-				$( this ).text( hideText );
-			} else {
-				$( this ).text( showText );
-			}
-			$table.toggleClass( 'expanded collapsed' );
-			return false;
-		} );
+			.text( showText )
+			.attr( {
+				role: 'button',
+				tabindex: 0
+			} )
+			.on( 'click keypress', function ( e ) {
+				if (
+					e.type === 'click' ||
+					e.type === 'keypress' && e.which === 13
+				) {
+					if ( $table.hasClass( 'collapsed' ) ) {
+						$( this ).text( hideText );
+					} else {
+						$( this ).text( showText );
+					}
+					$table.toggleClass( 'expanded collapsed' );
+				}
+			} );
 
 		$col.append( $link );
 		$row.append( $col );

@@ -55,9 +55,16 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 
 		$prop = array_flip( $params['prop'] );
 		$this->addFieldsIf( 'pt_user', isset( $prop['user'] ) || isset( $prop['userid'] ) );
-		$this->addFieldsIf( 'pt_reason', isset( $prop['comment'] ) || isset( $prop['parsedcomment'] ) );
 		$this->addFieldsIf( 'pt_expiry', isset( $prop['expiry'] ) );
 		$this->addFieldsIf( 'pt_create_perm', isset( $prop['level'] ) );
+
+		if ( isset( $prop['comment'] ) || isset( $prop['parsedcomment'] ) ) {
+			$commentStore = new CommentStore( 'pt_reason' );
+			$commentQuery = $commentStore->getJoin();
+			$this->addTables( $commentQuery['tables'] );
+			$this->addFields( $commentQuery['fields'] );
+			$this->addJoinConds( $commentQuery['joins'] );
+		}
 
 		$this->addTimestampWhereRange( 'pt_timestamp', $params['dir'], $params['start'], $params['end'] );
 		$this->addWhereFld( 'pt_namespace', $params['namespace'] );
@@ -127,16 +134,17 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 				}
 
 				if ( isset( $prop['comment'] ) ) {
-					$vals['comment'] = $row->pt_reason;
+					$vals['comment'] = $commentStore->getComment( $row )->text;
 				}
 
 				if ( isset( $prop['parsedcomment'] ) ) {
-					$vals['parsedcomment'] = Linker::formatComment( $row->pt_reason, $title );
+					$vals['parsedcomment'] = Linker::formatComment(
+						$commentStore->getComment( $row )->text, $titles
+					);
 				}
 
 				if ( isset( $prop['expiry'] ) ) {
-					global $wgContLang;
-					$vals['expiry'] = $wgContLang->formatExpiry( $row->pt_expiry, TS_ISO_8601 );
+					$vals['expiry'] = ApiResult::formatExpiry( $row->pt_expiry );
 				}
 
 				if ( isset( $prop['level'] ) ) {
@@ -235,6 +243,6 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 	}
 
 	public function getHelpUrls() {
-		return 'https://www.mediawiki.org/wiki/API:Protectedtitles';
+		return 'https://www.mediawiki.org/wiki/Special:MyLanguage/API:Protectedtitles';
 	}
 }
