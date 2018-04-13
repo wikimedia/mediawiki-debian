@@ -1,4 +1,4 @@
 debian/etc/*	etc/mediawiki
-*.php includes index.php languages maintenance mw-config resources serialized skins vendor usr/share/mediawiki
+*.php composer.json includes languages maintenance mw-config resources serialized skins vendor usr/share/mediawiki
 cache extensions images var/lib/mediawiki
 debian/images/*.png usr/share/mediawiki/resources/assets/debian
