@@ -16,6 +16,7 @@ override_dh_install:
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/Entity/StatsdDataTest.php
 	# Submitted upstream: https://github.com/oyejorge/less.php/pull/325
 	chmod a+x debian/mediawiki/usr/share/mediawiki/vendor/oyejorge/less.php/bin/lessc
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oyejorge/less.php/lib/Less/Less.php.combine
 
 	find debian/mediawiki/usr/share/mediawiki -maxdepth 1 -mindepth 1 | grep -v "\(LocalSettings.php\|debian-scripts\|images\|extensions\|config\)" | \
 	while read i; do \

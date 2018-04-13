@@ -9,12 +9,16 @@ mediawiki: embedded-javascript-library usr/share/mediawiki/resources/src/jquery.
 
 # MediaWiki uses an older version
 mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/jquery.cookie.js please use libjs-jquery-cookie
+mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/mustache/mustache.js please use libjs-mustache
 
 # MediaWiki uses a newer version
 mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/jquery.form.js please use libjs-jquery-form
 
 # MediaWiki requires an older version
 mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/jquery.js please use libjs-jquery
+
+# Don't use HHVM, even though there's a script for it
+mediawiki: missing-dep-for-interpreter hhvm => hhvm (usr/share/mediawiki/maintenance/hhvm/run-server) #!/usr/bin/hhvm
 
 # the files in question are not suitable for doc-base registration
 mediawiki: possible-documentation-but-no-doc-base-registration

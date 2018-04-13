@@ -7,8 +7,9 @@ mediawiki (1:1.30.0-1) UNRELEASED; urgency=medium
   * Rebase patches, dropping php-jwt-fix-shebang.diff
   * Don't try to install any *.phtml
   * Drop Suggests on hhvm
+  * Suppress and fix some lintian issues
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 10 Apr 2018 23:55:31 -0700
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 12 Apr 2018 19:04:41 -0700
 
 mediawiki (1:1.27.4-3) unstable; urgency=medium
 
