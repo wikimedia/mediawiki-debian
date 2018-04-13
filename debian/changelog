@@ -1,4 +1,4 @@
-mediawiki (1:1.30.0-1) UNRELEASED; urgency=medium
+mediawiki (1:1.30.0-1) unstable; urgency=medium
 
   * New upstream version 1.30.0
   * Update Vcs-Browser to use Gerrit/Gitiles as repository viewer
