@@ -1,3 +1,22 @@
+mediawiki (1:1.30.0-1) unstable; urgency=medium
+
+    MediaWiki has been updated to the 1.30 upstream release branch, which
+    brings in about a year and a half of upstream changes. Release notes
+    may be found in /usr/share/doc/mediawiki/RELEASE-NOTES-1.30 and
+    /usr/share/doc/mediawiki/changelog. Please see the "Upgrading" section
+    of README.debian and /usr/share/doc/mediawiki/UPGRADE for details on
+    what manual steps need to be taken to upgrade.
+
+    Some highlights of new features:
+    * Improved HTML file caching ($wgUseFileCache)
+    * A "slideshow" mode for file galleries
+    * Ability to assign user groups for a limited amount of time
+    * Special:Contributions supports querying IP ranges
+    * Support for 3 new languages (ban, kbp, & shn), as well as improvements
+      to language fallbacks for when translations aren't complete.
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 12 Apr 2018 20:20:09 -0700
+
 mediawiki (1:1.27.0-1) unstable; urgency=medium
 
     MediaWiki has been updated to the 1.27 upstream release branch, which

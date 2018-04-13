@@ -10,8 +10,9 @@ mediawiki (1:1.30.0-1) UNRELEASED; urgency=medium
   * Suppress and fix some lintian issues
   * Refer to newly available `/usr/share/common-licenses/CC0-1.0`
   * Standards-Version: 4.1.4
+  * Update mediawiki.NEWS for 1.30 release
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 12 Apr 2018 20:05:56 -0700
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 12 Apr 2018 20:30:42 -0700
 
 mediawiki (1:1.27.4-3) unstable; urgency=medium
 
