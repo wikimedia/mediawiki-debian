@@ -8,8 +8,9 @@ mediawiki (1:1.30.0-1) UNRELEASED; urgency=medium
   * Don't try to install any *.phtml
   * Drop Suggests on hhvm
   * Suppress and fix some lintian issues
+  * Refer to newly available `/usr/share/common-licenses/CC0-1.0`
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 12 Apr 2018 19:04:41 -0700
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 12 Apr 2018 20:05:08 -0700
 
 mediawiki (1:1.27.4-3) unstable; urgency=medium
 
