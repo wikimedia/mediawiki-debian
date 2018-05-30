@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
+class ComposerStaticInit93ca26a8112eb83aad22ad1138ae7e6a
 {
     public static $files = array (
         '23842c11409ef125f7fd90c8b167279e' => __DIR__ . '/..' . '/wikimedia/at-ease/src/MediaWiki/Functions.php',
@@ -91,6 +91,25 @@ class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
     );
 
     public static $prefixesPsr0 = array (
+        'P' => 
+        array (
+            'PEAR' => 
+            array (
+                0 => __DIR__ . '/..' . '/pear/pear_exception',
+            ),
+        ),
+        'M' => 
+        array (
+            'Mail_mimeDecode' => 
+            array (
+                0 => __DIR__ . '/..' . '/pear/mail_mime-decode',
+            ),
+            'Mail' => 
+            array (
+                0 => __DIR__ . '/..' . '/pear/mail',
+                1 => __DIR__ . '/..' . '/pear/mail_mime',
+            ),
+        ),
         'L' => 
         array (
             'Liuggio' => 
@@ -104,6 +123,10 @@ class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
         ),
         'C' => 
         array (
+            'Console' => 
+            array (
+                0 => __DIR__ . '/..' . '/pear/console_getopt',
+            ),
             'ComposerVendorHtaccessCreator' => 
             array (
                 0 => __DIR__ . '/../..' . '/includes/composer',
@@ -117,6 +140,7 @@ class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
 
     public static $fallbackDirsPsr0 = array (
         0 => __DIR__ . '/..' . '/cssjanus/cssjanus/src',
+        1 => __DIR__ . '/..' . '/pear/pear-core-minimal/src',
     );
 
     public static $classMap = array (
@@ -148,6 +172,7 @@ class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
         'Composer\\Semver\\Constraint\\MultiConstraint' => __DIR__ . '/..' . '/composer/semver/src/Constraint/MultiConstraint.php',
         'Composer\\Semver\\Semver' => __DIR__ . '/..' . '/composer/semver/src/Semver.php',
         'Composer\\Semver\\VersionParser' => __DIR__ . '/..' . '/composer/semver/src/VersionParser.php',
+        'Console_Getopt' => __DIR__ . '/..' . '/pear/console_getopt/Console/Getopt.php',
         'HtmlFormatter\\HtmlFormatter' => __DIR__ . '/..' . '/wikimedia/html-formatter/src/HtmlFormatter.php',
         'IPSet\\IPSet' => __DIR__ . '/..' . '/wikimedia/ip-set/src/IPSet/IPSet.php',
         'LCRun3' => __DIR__ . '/..' . '/zordius/lightncandy/src/lightncandy.php',
@@ -225,6 +250,17 @@ class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
         'Liuggio\\StatsdClient\\Service\\StatsdService' => __DIR__ . '/..' . '/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Service/StatsdService.php',
         'Liuggio\\StatsdClient\\StatsdClient' => __DIR__ . '/..' . '/liuggio/statsd-php-client/src/Liuggio/StatsdClient/StatsdClient.php',
         'Liuggio\\StatsdClient\\StatsdClientInterface' => __DIR__ . '/..' . '/liuggio/statsd-php-client/src/Liuggio/StatsdClient/StatsdClientInterface.php',
+        'Mail' => __DIR__ . '/..' . '/pear/mail/Mail.php',
+        'Mail_RFC822' => __DIR__ . '/..' . '/pear/mail/Mail/RFC822.php',
+        'Mail_mail' => __DIR__ . '/..' . '/pear/mail/Mail/mail.php',
+        'Mail_mime' => __DIR__ . '/..' . '/pear/mail_mime/Mail/mime.php',
+        'Mail_mimeDecode' => __DIR__ . '/..' . '/pear/mail_mime-decode/Mail/mimeDecode.php',
+        'Mail_mimePart' => __DIR__ . '/..' . '/pear/mail_mime/Mail/mimePart.php',
+        'Mail_mock' => __DIR__ . '/..' . '/pear/mail/Mail/mock.php',
+        'Mail_null' => __DIR__ . '/..' . '/pear/mail/Mail/null.php',
+        'Mail_sendmail' => __DIR__ . '/..' . '/pear/mail/Mail/sendmail.php',
+        'Mail_smtp' => __DIR__ . '/..' . '/pear/mail/Mail/smtp.php',
+        'Mail_smtpmx' => __DIR__ . '/..' . '/pear/mail/Mail/smtpmx.php',
         'OOUI\\AccessKeyedElement' => __DIR__ . '/..' . '/oojs/oojs-ui/php/mixins/AccessKeyedElement.php',
         'OOUI\\ActionFieldLayout' => __DIR__ . '/..' . '/oojs/oojs-ui/php/layouts/ActionFieldLayout.php',
         'OOUI\\ApexTheme' => __DIR__ . '/..' . '/oojs/oojs-ui/php/themes/ApexTheme.php',
@@ -268,6 +304,12 @@ class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
         'OOUI\\TitledElement' => __DIR__ . '/..' . '/oojs/oojs-ui/php/mixins/TitledElement.php',
         'OOUI\\Widget' => __DIR__ . '/..' . '/oojs/oojs-ui/php/Widget.php',
         'OOUI\\WikimediaUITheme' => __DIR__ . '/..' . '/oojs/oojs-ui/php/themes/WikimediaUITheme.php',
+        'OS_Guess' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/OS/Guess.php',
+        'PEAR' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR.php',
+        'PEAR_Error' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR.php',
+        'PEAR_ErrorStack' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/PEAR/ErrorStack.php',
+        'PEAR_Exception' => __DIR__ . '/..' . '/pear/pear_exception/PEAR/Exception.php',
+        'PEAR_ExceptionTest' => __DIR__ . '/..' . '/pear/pear_exception/tests/PEAR/ExceptionTest.php',
         'Psr\\Log\\AbstractLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/AbstractLogger.php',
         'Psr\\Log\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/log/Psr/Log/InvalidArgumentException.php',
         'Psr\\Log\\LogLevel' => __DIR__ . '/..' . '/psr/log/Psr/Log/LogLevel.php',
@@ -351,6 +393,7 @@ class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
         'RemexHtml\\TreeBuilder\\TreeMutationTracer' => __DIR__ . '/..' . '/wikimedia/remex-html/RemexHtml/TreeBuilder/TreeMutationTracer.php',
         'RunningStat\\PSquare' => __DIR__ . '/..' . '/wikimedia/running-stat/src/RunningStat/PSquare.php',
         'RunningStat\\RunningStat' => __DIR__ . '/..' . '/wikimedia/running-stat/src/RunningStat/RunningStat.php',
+        'System' => __DIR__ . '/..' . '/pear/pear-core-minimal/src/System.php',
         'UtfNormal\\Constants' => __DIR__ . '/..' . '/wikimedia/utfnormal/src/Constants.php',
         'UtfNormal\\Utils' => __DIR__ . '/..' . '/wikimedia/utfnormal/src/Util.php',
         'UtfNormal\\Validator' => __DIR__ . '/..' . '/wikimedia/utfnormal/src/Validator.php',
@@ -400,11 +443,11 @@ class ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit174d277c48faaef2fa738c0ae3fc7020::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit93ca26a8112eb83aad22ad1138ae7e6a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit93ca26a8112eb83aad22ad1138ae7e6a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit93ca26a8112eb83aad22ad1138ae7e6a::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit93ca26a8112eb83aad22ad1138ae7e6a::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit93ca26a8112eb83aad22ad1138ae7e6a::$classMap;
 
         }, null, ClassLoader::class);
     }
