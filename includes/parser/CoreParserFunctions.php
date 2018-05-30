@@ -337,8 +337,8 @@ class CoreParserFunctions {
 		// default
 		$gender = User::getDefaultOption( 'gender' );
 
-		// allow prefix.
-		$title = Title::newFromText( $username );
+		// allow prefix and normalize (e.g. "&#42;foo" -> "*foo" ).
+		$title = Title::newFromText( $username, NS_USER );
 
 		if ( $title && $title->inNamespace( NS_USER ) ) {
 			$username = $title->getText();
@@ -830,7 +830,7 @@ class CoreParserFunctions {
 			$restrictions = $titleObject->getRestrictions( strtolower( $type ) );
 			# Title::getRestrictions returns an array, its possible it may have
 			# multiple values in the future
-			return implode( $restrictions, ',' );
+			return implode( ',', $restrictions );
 		}
 		return '';
 	}
@@ -875,7 +875,7 @@ class CoreParserFunctions {
 		$code = strtolower( $code );
 		$inLanguage = strtolower( $inLanguage );
 		$lang = Language::fetchLanguageName( $code, $inLanguage );
-		return $lang !== '' ? $lang : wfBCP47( $code );
+		return $lang !== '' ? $lang : LanguageCode::bcp47( $code );
 	}
 
 	/**
@@ -930,7 +930,8 @@ class CoreParserFunctions {
 	 */
 	public static function anchorencode( $parser, $text ) {
 		$text = $parser->killMarkers( $text );
-		return (string)substr( $parser->guessSectionNameFromWikiText( $text ), 1 );
+		$section = (string)substr( $parser->guessSectionNameFromWikiText( $text ), 1 );
+		return Sanitizer::safeEncodeAttribute( $section );
 	}
 
 	public static function special( $parser, $text ) {
@@ -1004,10 +1005,10 @@ class CoreParserFunctions {
 		if ( $argA == 'nowiki' ) {
 			// {{filepath: | option [| size] }}
 			$isNowiki = true;
-			$parsedWidthParam = $parser->parseWidthParam( $argB );
+			$parsedWidthParam = Parser::parseWidthParam( $argB );
 		} else {
 			// {{filepath: [| size [|option]] }}
-			$parsedWidthParam = $parser->parseWidthParam( $argA );
+			$parsedWidthParam = Parser::parseWidthParam( $argA );
 			$isNowiki = ( $argB == 'nowiki' );
 		}
 
@@ -1338,7 +1339,7 @@ class CoreParserFunctions {
 			foreach ( $sources[0] as $sourceTitle ) {
 				$names[] = $sourceTitle->getPrefixedText();
 			}
-			return implode( $names, '|' );
+			return implode( '|', $names );
 		}
 		return '';
 	}
