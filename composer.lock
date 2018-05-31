@@ -1900,12 +1900,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/JetBrains/phpstorm-stubs.git",
-                "reference": "276bcbfc1e6baca0bf4b3dd1504b0712070a0b7b"
+                "reference": "edbf107492dfa1cc76aa528380371317a4a8bc39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/276bcbfc1e6baca0bf4b3dd1504b0712070a0b7b",
-                "reference": "276bcbfc1e6baca0bf4b3dd1504b0712070a0b7b",
+                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/edbf107492dfa1cc76aa528380371317a4a8bc39",
+                "reference": "edbf107492dfa1cc76aa528380371317a4a8bc39",
                 "shasum": ""
             },
             "require-dev": {
@@ -1930,7 +1930,7 @@
                 "stubs",
                 "type"
             ],
-            "time": "2018-05-23T18:04:54+00:00"
+            "time": "2018-05-30T15:53:56+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -3722,16 +3722,16 @@
         },
         {
             "name": "symfony/debug",
-            "version": "v4.0.11",
+            "version": "v4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "4e7c98de67cc4171d4c986554e09a511da40f3d8"
+                "reference": "449f8b00b28ab6e6912c3e6b920406143b27193b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/4e7c98de67cc4171d4c986554e09a511da40f3d8",
-                "reference": "4e7c98de67cc4171d4c986554e09a511da40f3d8",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/449f8b00b28ab6e6912c3e6b920406143b27193b",
+                "reference": "449f8b00b28ab6e6912c3e6b920406143b27193b",
                 "shasum": ""
             },
             "require": {
@@ -3747,7 +3747,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.0-dev"
+                    "dev-master": "4.1-dev"
                 }
             },
             "autoload": {
@@ -3774,7 +3774,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-16T09:05:32+00:00"
+            "time": "2018-05-16T14:33:22+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
