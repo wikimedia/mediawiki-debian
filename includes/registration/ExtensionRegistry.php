@@ -107,7 +107,7 @@ class ExtensionRegistry {
 				throw new Exception( "$path does not exist!" );
 			}
 			// @codeCoverageIgnoreStart
-			if ( !$mtime ) {
+			if ( $mtime === false ) {
 				$err = error_get_last();
 				throw new Exception( "Couldn't stat $path: {$err['message']}" );
 				// @codeCoverageIgnoreEnd
@@ -246,6 +246,7 @@ class ExtensionRegistry {
 			}
 			if ( isset( $info['AutoloadNamespaces'] ) ) {
 				$autoloadNamespaces += $this->processAutoLoader( $dir, $info['AutoloadNamespaces'] );
+				AutoLoader::$psr4Namespaces += $autoloadNamespaces;
 			}
 
 			// get all requirements/dependencies for this extension

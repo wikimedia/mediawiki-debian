@@ -71,7 +71,7 @@ $wgConfigRegistry = [
  * MediaWiki version number
  * @since 1.2
  */
-$wgVersion = '1.31.0-rc.2';
+$wgVersion = '1.31.0';
 
 /**
  * Name of the site. It must be changed in LocalSettings.php
@@ -2032,6 +2032,8 @@ $wgDBerrorLogTZ = false;
  * Even correct usage may cause failures with Unicode supplementary
  * characters (those not in the Basic Multilingual Plane) unless MySQL
  * has enhanced their Unicode support.
+ *
+ * @deprecated since 1.31
  */
 $wgDBmysql5 = false;
 
