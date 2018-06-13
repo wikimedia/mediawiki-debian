@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29
+class ComposerStaticInit_mediawiki_vendor
 {
     public static $files = array (
         '23842c11409ef125f7fd90c8b167279e' => __DIR__ . '/..' . '/wikimedia/at-ease/src/MediaWiki/Functions.php',
@@ -13,7 +13,6 @@ class ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29
         '4d945db823e5f6ca6dd83ad1f5fbcc43' => __DIR__ . '/..' . '/wikimedia/relpath/src/RelPath/RelPath.php',
         '6513700b70192b7dfd0e5e9fc8082cf3' => __DIR__ . '/..' . '/wikimedia/relpath/src/Wikimedia/RelPath.php',
         'c50606d667a3fde2b80a955639479d3d' => __DIR__ . '/..' . '/wikimedia/timestamp/src/defines.php',
-        '38db717deddb215de53e36c2c0bc9e7e' => __DIR__ . '/../..' . '/includes/compat/Timestamp.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -98,6 +97,14 @@ class ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29
                 0 => __DIR__ . '/..' . '/pear/pear_exception',
             ),
         ),
+        'N' => 
+        array (
+            'Net' => 
+            array (
+                0 => __DIR__ . '/..' . '/pear/net_smtp',
+                1 => __DIR__ . '/..' . '/pear/net_socket',
+            ),
+        ),
         'M' => 
         array (
             'Mail_mimeDecode' => 
@@ -127,14 +134,6 @@ class ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29
             array (
                 0 => __DIR__ . '/..' . '/pear/console_getopt',
             ),
-            'ComposerVendorHtaccessCreator' => 
-            array (
-                0 => __DIR__ . '/../..' . '/includes/composer',
-            ),
-            'ComposerHookHandler' => 
-            array (
-                0 => __DIR__ . '/../..' . '/includes/composer',
-            ),
         ),
     );
 
@@ -162,8 +161,6 @@ class ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29
         'Cdb\\Writer' => __DIR__ . '/..' . '/wikimedia/cdb/src/Writer.php',
         'Cdb\\Writer\\DBA' => __DIR__ . '/..' . '/wikimedia/cdb/src/Writer/DBA.php',
         'Cdb\\Writer\\PHP' => __DIR__ . '/..' . '/wikimedia/cdb/src/Writer/PHP.php',
-        'ComposerHookHandler' => __DIR__ . '/../..' . '/includes/composer/ComposerHookHandler.php',
-        'ComposerVendorHtaccessCreator' => __DIR__ . '/../..' . '/includes/composer/ComposerVendorHtaccessCreator.php',
         'Composer\\Semver\\Comparator' => __DIR__ . '/..' . '/composer/semver/src/Comparator.php',
         'Composer\\Semver\\Constraint\\AbstractConstraint' => __DIR__ . '/..' . '/composer/semver/src/Constraint/AbstractConstraint.php',
         'Composer\\Semver\\Constraint\\Constraint' => __DIR__ . '/..' . '/composer/semver/src/Constraint/Constraint.php',
@@ -261,6 +258,8 @@ class ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29
         'Mail_sendmail' => __DIR__ . '/..' . '/pear/mail/Mail/sendmail.php',
         'Mail_smtp' => __DIR__ . '/..' . '/pear/mail/Mail/smtp.php',
         'Mail_smtpmx' => __DIR__ . '/..' . '/pear/mail/Mail/smtpmx.php',
+        'Net_SMTP' => __DIR__ . '/..' . '/pear/net_smtp/Net/SMTP.php',
+        'Net_Socket' => __DIR__ . '/..' . '/pear/net_socket/Net/Socket.php',
         'OOUI\\AccessKeyedElement' => __DIR__ . '/..' . '/oojs/oojs-ui/php/mixins/AccessKeyedElement.php',
         'OOUI\\ActionFieldLayout' => __DIR__ . '/..' . '/oojs/oojs-ui/php/layouts/ActionFieldLayout.php',
         'OOUI\\ApexTheme' => __DIR__ . '/..' . '/oojs/oojs-ui/php/themes/ApexTheme.php',
@@ -430,6 +429,7 @@ class ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29
         'Wikimedia\\Purtle\\XmlRdfWriter' => __DIR__ . '/..' . '/wikimedia/purtle/src/XmlRdfWriter.php',
         'Wikimedia\\RunningStat' => __DIR__ . '/..' . '/wikimedia/running-stat/src/Wikimedia/RunningStat.php',
         'Wikimedia\\ScopedCallback' => __DIR__ . '/..' . '/wikimedia/scoped-callback/src/ScopedCallback.php',
+        'Wikimedia\\TestingAccessWrapper' => __DIR__ . '/..' . '/wikimedia/testing-access-wrapper/src/TestingAccessWrapper.php',
         'Wikimedia\\Timestamp\\ConvertibleTimestamp' => __DIR__ . '/..' . '/wikimedia/timestamp/src/ConvertibleTimestamp.php',
         'Wikimedia\\Timestamp\\TimestampException' => __DIR__ . '/..' . '/wikimedia/timestamp/src/TimestampException.php',
         'Wikimedia\\WaitConditionLoop' => __DIR__ . '/..' . '/wikimedia/wait-condition-loop/src/WaitConditionLoop.php',
@@ -443,11 +443,11 @@ class ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit3c0ceacf1e38f08645a9a35ad5b87d29::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit_mediawiki_vendor::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit_mediawiki_vendor::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit_mediawiki_vendor::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit_mediawiki_vendor::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit_mediawiki_vendor::$classMap;
 
         }, null, ClassLoader::class);
     }
