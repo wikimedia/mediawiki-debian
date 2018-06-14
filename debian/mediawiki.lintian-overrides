@@ -30,3 +30,9 @@ mediawiki: package-contains-broken-symlink var/lib/mediawiki/LocalSettings.php e
 # COPYING files are needed for Special:Version
 mediawiki: extra-license-file
 
+# false positive, this is a deprecated shim for GeSHi
+mediawiki: embedded-php-library usr/share/mediawiki/extensions-core/SyntaxHighlight_GeSHi/includes/GeSHi.php please use php-geshi
+
+# Doesn't make sense to depend upon python for a single development,
+# maintenance script
+mediawiki: python-script-but-no-python-dep usr/share/mediawiki/maintenance/language/zhtable/Makefile.py #!python
