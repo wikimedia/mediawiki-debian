@@ -1,8 +1,10 @@
-mediawiki (1:1.30.0-2) UNRELEASED; urgency=medium
+mediawiki (1:1.31.0-1) UNRELEASED; urgency=medium
 
+  * New upstream version 1.31.0
   * Run update.php as part of autopkgtest
+  * Bump d/watch to 1.31
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Mon, 30 Apr 2018 23:20:41 -0700
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 14 Jun 2018 10:30:09 +0200
 
 mediawiki (1:1.30.0-1) unstable; urgency=medium
 
