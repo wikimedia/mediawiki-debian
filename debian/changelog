@@ -1,3 +1,10 @@
+mediawiki (1:1.27.5-1~deb9u1) stretch-security; urgency=medium
+
+  * New upstream version 1.27.5 (security release), fixing
+    CVE-2018-0503, CVE-2018-0504, CVE-2018-0505.
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 20 Sep 2018 13:18:12 -0700
+
 mediawiki (1:1.27.4-1~deb9u1) stretch-security; urgency=high
 
   * Imported Upstream version 1.27.4 (security release), fixing
