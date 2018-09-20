@@ -1,6 +1,6 @@
-mediawiki (1:1.31.0-1) UNRELEASED; urgency=medium
+mediawiki (1:1.31.1-1) UNRELEASED; urgency=medium
 
-  * New upstream version 1.31.0
+  * New upstream version 1.31.1
   * Run update.php as part of autopkgtest
   * Bump d/watch to 1.31
   * Use PlatformSettings.php instead of LocalSettingsGenerator
