@@ -380,10 +380,6 @@ Files: skins/Timeless/*
 Copyright: Isarra Yos
 License: GPL-2.0+
 
-Files: skins/Timeless/resources/libraries/jquery.mobile.custom.js
-Copyright: jQuery Foundation, Inc. and other contributors
-License: Expat
-
 Files: skins/Timeless/resources/libraries/normalise.css
 Copyright: Nicolas Gallagher and Jonathan Neal
 License: Expat
