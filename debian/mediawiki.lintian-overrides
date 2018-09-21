@@ -6,6 +6,7 @@ mediawiki: embedded-javascript-library usr/share/mediawiki/resources/src/jquery/
 
 # MediaWiki has local patches
 mediawiki: embedded-javascript-library usr/share/mediawiki/resources/src/jquery.tipsy/jquery.tipsy.js please use libjs-jquery-tipsy
+mediawiki: embedded-javascript-library usr/share/mediawiki/resources/src/jquery.tipsy/jquery.tipsy.css please use libjs-jquery-tipsy
 
 # MediaWiki uses an older version
 mediawiki: embedded-javascript-library usr/share/mediawiki/resources/lib/jquery/jquery.cookie.js please use libjs-jquery-cookie
