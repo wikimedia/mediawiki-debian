@@ -1,11 +1,12 @@
 mediawiki (1:1.31.1-1) UNRELEASED; urgency=medium
 
-  * New upstream version 1.31.1
-  * Run update.php as part of autopkgtest
-  * Bump d/watch to 1.31
-  * Use PlatformSettings.php instead of LocalSettingsGenerator
-    (Closes: #863332)
-  * SyntaxHighlighting now uses Python 3
+  * New upstream version 1.31.1, including fixes for CVE-2018-0503,
+    CVE-2018-0505, CVE-2018-0504.
+  * Use PlatformSettings.php instead of LocalSettingsGenerator, see NEWS
+    for details on how to migrate.
+  * Wrap $wgFooterIcons custom config in an $wgExtensionFunctions, so the
+    resources path is read after config. (Closes: #863332)
+  * SyntaxHighlight extension now uses Python 3
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 14 Jun 2018 12:45:00 +0200
 
