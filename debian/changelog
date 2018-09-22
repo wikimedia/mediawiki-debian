@@ -1,8 +1,10 @@
-mediawiki (1:1.31.1-2) UNRELEASED; urgency=medium
+mediawiki (1:1.31.1-2) unstable; urgency=medium
 
-  * Fix SQLite autopkgtests
+  * Fix SQLite autopkgtests.
+  * Remove bogus version dependency upon php-common.
+  * Fix some package-contains-documentation-outside-usr-share-doc issues.
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Sat, 22 Sep 2018 15:04:50 -0700
+ -- Kunal Mehta <legoktm@member.fsf.org>  Sat, 22 Sep 2018 16:16:02 -0700
 
 mediawiki (1:1.31.1-1) unstable; urgency=medium
 
