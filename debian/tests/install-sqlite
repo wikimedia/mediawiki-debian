@@ -8,9 +8,9 @@ set -e
 sudo mkdir /etc/mw-install
 sudo chgrp www-data /etc/mw-install
 sudo chmod g+w /etc/mw-install
-php /var/lib/mediawiki/maintenance/install.php --confpath /etc/mw-install --dbpath /etc/mw-install --dbtype sqlite --pass password1 Debian-Autopkgtest Administrator
-php /var/lib/mediawiki/maintenance/getText.php --conf /etc/mw-install/LocalSettings.php "Main_Page" | grep "MediaWiki has been installed"
-php /var/lib/mediawiki/maintenance/update.php --conf /etc/mw-install/LocalSettings.php --quick
+sudo -u www-data php /var/lib/mediawiki/maintenance/install.php --confpath /etc/mw-install --dbpath /etc/mw-install --dbtype sqlite --pass password1 Debian-Autopkgtest Administrator
+sudo -u www-data php /var/lib/mediawiki/maintenance/getText.php --conf /etc/mw-install/LocalSettings.php "Main_Page" | grep "MediaWiki has been installed"
+sudo -u www-data php /var/lib/mediawiki/maintenance/update.php --conf /etc/mw-install/LocalSettings.php --quick
 sudo cp /etc/mw-install/LocalSettings.php /etc/mediawiki/LocalSettings.php
 curl --silent -I "http://localhost/mediawiki/index.php/Main_Page"
 curl --silent "http://localhost/mediawiki/index.php/Main_Page" | grep "MediaWiki has been installed"
