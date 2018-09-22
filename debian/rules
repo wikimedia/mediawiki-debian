@@ -39,6 +39,8 @@ override_dh_install:
 	done
 	# includes/libs is provided by mediawiki-classes
 	rm -rf debian/mediawiki/usr/share/mediawiki/includes/libs
+	# Remove mediawiki-classes README, already installed into /usr/share/doc
+	rm debian/mediawiki-classes/usr/share/mediawiki/includes/libs/README
 
 override_dh_systemd_enable:
 	# Do not enable by default, the user needs to manually
