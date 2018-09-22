@@ -13,7 +13,7 @@ Rules-Requires-Root: no
 
 Package: mediawiki
 Architecture: all
-Depends: apache2 | httpd, php, php-mysql | php-pgsql | php-sqlite3 | php-mysqlnd, php-common (>= 5.5.0+dfsg-10~), php-mbstring, php-xml, mime-support, mediawiki-classes (= ${binary:Version}), ${misc:Depends}
+Depends: apache2 | httpd, php, php-mysql | php-pgsql | php-sqlite3 | php-mysqlnd, php-common, php-mbstring, php-xml, mime-support, mediawiki-classes (= ${binary:Version}), ${misc:Depends}
 Recommends: default-mysql-server | virtual-mysql-server | postgresql-contrib, php-cli, php-apcu, php-intl, php-curl, php-wikidiff2, python3
 Suggests: imagemagick | php-gd, memcached, clamav
 Breaks: fusionforge-plugin-mediawiki (<< 5.2~rc1+1~),
