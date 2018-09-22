@@ -1,10 +1,17 @@
+mediawiki (1:1.27.5-1~deb9u1) stretch-security; urgency=medium
+
+  * New upstream version 1.27.5 (security release), fixing
+    CVE-2018-0503, CVE-2018-0504, CVE-2018-0505.
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Thu, 20 Sep 2018 13:18:12 -0700
+
 mediawiki (1:1.27.4-1ppa1~xenial1) xenial; urgency=medium
 
   * Rebuild for xenial
 
  -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 14 Nov 2017 16:42:15 -0800
 
-mediawiki (1:1.27.4-1) unstable; urgency=medium
+mediawiki (1:1.27.4-1~deb9u1) stretch-security; urgency=high
 
   * Imported Upstream version 1.27.4 (security release), fixing
     CVE-2017-8809, CVE-2017-8810, CVE-2017-8808, CVE-2017-8811,
@@ -13,7 +20,7 @@ mediawiki (1:1.27.4-1) unstable; urgency=medium
     by CVE-2017-9841, but an extra .htaccess file will restrict
     web access to the vendor/ directory.
 
- -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 14 Nov 2017 15:52:47 -0800
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 14 Nov 2017 15:02:45 -0800
 
 mediawiki (1:1.27.3-1ppa1~xenial1) xenial; urgency=medium
 
