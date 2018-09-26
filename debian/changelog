@@ -1,3 +1,9 @@
+mediawiki (1:1.31.1-3) UNRELEASED; urgency=medium
+
+  * Document removal of CologneBlue and Modern in NEWS (Closes: #909589)
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Tue, 25 Sep 2018 21:57:30 -0700
+
 mediawiki (1:1.31.1-2) unstable; urgency=medium
 
   * Fix SQLite autopkgtests.
