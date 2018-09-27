@@ -25,8 +25,20 @@ Upgrading:
 	database before upgrading, just in case.
 
 Editing:
-	For help on editing, see
-	<https://www.mediawiki.org/wiki/Help:Editing>.
+	For help on editing, see <https://www.mediawiki.org/wiki/Help:Editing>.
+
+Filesystem:
+	MediaWiki is typically deployed in one complete directory, however
+	we have split it up into multiple directories to adhere with the FHS:
+	* /usr/share/mediawiki - MediaWiki core files
+    * /etc/mediawiki/LocalSettings.php - expected location of
+	  LocalSettings.php. You can also put other configuration files in this
+	  directory.
+	* /var/lib/mediawiki - Main directory that the webserver will read from.
+	  Most core files from /usr/share/mediawiki are symlinked into this
+	  directory, and the LocalSettings.php file as well.
+	* /var/lib/mediawiki/extensions - Extensions are read from this directory.
+	  Non-packaged extensions can be installed here as well.
 
 Contributing:
 	Help is welcome in maintaining the mediawiki package! The git
