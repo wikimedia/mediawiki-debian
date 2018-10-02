@@ -1,7 +1,7 @@
 Source: mediawiki
 Section: web
 Priority: optional
-Maintainer: Kunal Mehta <legoktm@member.fsf.org>
+Maintainer: Kunal Mehta <legoktm@debian.org>
 Build-Depends: debhelper (>= 10),
  dh-buildinfo,
  apache2-dev
