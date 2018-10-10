@@ -28,6 +28,8 @@ mediawiki (1:1.31.1-1) unstable; urgency=medium
         titles.
     * The newly added Timeless skin provides a fully responsive interface
       for MediaWiki, working seamlessly across mobile and desktop devices.
+    * The CologneBlue and Modern skins are no longer included, and must be
+      removed from LocalSettings.php or downloaded separately.
     * User input is now cleaned up according to the HTML 5 parsing algorithm,
       instead of using HTML tidy, which relied on HTML 4 semantics. If you
       imported templates from Wikipedia or another wiki, you may need to

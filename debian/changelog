@@ -1,3 +1,10 @@
+mediawiki (1:1.31.1-3) unstable; urgency=medium
+
+  * Document removal of CologneBlue and Modern in NEWS (Closes: #909589)
+  * Document filesystem structure in README.Debian
+
+ -- Kunal Mehta <legoktm@member.fsf.org>  Wed, 26 Sep 2018 20:41:24 -0700
+
 mediawiki (1:1.31.1-2ppa1~bionic1) bionic; urgency=medium
 
   * Rebuild for bionic.
