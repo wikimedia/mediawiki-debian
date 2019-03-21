@@ -1,8 +1,12 @@
 mediawiki (1:1.31.1-5) UNRELEASED; urgency=medium
 
+  [ Kunal Mehta ]
   * Sync upstream/signing-key.asc with mediawiki.org
 
- -- Kunal Mehta <legoktm@debian.org>  Tue, 20 Nov 2018 02:48:26 -0800
+  [ Mark A. Hershberger ]
+  * Fix indentation in README.Debian
+
+ -- Kunal Mehta <legoktm@debian.org>  Thu, 21 Mar 2019 12:48:47 -0700
 
 mediawiki (1:1.31.1-4) unstable; urgency=medium
 
