@@ -1,3 +1,13 @@
+mediawiki (1:1.27.6-1~deb9u1) stretch-security; urgency=medium
+
+  * New upstream version 1.27.6 (security release), fixing
+    CVE-2019-12466, CVE-2019-12467, CVE-2019-12468, CVE-2019-12469,
+    CVE-2019-12470, CVE-2019-12471, CVE-2019-12472, CVE-2019-12473,
+    CVE-2019-12474. The bundled jQuery was also updated, fixing
+    CVE-2019-11358.
+
+ -- Kunal Mehta <legoktm@debian.org>  Wed, 05 Jun 2019 16:48:43 -0400
+
 mediawiki (1:1.27.5-1~deb9u1) stretch-security; urgency=medium
 
   * New upstream version 1.27.5 (security release), fixing
