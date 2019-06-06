@@ -5,18 +5,13 @@ override_dh_install:
 	# Now some tidying up is required
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail/tests/bug17178.phpt
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail/tests/bug17317.phpt
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/xmail.dtd
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/Mail/mimePart.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/Mail/mimeDecode.php
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/pear/mail_mime-decode/xmail.xsl
 	# These were fixed upstream already: https://github.com/liuggio/statsd-php-client/pull/52
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Entity/StatsdData.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/StatsdDataFactoryTest.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/src/Liuggio/StatsdClient/Entity/StatsdDataInterface.php
 	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/liuggio/statsd-php-client/tests/Liuggio/StatsdClient/Entity/StatsdDataTest.php
-	# Submitted upstream: https://github.com/oyejorge/less.php/pull/325
-	chmod a+x debian/mediawiki/usr/share/mediawiki/vendor/oyejorge/less.php/bin/lessc
-	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/oyejorge/less.php/lib/Less/Less.php.combine
+
+	chmod a-x debian/mediawiki/usr/share/mediawiki/vendor/wikimedia/less.php/lib/Less/Less.php.combine
 
 	find debian/mediawiki/usr/share/mediawiki -maxdepth 1 -mindepth 1 | grep -v "\(LocalSettings.php\|debian-scripts\|images\|extensions\|config\)" | \
 	while read i; do \

@@ -1,3 +1,30 @@
+mediawiki (1:1.31.2-1) unstable; urgency=medium
+
+  [ Kunal Mehta ]
+  * New upstream version 1.31.2 (security release), fixing
+    CVE-2019-12466, CVE-2019-12467, CVE-2019-12468, CVE-2019-12469,
+    CVE-2019-12470, CVE-2019-12471, CVE-2019-12472, CVE-2019-12473,
+    CVE-2019-12474. The bundled jQuery was also updated, fixing
+    CVE-2019-11358.
+  * Fix regex that was breaking file uploads in PHP 7.3
+    (Closes: #928716).
+  * Sync upstream/signing-key.asc with mediawiki.org.
+  * Drop patch merged upstream.
+  * Revert "Temporarily add allow-stderr restriction to autopkgtests",
+    as it was fixed upstream.
+
+  [ Mark A. Hershberger ]
+  * Fix indentation in README.Debian
+
+ -- Kunal Mehta <legoktm@debian.org>  Wed, 05 Jun 2019 22:40:28 -0400
+
+mediawiki (1:1.31.1-4) unstable; urgency=medium
+
+  * Update my email address
+  * Temporarily add allow-stderr restriction to autopkgtests (Closes: #911829)
+
+ -- Kunal Mehta <legoktm@debian.org>  Thu, 25 Oct 2018 23:19:40 -0700
+
 mediawiki (1:1.31.1-3~bpo9+1) stretch-backports; urgency=medium
 
   * Rebuild for stretch-backports.
