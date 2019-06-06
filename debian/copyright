@@ -409,10 +409,6 @@ Files: vendor/oojs/oojs-ui/*
 Copyright: 2011-2018, OOUI Team and other contributors
 License: Expat
 
-Files: vendor/oyejorge/less.php/*
-Copyright: Josh Schmidt, Matt Agar, Martin Jantošovič
-License: Apache-2.0
-
 Files: vendor/pear/console_getopt/*
 Copyright: 2001-2015, The PEAR developers
 License: BSD-2-clause
@@ -425,10 +421,6 @@ Files: vendor/pear/mail_mime/*
 Copyright: 2002-2003, Richard Heyes <richard@phpguru.org>
            2003-2006, PEAR <pear-group@php.net>
 License: BSD-3-clause
-
-Files: vendor/pear/mail_mime-decode/*
-Copyright: 2001-2015, The PEAR developers
-License: BSD-2-clause
 
 Files: vendor/pear/net_smtp/*
 Copyright: 2002-2015, Jon Parise and Chuck Hagenbuch
@@ -489,6 +481,10 @@ License: GPL-2.0+
 Files: vendor/wikimedia/ip-set/*
 Copyright: 2014-2015, Brandon Black <blblack@gmail.com>
 License: GPL-2.0+
+
+Files: vendor/wikimedia/less.php/*
+Copyright: Josh Schmidt, Matt Agar, Martin Jantošovič
+License: Apache-2.0
 
 Files: vendor/wikimedia/object-factory/*
 Copyright: 2014 Wikimedia Foundation and contributors
