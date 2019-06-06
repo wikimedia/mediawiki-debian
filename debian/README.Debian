@@ -31,7 +31,7 @@ Filesystem:
 	MediaWiki is typically deployed in one complete directory, however
 	we have split it up into multiple directories to adhere with the FHS:
 	* /usr/share/mediawiki - MediaWiki core files
-    * /etc/mediawiki/LocalSettings.php - expected location of
+	* /etc/mediawiki/LocalSettings.php - expected location of
 	  LocalSettings.php. You can also put other configuration files in this
 	  directory.
 	* /var/lib/mediawiki - Main directory that the webserver will read from.
