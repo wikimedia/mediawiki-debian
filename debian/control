@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 10),
  dh-buildinfo,
  apache2-dev
 Homepage: https://www.mediawiki.org/
-Standards-Version: 4.1.4
+Standards-Version: 4.3.0
 Vcs-Git: https://gerrit.wikimedia.org/r/mediawiki/debian.git
 Vcs-Browser: https://gerrit.wikimedia.org/g/mediawiki/debian
 Rules-Requires-Root: no
