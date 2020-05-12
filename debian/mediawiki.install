@@ -1,6 +1,0 @@
-debian/etc/*	etc/mediawiki
-*.php composer.json includes languages maintenance mw-config resources serialized skins vendor usr/share/mediawiki
-cache extensions images var/lib/mediawiki
-debian/images/*.png usr/share/mediawiki/resources/assets/debian
-debian/DebianOverrides.php usr/share/mediawiki/mw-config/overrides
-debian/PlatformSettings.php usr/share/mediawiki/includes

@@ -1,9 +1,0 @@
-#!/bin/sh
-# Lint both PHP and JSON files
-
-set -e
-
-# Ignore LocalSettings.php since it is just a symlink
-# that does not exist yet.
-find /usr/share/mediawiki -not -type d -name '*.php' -not -name 'LocalSettings.php' | xargs -n1 -exec php -l
-find /usr/share/mediawiki -not -type d -name '*.json' | xargs -n1 -exec jsonlint-php
